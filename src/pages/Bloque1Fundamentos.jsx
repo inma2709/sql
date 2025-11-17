@@ -1365,7 +1365,8 @@ N:M   →  [A] N — M [B]  (→ tabla intermedia)
 
 <div className="callout callout--success">
   <p>
-    La mayoría de campos de texto en proyectos reales se crean como <strong>VARCHAR</strong>.
+    La mayoría de campos de texto en proyectos reales se crean como <strong>VARCHAR</strong>. Varchar admite letras y números
+    y casi cualquier caracter por ejemplo puedes usarlo para password. Aunque VARCHAR admite texto, números y casi cualquier carácter, no conviene usarlo para todo. Los tipos numéricos, de fecha o booleanos permiten cálculos, ordenación correcta, validaciones automáticas y son más rápidos y precisos que el texto.
   </p>
 </div>
 

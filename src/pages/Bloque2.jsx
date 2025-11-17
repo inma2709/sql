@@ -28,11 +28,12 @@ export default function Bloque2Consultas() {
             <li><a href="#crud-select">R → SELECT (leer datos)</a></li>
               <li><a href="#filtros">Filtros con WHERE</a></li>
              <li><a href="#ordenaciones">Ordenaciones con ORDER BY</a></li>
+             <li><a href="#vistas">Crear y usar vistas</a></li>
             <li><a href="#crud-update">U → UPDATE (modificar datos)</a></li>
             <li><a href="#crud-delete">D → DELETE (eliminar datos)</a></li>
 
          
-            <li><a href="#ordenaciones">Ordenaciones con ORDER BY</a></li>
+            
             <li><a href="#joins">Relaciones entre tablas y JOIN</a></li>
             <li><a href="#buenas-practicas">Buenas prácticas de modelado y consultas</a></li>
             <li><a href="#actividades">Actividades del bloque</a></li>
@@ -251,7 +252,7 @@ FOREIGN KEY (categoria_id) REFERENCES categorias(id)`}</code>
     <article className="card">
 
       {/* INTRODUCCIÓN */}
-      <h3>Introducción y conceptos básicos</h3>
+      <h3>1.1 Introducción y conceptos básicos</h3>
       <p>
         Cuando pasamos del modelo lógico (ERL) al modelo físico en SQL, transformamos:
       </p>
@@ -316,7 +317,7 @@ FOREIGN KEY (categoria_id) REFERENCES categorias(id)`}</code>
 
       <p>
         Un valor por defecto sirve para que una columna tenga un valor automático si
-        no se especifica durante la inserción.
+        no se especifica durante la inserción. “Predeterminado” (o DEFAULT) es justo donde eliges el valor por defecto que tendrá esa columna cuando el usuario NO introduzca ningún dato.
       </p>
 
       <p>Se define directamente en el <strong>CREATE TABLE</strong>:</p>
@@ -325,15 +326,60 @@ FOREIGN KEY (categoria_id) REFERENCES categorias(id)`}</code>
         <code>{`stock INT DEFAULT 0,
 activo TINYINT(1) DEFAULT 1`}</code>
       </pre>
+<h4>¿Cuándo tiene sentido usar DEFAULT?</h4>
 
-      <h4>¿Cuándo tiene sentido usar DEFAULT?</h4>
+<ul>
+  <li>
+    <strong>Cuando existe un valor inicial lógico o común</strong>  
+    Por ejemplo, en inventarios el <code>stock</code> suele comenzar en <code>0</code>, o en comentarios 
+    el campo <code>likes</code> puede empezar en <code>0</code>. Así evitamos escribirlo manualmente en cada inserción. Si no lo nombramos en las columnas
+    no hace falta poner default y cogera tambien el valor por defecto. 
+  </li>
 
-      <ul>
-        <li>Cuando hay un valor inicial lógico (stock = 0)</li>
-        <li>Para evitar errores al omitir columnas en INSERT</li>
-        <li>Para funciones frecuentes (activo = 1)</li>
-        <li>Para automatizar datos repetitivos</li>
-      </ul>
+  <li>
+    <strong>Para evitar errores al omitir columnas en un INSERT</strong>  
+    Si un campo no tiene predeterminado y no admite NULL, MySQL dará error.  
+    Con un DEFAULT adecuado, la sentencia INSERT funciona incluso si el campo no se envía.
+  </li>
+
+  <li>
+    <strong>Para simplificar inserciones repetitivas</strong>  
+    Campos como <code>rol</code> en usuarios suelen empezar en <code>'usuario'</code> en vez de <code>'admin'</code>, 
+    o un pedido puede empezar con estado <code>'pendiente'</code>.  
+    Esto agiliza el trabajo del desarrollador.
+  </li>
+
+  <li>
+    <strong>Para que ciertos campos no se queden en blanco sin sentido</strong>  
+    Si un campo no debe quedar vacío pero tampoco queremos obligar al usuario a escribirlo, 
+    un valor predeterminado mantiene consistencia.  
+    Por ejemplo: <code>pais = 'España'</code> en una tienda cuyo público es mayoritariamente nacional.
+  </li>
+
+  <li>
+    <strong>Para campos booleanos o de estado</strong>  
+    Es habitual establecer <code>activo = 1</code> para usuarios, productos o registros que deben estar disponibles 
+    nada más crearse, sin requerir intervención manual.
+  </li>
+
+  <li>
+    <strong>Para automatizar datos repetitivos o técnicos</strong>  
+    Campos como <code>fecha_creacion</code> o <code>fecha_registro</code> suelen usar 
+    <code>CURRENT_TIMESTAMP</code> como predeterminado, de modo que se rellenen automáticamente en cada inserción.
+  </li>
+
+  <li>
+    <strong>Para mejorar la coherencia de los datos</strong>  
+    Un buen Default asegura que, aunque falte información puntual, la tabla se mantiene ordenada y 
+    con valores razonables en todos sus registros.
+  </li>
+
+  <li>
+    <strong>Para hacer el código más limpio y fácil de mantener</strong>  
+    Cuando varios campos tienen valores automáticos, las sentencias SQL son más simples y hay menos riesgo
+    de olvidar columnas obligatorias.
+  </li>
+</ul>
 
       <p>Ejemplo completo:</p>
 
@@ -427,12 +473,151 @@ VALUES ('Reloj digital', 19.90);`}</code>
         </table>
       </div>
 
-      <p>
-        Con esto completamos el proceso de transformar un modelo lógico en tablas SQL reales.  
-        El siguiente paso es aprender a insertar datos y trabajar con el CRUD.
-      </p>
 
             <hr />
+
+           {/*Fechas y horas*/}
+<h3>1.5. Cómo trabajar con fechas y horas en MySQL</h3>
+
+<p>
+  MySQL ofrece varios tipos de datos para manejar fechas, horas y momentos exactos 
+  en el tiempo. Elegir el tipo adecuado es fundamental para evitar errores y 
+  trabajar correctamente con calendarios, horarios o registros de actividad.
+</p>
+
+<div className="contenedor">
+  <table className="tabla-datos">
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Qué almacena</th>
+        <th>Formato</th>
+        <th>Cuándo usarlo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>DATE</code></td>
+        <td>Solo fecha</td>
+        <td>YYYY-MM-DD</td>
+        <td>
+          Cuando la hora no importa (fechas de nacimiento, estrenos, reservas por día).
+        </td>
+      </tr>
+
+      <tr>
+        <td><code>TIME</code></td>
+        <td>Solo hora</td>
+        <td>HH:MM:SS</td>
+        <td>
+          Para guardar horarios (aperturas, turnos, duración de un evento).
+        </td>
+      </tr>
+
+      <tr>
+        <td><code>DATETIME</code></td>
+        <td>Fecha y hora</td>
+        <td>YYYY-MM-DD HH:MM:SS</td>
+        <td>
+          Cuando importa el momento exacto (fecha de registro, compras, comentarios).
+        </td>
+      </tr>
+
+      <tr>
+        <td><code>TIMESTAMP</code></td>
+        <td>Fecha y hora (con zona horaria)</td>
+        <td>YYYY-MM-DD HH:MM:SS</td>
+        <td>
+          Para auditorías y sistemas distribuidos. Cambia según la zona horaria del servidor.
+        </td>
+      </tr>
+
+      <tr>
+        <td><code>YEAR</code></td>
+        <td>Un año</td>
+        <td>YYYY</td>
+        <td>
+          Para almacenar solo el año (año de estreno, año fiscal).
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h4>¿Cómo elegir entre DATE y DATETIME?</h4>
+
+<div className="contenedor">
+  <table className="tabla-datos">
+    <thead>
+      <tr>
+        <th>Si necesitas guardar…</th>
+        <th>Usa</th>
+        <th>Ejemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Una fecha sin hora</td>
+        <td><strong>DATE</strong></td>
+        <td><code>'2025-06-19'</code></td>
+      </tr>
+
+      <tr>
+        <td>Fecha + hora exacta</td>
+        <td><strong>DATETIME</strong></td>
+        <td><code>'2025-06-19 14:22:55'</code></td>
+      </tr>
+
+      <tr>
+        <td>Hora sola</td>
+        <td><strong>TIME</strong></td>
+        <td><code>'18:30:00'</code></td>
+      </tr>
+
+      <tr>
+        <td>Diferencias horarias entre servidores</td>
+        <td><strong>TIMESTAMP</strong></td>
+        <td><code>'2025-06-19 14:22:55'</code> (ajustado a zona horaria)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+  Ejemplo de creación de una tabla que usa <code>DATE</code> y <code>TIME</code>:
+</p>
+
+<pre>
+  <code>{`CREATE TABLE eventos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  fecha DATE NOT NULL,
+  hora TIME NOT NULL
+);`}</code>
+</pre>
+
+<p>
+  Para insertar datos con fechas y horas:
+</p>
+
+<pre>
+  <code>{`INSERT INTO eventos (nombre, fecha, hora)
+VALUES ('Concierto', '2023-05-15', '20:00:00');`}</code>
+</pre>
+
+<h4>Operaciones útiles con fechas en MySQL</h4>
+
+<p>MySQL permite trabajar con fechas de forma muy potente:</p>
+
+<ul>
+  <li><strong>Calcular diferencias</strong>: <code>DATEDIFF(fecha1, fecha2)</code></li>
+  <li><strong>Sumar días, meses o años</strong>: <code>DATE_ADD(fecha, INTERVAL 7 DAY)</code></li>
+  <li><strong>Restar tiempo</strong>: <code>DATE_SUB(fecha, INTERVAL 1 MONTH)</code></li>
+  <li><strong>Extraer partes</strong>: <code>YEAR(fecha)</code>, <code>MONTH(fecha)</code>, <code>HOUR(datetime)</code></li>
+  <li><strong>Formatear</strong>: <code>DATE_FORMAT(fecha, '%d/%m/%Y')</code></li>
+</ul>
+
+
 
       {/* 1.6 CREAR UNA TABLA HIJA CON CLAVE FORÁNEA */}
       <h3>1.6. Cómo crear correctamente una tabla hija con clave foránea</h3>
@@ -537,7 +722,7 @@ VALUES ('Reloj digital', 19.90);`}</code>
         </li>
       </ul>
 
-      <h4>Errores típicos al crear tablas con FK (muy comunes en alumnos):</h4>
+      <h4>Errores típicos al crear tablas con FK :</h4>
 
       <ul>
         <li>
@@ -607,7 +792,7 @@ VALUES ('Reloj digital', 19.90);`}</code>
       </div>
 
       <p>
-        Con esto, los alumnos entienden completamente cómo se crea una relación 1:N en SQL
+        Con esto,  entienden completamente cómo se crea una relación 1:N en SQL
         y cómo se implementa correctamente en el modelo físico.
       </p>
 
@@ -714,7 +899,7 @@ VALUES ('Teclado mecánico', 49.99, 10, 1);`}</code>
       </ul>
 
       {/* NUEVA SECCIÓN 4.9 */}
-      <h3>4.9. Insertar solo algunas columnas (columnas opcionales)</h3>
+      <h3>4.8. Insertar solo algunas columnas (columnas opcionales)</h3>
 
       <p>
         MySQL solo exige que rellenes las columnas que son:
@@ -875,7 +1060,7 @@ VALUES ('Producto fantasma', 10.00, 99);`}</code>
 FROM nombre_tabla
 [LIMIT cantidad];`}</code></pre>
         <p>
-          Con <code>SELECT</code> indicamos <strong>qué columnas queremos ver</strong> 
+          Con <code>SELECT</code> indicamos <strong>qué columnas queremos ver</strong>  
           y con <code>FROM</code> indicamos <strong>de qué tabla</strong>. 
           Opcionalmente podemos limitar el número de filas con <code>LIMIT</code>.
         </p>
@@ -924,43 +1109,131 @@ FROM productos;`}</code>
         Esta consulta solo muestra dos columnas: <strong>nombre</strong> y <strong>precio</strong>
         de cada producto.
       </p>
+<h3>5.3. Alias con AS (renombrar columnas)</h3>
 
-      <h3>5.3. Alias con AS (renombrar columnas)</h3>
-      <p>
-        Los <strong>alias</strong> nos permiten mostrar un nombre más claro para las columnas 
-        en el resultado. Se definen con la palabra <code>AS</code>.
-      </p>
+<p>
+  Los <strong>alias</strong> nos permiten mostrar un nombre más claro para las columnas 
+  en el resultado de una consulta SQL. Se definen con la palabra <code>AS</code> 
+  y <strong>no modifican</strong> la estructura de la tabla.
+</p>
 
-      <pre>
-        <code>{`SELECT nombre AS producto, precio AS coste
+<pre>
+  <code>{`SELECT nombre AS producto, precio AS coste
 FROM productos;`}</code>
-      </pre>
+</pre>
 
-      <p>
-        En el resultado veremos las columnas como <strong>producto</strong> y <strong>coste</strong>,
-        pero la tabla sigue teniendo los nombres reales <code>nombre</code> y <code>precio</code>.
-      </p>
+<p>
+  En el resultado veremos las columnas como <strong>producto</strong> y <strong>coste</strong>,
+  pero la tabla sigue teniendo los nombres reales <code>nombre</code> y <code>precio</code>.
+</p>
 
-      <ul>
-        <li>Los alias <strong>no cambian</strong> la estructura de la tabla.</li>
-        <li>Solo afectan a cómo se muestran los resultados.</li>
-        <li>Son muy útiles para hacer las consultas más legibles.</li>
-      </ul>
+<ul>
+  <li>Los alias <strong>no cambian</strong> la estructura de la tabla.</li>
+  <li>Solo afectan al resultado de la consulta.</li>
+  <li>Hacen que las salidas sean más claras y profesionales.</li>
+</ul>
 
-      <p>
-        También podemos usar comillas si el alias lleva espacios:
-      </p>
+<p>
+  También podemos usar comillas si el alias lleva espacios:
+</p>
 
-      <pre>
-        <code>{`SELECT nombre AS "Nombre del producto"
+<pre>
+  <code>{`SELECT nombre AS "Nombre del producto"
 FROM productos;`}</code>
-      </pre>
+</pre>
 
-      <p>
-        Más adelante, cuando estudiemos <strong>JOIN</strong>, también usaremos alias
-        para las tablas completas (por ejemplo, <code>productos p</code>, 
-        <code>categorias c</code>), pero de momento nos centraremos en los alias de columnas.
-      </p>
+<h4>¿En qué casos tiene sentido usar <code>AS</code>?</h4>
+
+<p>
+  Aunque el alias no cambia la tabla, sí es muy útil cuando queremos que el 
+  <strong>resultado</strong> de la consulta sea más claro o más adecuado al contexto.
+  Estos son los casos más habituales:
+</p>
+
+<ul>
+  <li>
+    <strong>1. Informes o listados más legibles:</strong>  
+    Cuando preparas una tabla para un informe, Excel, Google Sheets o un PDF, 
+    el nombre original de la columna no siempre es el mejor para un lector.
+  </li>
+
+  <li>
+    <strong>2. Consultas con funciones:</strong>  
+    Si calculas una media, suma o porcentaje, el nombre por defecto sería feo:<br/>
+    <code>AVG(puntuacion)</code>.  
+    Con <code>AS</code>:  
+    <pre><code>SELECT AVG(puntuacion) AS media FROM valoraciones;</code></pre>
+  </li>
+
+  <li>
+    <strong>3. Consultas con expresiones o cálculos:</strong>  
+    <pre><code>SELECT precio * 1.21 AS precio_con_IVA FROM productos;</code></pre>
+    Sin alias, esa columna no tiene nombre.
+  </li>
+
+  <li>
+    <strong>4. Consultas con nombres largos o técnicos:</strong>  
+    <code>fecha_ultimo_acceso</code> → <code>AS ultima_visita</code>
+  </li>
+
+  <li>
+    <strong>5. Consultas que irán a una API o un backend:</strong>  
+    A veces el equipo de frontend pide que las claves lleguen con ciertos nombres.
+  </li>
+
+  <li>
+    <strong>6. Evitar colisiones de nombres al hacer JOIN:</strong>  
+    Si dos tablas tienen columna <code>nombre</code>, necesitamos distinguirlas.
+    <pre><code>SELECT u.nombre AS usuario, 
+       p.nombre AS producto
+FROM usuarios u
+JOIN productos p;</code></pre>
+  </li>
+</ul>
+
+<h4>¿Y si en el frontend ponemos nuestros propios nombres?</h4>
+
+<p>
+  Es cierto: en una web (HTML, React, Vue, etc.) solemos mostrar la información 
+  con los nombres que queramos. <strong>Pero el alias sigue siendo útil</strong> porque:
+</p>
+
+<ul>
+  <li>
+    <strong>El backend recibe un resultado más claro.</strong>  
+    Si la API devuelve un campo <code>media</code> en vez de <code>AVG(puntuacion)</code>,
+    el código del backend es más limpio.
+  </li>
+
+  <li>
+    <strong>El frontend recibe directamente nombres más amigables.</strong><br/>
+    Así no tienes que renombrar JSON en React, por ejemplo.
+  </li>
+
+  <li>
+    <strong>Si exportas datos a Excel o Google Sheets</strong>, los encabezados ya están listos.
+  </li>
+
+  <li>
+    <strong>Cuando trabajas con analistas, informes o dashboards</strong>, los alias 
+    ponen nombres profesionales a las columnas.
+  </li>
+
+  <li>
+    <strong>Ayuda muchísimo al leer códigos SQL de compañeros.</strong>
+  </li>
+
+  <li>
+    <strong>Evita choques de nombres en consultas con muchas tablas.</strong>
+  </li>
+</ul>
+
+<p>
+  Más adelante, cuando estudiemos <strong>JOIN</strong>, también usaremos alias
+  para renombrar <strong>tablas completas</strong> (por ejemplo, 
+  <code>productos p</code>, <code>categorias c</code>), lo cual hace las 
+  consultas más cortas y fáciles de leer.
+</p>
 
       <h3>5.4. LIMIT — mostrar solo algunas filas</h3>
       <p>
@@ -1162,6 +1435,17 @@ FROM productos
 WHERE precio > 30;`}</code>
       </pre>
 
+<p>Podemos hacer también una selección con un alias</p>
+<pre>
+  <code>{`SELECT  
+  id_usuario AS usuario,  
+  id_pelicula AS pelicula,  
+  puntuacion,  
+  comentario,  
+  'Excelente' AS nivel  
+FROM valoraciones  
+WHERE puntuacion > 8;`}</code>
+</pre>
       <h3>8.3. Operadores lógicos: AND y OR</h3>
 
       <p>
@@ -1326,21 +1610,7 @@ FROM productos
 WHERE nombre LIKE '%Cafetera%';`}</code>
       </pre>
 
-      <h3>8.9. Ejercicios recomendados</h3>
-
-      <ul>
-        <li>Muestra los productos con precio mayor de 50€.</li>
-        <li>Muestra los productos con stock entre 5 y 20 (incluidos).</li>
-        <li>Muestra los productos de las categorías 1 o 2 usando <code>IN</code>.</li>
-        <li>Muestra los productos cuyo nombre empiece por la letra 'A'.</li>
-        <li>Muestra los productos que no tienen categoría asignada.</li>
-        <li>Crea una consulta con <code>AND</code> y otra con <code>OR</code> comparando precio y stock.</li>
-      </ul>
-
-      <p>
-        Una vez que controlamos los filtros con WHERE, el siguiente paso natural es aprender a
-        <strong>ordenar los resultados con ORDER BY</strong> para presentar mejor la información.
-      </p>
+     
     </article>
   </details>
 </section>
@@ -1556,6 +1826,170 @@ ORDER BY categoria_id ASC, nombre ASC;`}</code>
         más importantes del modelo relacional:
         <strong> unir tablas con JOIN</strong>.
       </p>
+
+    </article>
+  </details>
+</section>
+<section className="section" id="sql-vistas">
+  <details>
+    <summary>Crear y usar VISTAS en SQL</summary>
+
+    <article className="card">
+
+      <h3>Crear y usar VISTAS en SQL</h3>
+
+      <p>
+        Una <strong>vista</strong> es una consulta SQL guardada con un nombre.
+        Funciona como si fuese una tabla, pero <strong>no almacena datos nuevos</strong>:
+        simplemente muestra el resultado de una consulta cada vez que la usamos.
+      </p>
+
+      <div className="callout">
+        <strong>Piensa en una vista como en una “ventana” a los datos</strong>.
+        La información no se duplica, solo se presenta de forma más cómoda.
+      </div>
+
+      <h4>¿Para qué sirven las vistas?</h4>
+      <ul>
+        <li>Para <strong>simplificar consultas complejas</strong> que usamos a menudo.</li>
+        <li>Para crear <strong>informes</strong> (por ejemplo, “valoraciones excelentes”).</li>
+        <li>Para mejorar la <strong>legibilidad</strong> del código SQL.</li>
+        <li>Para <strong>proteger datos sensibles</strong> (la vista muestra solo lo que queremos).</li>
+        <li>Para que varias aplicaciones consulten los datos de forma unificada.</li>
+      </ul>
+
+      <h4>Ejemplo simple: crear una vista</h4>
+
+      <p>Queremos mostrar solo las valoraciones con puntuación superior a 8:</p>
+
+      <pre>
+        <code>{`CREATE VIEW valoraciones_excelentes AS
+SELECT
+  id_usuario,
+  id_pelicula,
+  puntuacion,
+  comentario
+FROM valoraciones
+WHERE puntuacion > 8;`}</code>
+      </pre>
+
+      <p>La consultamos igual que una tabla:</p>
+
+      <pre>
+        <code>{`SELECT * FROM valoraciones_excelentes;`}</code>
+      </pre>
+
+      <h4>Vistas con JOIN (más útiles en proyectos)</h4>
+
+      <p>En nuestro catálogo de películas queremos ver información completa:</p>
+
+      <ul>
+        <li>nombre del usuario</li>
+        <li>título de la película</li>
+        <li>puntuación</li>
+        <li>comentario</li>
+      </ul>
+
+      <p>Podemos crear una vista así:</p>
+
+      <pre>
+        <code>{`CREATE VIEW vista_valoraciones_detalladas AS
+SELECT
+  u.nombre AS usuario,
+  p.titulo AS pelicula,
+  v.puntuacion,
+  v.comentario,
+  v.fecha
+FROM valoraciones v
+JOIN usuarios u ON v.id_usuario = u.id_usuario
+JOIN peliculas p ON v.id_pelicula = p.id_pelicula;`}</code>
+      </pre>
+
+      <p>Y consultarla:</p>
+
+      <pre>
+        <code>{`SELECT * FROM vista_valoraciones_detalladas
+ORDER BY fecha DESC;`}</code>
+      </pre>
+
+      <h4>Actualizar o redefinir una vista</h4>
+
+      <p>Para modificar una vista sin borrarla:</p>
+
+      <pre>
+        <code>{`CREATE OR REPLACE VIEW vista_valoraciones_detalladas AS
+SELECT ...
+;`}</code>
+      </pre>
+
+      <h4>Eliminar una vista</h4>
+
+      <pre>
+        <code>{`DROP VIEW valoraciones_excelentes;`}</code>
+      </pre>
+
+      <h4>¿Las vistas guardan datos?</h4>
+
+      <p>
+        <strong>No.</strong>  
+        Las vistas <em>no almacenan copias</em>.
+        Cada vez que consultas una vista, MySQL ejecuta la consulta original.
+      </p>
+
+      <div className="callout">
+        <strong>Ventaja:</strong> siempre ves datos actualizados.<br />
+        <strong>Inconveniente:</strong> vistas muy complejas pueden ser más lentas.
+      </div>
+
+      <h4>Buenas prácticas al crear vistas</h4>
+      <ul>
+        <li>Usar nombres claros (p. ej. <code>vista_ventas_mensuales</code>).</li>
+        <li>Añadir alias descriptivos a las columnas.</li>
+        <li>No incluir datos sensibles si la vista será pública.</li>
+        <li>Evitar vistas demasiado grandes o muy complejas.</li>
+        <li>Usar <code>CREATE OR REPLACE VIEW</code> para actualizar vistas.</li>
+      </ul>
+
+      <h4>Ejemplos en nuestro proyecto catalogopelis</h4>
+
+      <p><strong>1. Películas con su actor y género:</strong></p>
+
+      <pre>
+        <code>{`CREATE VIEW vista_peliculas_detalle AS
+SELECT
+  p.id_pelicula,
+  p.titulo,
+  a.nombre AS actor_principal,
+  g.nombre AS genero,
+  p.anio_estreno
+FROM peliculas p
+JOIN actores a ON p.id_actor_principal = a.id_actor
+JOIN generos g ON p.id_genero = g.id_genero;`}</code>
+      </pre>
+
+      <p><strong>2. Ranking de películas por puntuación media:</strong></p>
+
+      <pre>
+        <code>{`CREATE VIEW vista_ranking_peliculas AS
+SELECT
+  p.titulo,
+  AVG(v.puntuacion) AS media,
+  COUNT(*) AS total_valoraciones
+FROM valoraciones v
+JOIN peliculas p ON v.id_pelicula = p.id_pelicula
+GROUP BY p.id_pelicula
+ORDER BY media DESC;`}</code>
+      </pre>
+
+      <h4>Ejercicios recomendados</h4>
+
+      <ul>
+        <li>Crea una vista llamada <code>vista_valoraciones_recientes</code> con las valoraciones de los últimos 7 días.</li>
+        <li>Crea una vista con todas las películas de un género concreto (acción, drama…).</li>
+        <li>Crea una vista que muestre solo las valoraciones de un usuario concreto.</li>
+      </ul>
+
+      <p>Las vistas son una herramienta poderosa para simplificar SQL y crear informes profesionales.</p>
 
     </article>
   </details>
@@ -2453,7 +2887,7 @@ RIGHT JOIN categorias c ON p.categoria_id = c.id;`}</code>
               <ul>
                 <li><strong>peliculas</strong></li>
                 <li><strong>actores</strong></li>
-                <li><strong>reparto</strong> (N:M)</li>
+               
                 <li><strong>generos</strong></li>
                 <li><strong>valoraciones</strong></li>
               </ul>
@@ -2506,167 +2940,210 @@ RIGHT JOIN categorias c ON p.categoria_id = c.id;`}</code>
           </details>
         </section>
 
-        {/* BONUS — EXPORTAR, ENTREGAR Y SUBIR A PORTFOLIO */}
-        <section className="section" id="bonus">
-          <details open>
-            <summary>Bonus: cómo generar un archivo SQL y subir tu proyecto al portfolio</summary>
+      {/* BONUS — EXPORTAR, ENTREGAR Y SUBIR A PORTFOLIO */}
+<section className="section" id="bonus">
+  <details open>
+    <summary>Bonus: cómo generar un archivo SQL y subir tu proyecto al portfolio</summary>
 
-            <article className="card">
+    <article className="card">
+      <h3>Bonus: Generar archivo SQL, entregarlo correctamente y subirlo a tu portfolio</h3>
 
-              <h3>Bonus: Generar archivo SQL, entregarlo correctamente y subirlo a tu portfolio</h3>
+      <p>
+        En este bonus vas a ver cómo dejar tu proyecto SQL con un acabado profesional:
+        generar el archivo <strong>.sql</strong>, organizar bien las carpetas,
+        documentarlo en un <code>README.md</code> y publicarlo en GitHub como parte de tu portfolio.
+      </p>
 
-              <p>
-                Esta sección te explica cómo preparar tu proyecto SQL de forma profesional:  
-                cómo generar un archivo <strong>.sql</strong>, cómo organizar los documentos,  
-                y cómo subirlo a tu portfolio de GitHub para que forme parte de tu currículum tecnológico.
-              </p>
+      {/* CALLOUT ESPECIAL */}
+      <div className="callout-bonus">
+        <strong>Idea clave:</strong>
+        <p>
+          Un buen proyecto SQL no es solo la base de datos: también incluye documentación,
+          scripts separados (creación, datos, consultas) y un README claro. Es algo
+          que verán profesores, empresas y futuros compañeros.
+        </p>
+      </div>
 
-              {/* CALLOUT ESPECIAL */}
-              <div className="callout-bonus">
-                <strong>Idea clave:</strong>
-                <p>
-                  Un buen proyecto SQL no es solo la base de datos: también incluye documentación, scripts y un README claro.  
-                  Piensa que será algo que verán profesores, empresas y futuros compañeros.
-                </p>
-              </div>
+      <h4>1. ¿Qué es un archivo SQL?</h4>
+      <p>
+        Un archivo <code>.sql</code> es un fichero de texto que contiene comandos SQL listos para ejecutar:
+        <strong> CREATE TABLE</strong>, <strong>INSERT</strong>, <strong>ALTER</strong>, etc.
+      </p>
 
-              <h3>1. ¿Qué es un archivo SQL?</h3>
-              <p>
-                Un archivo <code>.sql</code> es un fichero de texto que contiene comandos SQL listos para ejecutar:  
-                <strong>CREATE TABLE</strong>, <strong>INSERT</strong>, <strong>ALTER</strong>, etc.  
-              </p>
+      <p>Suele usarse para:</p>
+      <ul>
+        <li>Recrear la base de datos en cualquier ordenador</li>
+        <li>Importarla en phpMyAdmin (por ejemplo, en un XAMPP nuevo)</li>
+        <li>Subirla a GitHub como parte del proyecto</li>
+        <li>Guardar copias de seguridad de tus prácticas</li>
+      </ul>
 
-              <p>Sirve para:</p>
-              <ul>
-                <li>Recrear la base de datos en cualquier ordenador</li>
-                <li>Importarla en phpMyAdmin</li>
-                <li>Compartirla en GitHub</li>
-                <li>Realizar copia de seguridad</li>
-              </ul>
+      <h4>2. Cómo generar un archivo SQL desde phpMyAdmin</h4>
 
-              <h3>2. Cómo generar un archivo SQL desde phpMyAdmin</h3>
+      <ol>
+        <li>Arranca <strong>MySQL</strong> en XAMPP y entra en <strong>phpMyAdmin</strong>.</li>
+        <li>En el panel izquierdo, haz clic en tu base de datos (por ejemplo, <code>tienda</code> o <code>biblioteca</code>).</li>
+        <li>Ve a la pestaña <strong>Exportar</strong>.</li>
+        <li>
+          Elige el método:
+          <ul>
+            <li><strong>Rápido</strong> → Exporta toda la base de datos (tablas + datos).</li>
+            <li><strong>Personalizado</strong> → Puedes elegir tablas concretas y opciones avanzadas.</li>
+          </ul>
+        </li>
+        <li>Asegúrate de que el formato seleccionado es <strong>SQL</strong>.</li>
+        <li>Pulsa <strong>Continuar</strong>.</li>
+      </ol>
 
-              <ol>
-                <li>Abre <strong>phpMyAdmin</strong></li>
-                <li>Selecciona tu base de datos en el panel izquierdo</li>
-                <li>Haz clic en la pestaña <strong>Exportar</strong></li>
-                <li>Elige el método:
-                  <ul>
-                    <li><strong>Rápido</strong> → para exportar todo</li>
-                    <li><strong>Personalizado</strong> → si quieres elegir tablas</li>
-                  </ul>
-                </li>
-                <li>Asegúrate de que el formato es <strong>SQL</strong></li>
-                <li>Haz clic en <strong>Continuar</strong></li>
-              </ol>
+      <p>
+        Se descargará un archivo del estilo: <code>mi-bbdd.sql</code> que podrás guardar dentro de la carpeta del proyecto.
+      </p>
 
-              <p>Se descargará algo así como: <code>mi-bbdd.sql</code>.</p>
+      <h4>3. Cómo guardar tus consultas para tenerlas en el README</h4>
 
-              <h3>3. Estructura recomendada de carpetas para tu proyecto</h3>
+      <p>
+        Cada vez que ejecutes una consulta en phpMyAdmin (por ejemplo un <code>SELECT</code> con
+        <code>JOIN</code>), puedes guardarla para documentarla después:
+      </p>
 
-              <pre>
-                <code>{`mi-proyecto-sql/
+      <ol>
+        <li>Escribe y ejecuta la consulta en la pestaña <strong>SQL</strong>.</li>
+        <li>
+          Usa el botón <strong>“Copiar al portapapeles”</strong> (debajo de la consulta) o selecciona
+          el texto manualmente.
+        </li>
+        <li>Pega esa consulta en un archivo de texto llamado <code>consultas.sql</code>.</li>
+        <li>
+          Agrupa las consultas por bloque, por ejemplo:
+          <ul>
+            <li><code>-- Consultas básicas (SELECT + WHERE)</code></li>
+            <li><code>-- Consultas con ORDER BY y LIMIT</code></li>
+            <li><code>-- Consultas con JOIN entre tablas</code></li>
+          </ul>
+        </li>
+      </ol>
+
+      <p>
+        Así tendrás todas tus consultas importantes organizadas y listas para copiar en el
+        <code>README.md</code> o para repetir el ejercicio en el futuro.
+      </p>
+
+      <h4>4. Estructura recomendada de carpetas para tu proyecto</h4>
+
+      <pre>
+        <code>{`mi-proyecto-sql/
 │
-├── script.sql          # Tablas y modelo físico
-├── inserts.sql         # Datos de ejemplo
-├── consultas.sql       # SELECT, WHERE, JOIN...
-├── modelo-ERL.png      # Diagrama del proyecto
-├── README.md           # Documentación
-└── extras/             # (opcional) Mejoras, vistas, ejercicios
+├── script.sql          # Tablas y modelo físico (CREATE DATABASE, CREATE TABLE...)
+├── inserts.sql         # Datos de ejemplo (INSERT INTO...)
+├── consultas.sql       # SELECT, WHERE, JOIN... que quieres documentar
+├── modelo-ERL.png      # Diagrama del proyecto (modelo ER)
+├── README.md           # Documentación principal del proyecto
+└── extras/             # (opcional) Vistas, ejercicios, versiones mejoradas
 `}</code>
-              </pre>
+      </pre>
 
-              <h3>4. Cómo subirlo a tu portfolio de GitHub</h3>
+      <h4>5. Cómo subir el proyecto a tu portfolio de GitHub</h4>
 
-              <ol>
-                <li>Abre la carpeta del proyecto en VSCode</li>
-                <li>Inicializa un repositorio:
-                  <pre><code>git init</code></pre>
-                </li>
-                <li>Añade todos los archivos:
-                  <pre><code>git add .</code></pre>
-                </li>
-                <li>Haz el commit:
-                  <pre><code>git commit -m "Proyecto SQL completo (UF1845)"</code></pre>
-                </li>
-                <li>
-                  Crea un repositorio vacío en GitHub llamado  
-                  <strong>uf1845-mi-proyecto-sql</strong>
-                </li>
-                <li>Conéctalo:
-                  <pre><code>{`git remote add origin https://github.com/tuusuario/uf1845-mi-proyecto-sql.git
+      <ol>
+        <li>Abre la carpeta del proyecto en VS Code.</li>
+        <li>
+          Inicializa un repositorio Git:
+          <pre>
+            <code>git init</code>
+          </pre>
+        </li>
+        <li>
+          Añade todos los archivos:
+          <pre>
+            <code>git add .</code>
+          </pre>
+        </li>
+        <li>
+          Haz el primer commit:
+          <pre>
+            <code>git commit -m "Proyecto SQL completo (UF1845)"</code>
+          </pre>
+        </li>
+        <li>
+          Crea un repositorio vacío en GitHub, por ejemplo:
+          <strong> uf1845-mi-proyecto-sql</strong>.
+        </li>
+        <li>
+          Conecta tu carpeta local con GitHub y sube el proyecto:
+          <pre>
+            <code>{`git remote add origin https://github.com/tuusuario/uf1845-mi-proyecto-sql.git
 git branch -M main
-git push -u origin main`}</code></pre>
-                </li>
-              </ol>
+git push -u origin main`}</code>
+          </pre>
+        </li>
+      </ol>
 
-              <p>
-                ¡Listo! Ya tienes un proyecto SQL en tu portfolio profesional.
-              </p>
+      <p>¡Listo! Ya tienes tu proyecto SQL publicado en tu portfolio profesional.</p>
 
-              <hr />
+      <hr />
 
-              <h3>5. Plantilla profesional para README.md</h3>
+      <h4>6. Plantilla profesional para README.md</h4>
 
-              <div className="callout-bonus">
-                <strong>Consejo:</strong>  
-                <p>
-                  Un buen README es muchas veces más importante que el propio SQL,  
-                  porque explica tu nivel, tu proceso y tu capacidad de comunicar.
-                </p>
-              </div>
+      <div className="callout-bonus">
+        <strong>Consejo:</strong>
+        <p>
+          Un buen <code>README.md</code> muchas veces transmite más que el propio SQL,
+          porque demuestra tu capacidad de explicar, documentar y ordenar un proyecto.
+        </p>
+      </div>
 
-              <pre>
-                <code>{`# 📦 Proyecto SQL — UF1845
+      <pre>
+        <code>{`# 📦 Proyecto SQL — UF1845
 
-## 1. Descripción
+ 1. Descripción
 Base de datos desarrollada en MySQL/MariaDB como parte del bloque de modelado y consultas SQL.
 Tema elegido: **[Indica aquí tienda, biblioteca, cine, cursos…]**.
 
-## 2. Modelo ER
+ 2. Modelo ER
+Incluye el diagrama en el repositorio (por ejemplo, modelo-ERL.png) y añádelo aquí:
 ![Diagrama ER](./modelo-ERL.png)
 
-## 3. Estructura de tablas
-Explica brevemente las tablas y sus claves (PK y FK).
+ 3. Estructura de tablas
+Explica brevemente las tablas y sus claves:
+- Tabla ...
+- Clave primaria (PK): ...
+- Claves foráneas (FK): ...
 
-## 4. script.sql
-Incluye el código de creación de la base de datos:
+ 4. script.sql
+Código de creación de la base de datos:
 - CREATE DATABASE
 - CREATE TABLE
 - Claves primarias y foráneas
-- DEFAULT, NOT NULL…
+- Restricciones (NOT NULL, DEFAULT, UNIQUE...)
 
-## 5. inserts.sql
-Datos de ejemplo.
+ 5. inserts.sql
+Datos de ejemplo para probar la base de datos.
 
-## 6. consultas.sql
-Incluye:
-- SELECT
-- WHERE
-- ORDER BY
-- JOIN
+ 6. consultas.sql
+Consultas más importantes del proyecto:
+- SELECT con filtros (WHERE)
+- ORDER BY y LIMIT
+- Consultas con JOIN entre varias tablas
 
-## 7. Cómo importar
+ 7. Cómo importar el proyecto
 1. Abre phpMyAdmin
-2. Crea una base de datos vacía
+2. Crea una base de datos vacía con el nombre del proyecto
 3. Importa \`script.sql\`
 4. Después importa \`inserts.sql\`
 
-## 8. Autor
-Nombre del alumno, curso, academia.
+ 8. Autor
+Nombre del alumno, curso, academia y año académico.
 
-## 9. Mejoras futuras (opcional)
-- Vistas
-- Borrado lógico
-- CASCADE
-- Nuevas tablas`}</code>
-              </pre>
-
-            </article>
-          </details>
-        </section>
-
-      </div>
-    </main>
+ 9. Mejoras futuras (opcional)
+- Crear VISTAS para consultas frecuentes
+- Borrado lógico con un campo \`activo\`
+- Añadir ON DELETE CASCADE / ON UPDATE CASCADE
+- Nuevas tablas relacionadas`}</code>
+      </pre>
+    </article>
+  </details>
+</section>
+</div>
+</main>
   );
 }

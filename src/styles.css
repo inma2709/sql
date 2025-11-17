@@ -1,0 +1,773 @@
+/* ================================
+   🎨 Variables de color base
+   ================================ */
+:root {
+  --color-principal: #f37555;           /* naranja HTML */
+  --color-principal-oscuro: #c53f20;
+  --color-secundario: #F16529;          /* naranja más claro */
+  --color-fondo: #ffffff;
+  --color-fondo-suave: #fff7f3;
+  --color-texto: #222222;
+  --color-texto-suave: #555555;
+  --color-texto-inverso: #ffffff;
+  --color-borde-suave: #ffd4bf;
+  --color-sombra-suave: rgba(0, 0, 0, 0.05);
+  --color-resaltado: #ffe1c9;
+  --fondo: white-smoke;
+}
+
+/* ================================
+   🧱 Reset básico
+   ================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #fcfcfc;
+  color: var(--color-texto);
+  line-height: 1.5;
+}
+
+/* ================================
+   🔗 Enlace para saltar contenido
+   ================================ */
+.enlace-saltar {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-principal);
+  color: var(--color-texto-inverso);
+  text-decoration: none;
+  z-index: 999;
+}
+
+.enlace-saltar:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* ================================
+   🧭 Cabecera y navegación
+   ================================ */
+.cabecera {
+  background: linear-gradient(90deg, var(--color-principal), var(--color-secundario));
+  color: var(--color-texto-inverso);
+  padding: 1.5rem 0;
+  box-shadow: 0 2px 6px var(--color-sombra-suave);
+}
+
+.contenedor {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.cabecera-titulo {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.cabecera-subtitulo {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.navegacion-principal {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.enlace-navegacion {
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--color-texto-inverso);
+}
+
+.enlace-navegacion:hover,
+.enlace-navegacion:focus {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+/* ============================
+   🔔 Callout / Aviso Didáctico
+   ============================ */
+
+.callout {
+  border-left: 4px solid #ec3919;                  
+  background: #eeedec;                     
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.callout strong {
+  color: #ec3919;                          /* Verde más oscuro: título/énfasis */
+}
+
+.callout code {
+  background: #f3e9e4;                     /* Un tono sutil más claro */
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Opcional: un callout con iconito a la izquierda */
+.callout::before {
+  content: "💡";
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+/* ================================
+   📄 Contenido principal
+   ================================ */
+.contenido-principal {
+  padding: 2rem 0 3rem;
+}
+
+.seccion {
+  margin-bottom: 2rem;
+}
+
+/* Tarjetas de contenido */
+.tarjeta {
+  background-color: var(--color-fondo);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 10px var(--color-sombra-suave);
+  border: 1px solid var(--color-borde-suave);
+}
+
+.tarjeta-encabezado {
+  margin-bottom: 0.75rem;
+}
+
+.tarjeta-titulo {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--color-principal-oscuro);
+}
+
+.tarjeta-subtitulo {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  color: var(--color-texto-suave);
+}
+
+.tarjeta-cuerpo p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.lista-simple {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0 0.5rem;
+}
+
+.lista-simple li + li {
+  margin-top: 0.25rem;
+}
+
+/* ================================
+   📊 Tablas
+   ================================ */
+.contenedor-tabla {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background-color: var(--color-fondo);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--color-borde-suave);
+}
+
+.tabla-datos thead {
+  background-color: var(--color-principal);
+  color: var(--color-texto-inverso);
+}
+
+.tabla-datos th,
+.tabla-datos td {
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ffe1c9;
+}
+
+.tabla-datos th {
+  font-weight: 600;
+}
+
+.tabla-datos tbody tr:nth-child(even) {
+  background-color: var(--color-fondo-suave);
+}
+
+.tabla-datos tbody tr:hover {
+  background-color: var(--color-resaltado);
+}
+
+.tabla-datos--compacta th,
+.tabla-datos--compacta td {
+  padding: 0.45rem 0.6rem;
+}
+
+
+   /* ============================
+   CUADRO DIDÁCTICO (estilo)
+   ============================ */
+
+.cuadro-didactico {
+  margin-top: 2.5rem;
+  padding: 1.8rem 2rem;
+  background: #ffffff;
+  border-left: 6px solid var(--color-principal, #e44d26); /* Naranja SQL del curso */
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.cuadro-didactico h4 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.cuadro-didactico p {
+  margin-bottom: 0.75rem;
+  line-height: 1.55;
+}
+
+.cuadro-didactico__grid {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem 1.5rem;
+}
+
+.cuadro-didactico__item {
+  background: #f8f8f8;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  transition: 0.2s ease;
+}
+
+.cuadro-didactico__item:hover {
+  background: #fff;
+  border-color: var(--color-principal, #e44d26);
+  transform: translateY(-2px);
+}
+
+.cuadro-didactico__item h5 {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
+.cuadro-didactico__item p {
+  margin: 0.2rem 0 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.cuadro-didactico__nota {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #fff7e6;
+  border-left: 4px solid #eaa84c;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+
+/* ================================
+   🏷️ Etiquetas y resaltados
+   ================================ */
+.etiqueta-codigo {
+  font-family: "Fira Code", "Consolas", monospace;
+  background-color: var(--color-fondo-suave);
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.35rem;
+  font-size: 0.9rem;
+  border: 1px solid #ffe1c9;
+}
+
+.texto-resaltado {
+  background-color: var(--color-resaltado);
+  padding: 0.1rem 0.2rem;
+  border-radius: 0.25rem;
+}
+
+/* Bloques de código */
+.bloque-codigo {
+  font-family: "Fira Code", "Consolas", monospace;
+  background-color: #1e1e1e;
+  color: #f7f7f7;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+/* ================================
+   ⚠️ Notas y avisos
+   ================================ */
+.nota {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  background-color: var(--color-fondo-suave);
+  border-left: 4px solid var(--color-secundario);
+}
+
+.nota-importante {
+  background-color: #fff3e0;
+  border-left-color: var(--color-principal);
+  font-weight: 500;
+}
+
+/* ================================
+   🔘 Botones
+   ================================ */
+.boton {
+  display: inline-flex;
+ 
+  align-items: right;
+  justify-content: flex-end;
+  gap: 0.15rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 3px solid var(--color-principal);
+  font-size: 0.7rem;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: #ffffff;
+  color: var(--color-principal-oscuro);
+}
+.boton-derecha {
+  display: flex;
+  justify-content: flex-end; /* 👉 botón a la derecha */
+  width: 100%;               /* 👉 ocupa toda la línea */
+  margin-top: 0.5rem;        /* opcional */
+}
+
+
+.boton-primario {
+  background: linear-gradient(90deg, var(--color-principal), var(--color-secundario));
+  color: var(--color-texto-inverso);
+  border-color: transparent;
+}
+
+.boton-primario:hover,
+.boton-primario:focus {
+  background: linear-gradient(90deg, var(--color-principal-oscuro), var(--color-principal));
+}
+
+.boton-secundario {
+  border-color: var(--color-principal);
+  color: var(--color-principal-oscuro);
+}
+
+.boton-secundario:hover,
+.boton-secundario:focus {
+  background-color: var(--color-fondo-suave);
+}
+
+/* ================================
+   🧷 Utilidades de espaciado
+   ================================ */
+.espacio-arriba {
+  margin-top: 1.5rem;
+}
+
+.espacio-abajo {
+  margin-bottom: 1.5rem;
+}
+
+/* ================================
+   📱 Diseño responsive
+   ================================ */
+@media (min-width: 768px) {
+  .cabecera-contenido {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .tarjetas-en-fila {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* ================================
+   ✨ Accesibilidad básica
+   ================================ */
+a,
+button,
+.boton {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+.boton:focus-visible {
+  outline: 2px solid var(--color-principal-oscuro);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+/* ============================
+   🔻 PIE DE PÁGINA
+   ============================ */
+
+.pie {
+  background-color: #E44D26; /* naranja HTML5 */
+  color: #ffffff;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  text-align: center;
+  border-top: 6px solid #F16529; /* tono más claro */
+}
+
+.pie .contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pie-imagen {
+  max-height: 60px;
+  width: auto;
+  filter: drop-shadow(0 3px 4px rgba(0,0,0,0.2));
+}
+
+.pie p,
+.pie span {
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.pie a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.pie a:hover {
+  color: #ffe6d5;
+}
+
+/* Responsive: en pantallas grandes alinea horizontal */
+@media (min-width: 768px) {
+  .pie .contenedor {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+/* ============================
+   BLOQUE 1 FUNDAMENTOS
+   ============================ */
+   /* ====== Bloque / Hero básicos (por si no los tienes) ====== */
+.bloque {
+  padding-block: 2rem 3rem;
+}
+
+.bloque-sql {
+  background-color: #f9fafb; /* fondo muy claro para el contenido */
+}
+
+/* ====== HERO PROFESIONAL ====== */
+.hero {
+  padding-block: 2rem 2.5rem;             /* más alto, look de portada */
+  color: #ffffff;
+  text-align: center;
+  background: linear-gradient(135deg, #e44d26, #f16529);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Subtítulo pequeño arriba tipo etiqueta */
+.hero .kicker {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.95;
+  margin-bottom: 0.75rem;
+}
+
+/* Título grande muy visible */
+.hero h1 {
+  font-size: 3rem;                        /* MÁS GRANDE */
+  font-weight: 800;
+  margin: 0.5rem 0 1rem;
+  line-height: 1.1;
+}
+
+/* Subtítulo descriptivo */
+.hero .subtitle {
+  font-size: 1.25rem;                     /* más grande */
+  font-weight: 300;
+  max-width: 50rem;
+  margin: 0 auto;
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+/* Responsive: adaptar tamaños en pantallas pequeñas */
+@media (max-width: 768px) {
+  .hero {
+    padding-block: 3rem 3.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero .subtitle {
+    font-size: 1.1rem;
+    padding-inline: 1rem;
+  }
+}
+
+/* Ajuste de #contenido para el enlace "Saltar al contenido" */
+#contenido {
+  scroll-margin-top: 6rem; /* para que no quede tapado por la cabecera fija, si la hay */
+}
+
+/* ==========================================================
+   ÍNDICE PROFESIONAL (TOC)
+   ========================================================== */
+
+.toc {
+  margin-block: 2rem 2.5rem;
+  padding: 1.5rem 2rem;
+  background: #fff8f3;                     /* tono suave */
+  border: 1px solid #f0b99d;               /* borde elegante */
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.toc h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #e44d26;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.toc ol {
+  margin: 0;
+  padding-left: 0rem;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.toc li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toc li::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 2px solid #e44d26;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.9;
+}
+
+
+/* Enlaces del índice */
+.toc a {
+  text-decoration: none;
+  color: #333333;
+  font-size: 1.05rem;
+  transition: 0.2s ease;
+}
+
+.toc a:hover {
+  color: #e44d26;
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .toc {
+    padding: 1.2rem 1.3rem;
+  }
+
+  .toc h2 {
+    font-size: 1.2rem;
+  }
+
+  .toc a {
+    font-size: 1rem;
+  }
+}
+/* ==========================================================
+   DETALLES EXPANDIBLES ESTILO PROFESIONAL
+   ========================================================== */
+/* ====== Secciones y tarjetas ====== */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ====== ESTILO PARA DETAILS / SUMMARY ====== */
+
+.section details {
+  margin-bottom: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #f1c0a7;
+  background: whitesmoke;
+  overflow: hidden;
+}
+
+/* Quitamos el triángulo feo del navegador */
+.section summary {
+  list-style: none;
+}
+
+/* Esto quita el marcador en navegadores que lo soportan */
+.section summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Cabecera del summary (zona clicable) */
+.section summary {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.98rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: whitesmoke;
+  color: #4a2712;
+}
+
+/* Icono de flechita ▶ */
+.section summary::before {
+  content: "▶";
+  display: inline-block;
+  font-size: 0.8rem;
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+/* Cuando el details está abierto, rotamos la flecha ▼ */
+.section details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+/* Cuerpo interior (article.card dentro del details) */
+.section details > .card {
+  border-radius: 0; /* ya lo redondea el details */
+  border-top: 3px solid #f1c0a7;
+  box-shadow: none;
+}
+
+/* Un poco de separación para el texto dentro del card */
+.section details > .card p:last-child {
+  margin-bottom: 0;
+}
+
+.callout-bonus {
+  background: #f1f9ff;
+  border-left: 5px solid #1e90ff;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: 8px;
+}
+
+.callout-bonus strong {
+  color: #1e90ff;
+}
+
+/* ================================
+   🔗 Enlaces dentro de tarjetas
+   ================================ */
+
+/* Estilo base: sin azul y con color corporativo */
+.tarjetas-en-fila a {
+  color: var(--color-principal);
+  text-decoration: underline;
+  font-weight: 900;
+  font-size: 1.30rem;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  
+}
+
+/* Hover más visible pero elegante */
+.tarjetas-en-fila a:hover {
+  color: var(--color-principal-oscuro, #c2471e); /* por si no tienes definida la variable */
+  text-shadow: 0 0 4px rgba(0,0,0,0.08);
+}
+
+/* Estado activo (click) */
+.tarjetas-en-fila a:active {
+  color: var(--color-principal);
+  opacity: 0.8;
+}
+
+/* Estado enfocado (accesibilidad obligatoria) */
+.tarjetas-en-fila a:focus {
+  outline: 3px solid var(--color-principal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}

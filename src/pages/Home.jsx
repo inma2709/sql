@@ -82,6 +82,11 @@ function Home() {
             <span className="texto-resaltado">
               Aquí unimos JavaScript con la base de datos.
             </span>
+              <div className="boton-derecha">
+                <Link to="/Bloque3Backend" className="boton">
+                  Ver contenido
+                </Link>
+              </div>
           </Tarjeta>
 
           <Tarjeta
@@ -94,25 +99,15 @@ function Home() {
               <li>Formularios y estado para login/registro.</li>
               <li>Consumir la API: listar productos y pedidos.</li>
             </ul>
+               <div className="boton-derecha">
+                <Link to="/Bloque4Front" className="boton">
+                  Ver contenido
+                </Link>
+              </div>
           </Tarjeta>
         </div>
 
-        <div className="seccion espacio-arriba">
-          <Tarjeta
-            titulo={<Link to="/proyectos">Bloque 5 · Proyecto Final Full Stack</Link>}
-           
-          >
-            <ul className="lista-simple">
-              <li>Montar la app completa: SQL + API + React.</li>
-              <li>CRUD de productos y gestión de usuarios.</li>
-              <li>Listado y creación de pedidos.</li>
-              <li>Preparar demo y entrega final.</li>
-            </ul>
-            <Link to="/proyectos" className="boton boton-primario espacio-arriba">
-              Ver proyecto final
-            </Link>
-          </Tarjeta>
-        </div>
+        
       </section>
     </div>
   );

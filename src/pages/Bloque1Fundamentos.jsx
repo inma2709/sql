@@ -24,7 +24,9 @@ export default function Bloque1Fundamentos() {
             <li><a href="#mysql-mariadb">MySQL, MariaDB y XAMPP/phpMyAdmin</a></li>
             <li><a href="#modelo-er">Diseño de bases de datos: Modelo Entidad–Relación</a></li>
             <li><a href="#crear-bd">Crear bases de datos</a></li>
-              <li><a href="#tipos-claves">Tipos de datos básicos y claves</a></li>
+            <li><a href="#tipos-comandos-sql">Comandos SQL básicos</a></li>
+            <li><a href="#estructura-instruccion-sql">Estructura instrucción sql</a></li>
+            <li><a href="#tipos-claves">Tipos de datos básicos y claves</a></li>
             <li><a href="#use">Seleccionar bbdd</a></li>
             <li><a href="#crear-tablas">Crear tablas</a></li>          
             <li><a href="#actividades">Actividades</a></li>
@@ -1128,125 +1130,303 @@ N:M   →  [A] N — M [B]  (→ tabla intermedia)
           </details>
         </section>
 
-        {/* 5. CREAR TABLAS */}
-        <section className="section" id="crear-tablas">
-          <details>
-            <summary>Crear BBDD</summary>
-            <article className="card">
-             <h2>Crear una base de datos</h2>
 
-<p>
-  Una base de datos (BD) es un contenedor donde guardamos todas las tablas de un proyecto.
-  Antes de poder crear tablas o insertar información, necesitamos crear esta “caja” principal.
-  En MySQL/MariaDB podemos hacerlo de dos formas:
-  desde la interfaz gráfica de <strong>phpMyAdmin</strong> o usando <strong>sentencias SQL</strong>.
-</p>
+      {/* ================================
+  TIPOS DE COMANDOS SQL
+================================ */}
+<section className="section" id="tipos-comandos-sql">
+  <details>
+    <summary>📌 Tipos de comandos SQL (DDL, DML, DCL y TCL)</summary>
 
-<hr />
+    <article className="card">
+      <h3>📌 Tipos de comandos SQL (DDL, DML, DCL y TCL)</h3>
 
-<h3>🖥️ 1) Crear una base de datos desde phpMyAdmin (modo fácil)</h3>
+      <p>
+        Los comandos de SQL se agrupan según la función que realizan dentro de la base
+        de datos. Esta clasificación nos ayuda a entender <strong>qué hace cada
+        instrucción</strong> y <strong>cuándo debemos utilizarla</strong>.
+      </p>
 
-<p>
-  phpMyAdmin es la herramienta gráfica incluida en XAMPP que nos permite trabajar con MySQL/MariaDB
-  sin usar la consola. Es la forma más sencilla de comenzar.
-</p>
+      <div className="contenedor-tabla">
+        <table className="tabla-datos">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Nombre</th>
+              <th>¿Para qué sirve?</th>
+              <th>Comandos principales</th>
+            </tr>
+          </thead>
 
-<ol>
-  <li>Abre tu navegador y entra en <code>http://localhost/phpmyadmin</code>.</li>
-  <li>En la parte superior, haz clic en la pestaña <strong>“Bases de datos”</strong>.</li>
-  <li>En el cuadro “Crear base de datos”, escribe:
-    <code className="etiqueta-codigo">curso_fullstack</code>
-  </li>
-  <li>
-    En “Cotejamiento” (Collation), selecciona:
-    <code className="etiqueta-codigo">utf8mb4_general_ci</code>viene seleccionado por defecto,  
-    (el estándar recomendado para evitar errores con tildes, eñes y emojis).
-  </li>
-  <li>Pulsa <strong>Crear</strong>.</li>
-</ol>
+          <tbody>
+            <tr>
+              <td><strong>DDL</strong></td>
+              <td>Data Definition Language</td>
+              <td>
+                Define y modifica la <strong>estructura</strong> de la base de datos:
+                tablas, columnas, vistas...
+              </td>
+              <td>
+                <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code>
+              </td>
+            </tr>
 
-<p>
-  Si todo ha ido bien, verás un mensaje en verde indicando que la BD se creó correctamente.  
-  También aparecerá en el panel lateral izquierdo.
-</p>
+            <tr>
+              <td><strong>DML</strong></td>
+              <td>Data Manipulation Language</td>
+              <td>
+                Manipula los <strong>datos</strong> dentro de las tablas: inserta, consulta,
+                actualiza o borra registros.
+              </td>
+              <td>
+                <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>
+              </td>
+            </tr>
 
-<div className="callout callout--success">
+            <tr>
+              <td><strong>DCL</strong></td>
+              <td>Data Control Language</td>
+              <td>
+                Controla los <strong>permisos y la seguridad</strong> de la base de datos:
+                quién puede hacer qué.
+              </td>
+              <td>
+                <code>GRANT</code>, <code>REVOKE</code>
+              </td>
+            </tr>
+
+            <tr>
+              <td><strong>TCL</strong></td>
+              <td>Transaction Control Language</td>
+              <td>
+                Gestiona las <strong>transacciones</strong>: confirmar cambios,
+                deshacer errores o crear puntos de control.
+              </td>
+              <td>
+                <code>COMMIT</code>, <code>ROLLBACK</code>, <code>SAVEPOINT</code>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="nota nota-importante">
+        👉 Una forma sencilla de recordarlo:{" "}
+        <strong>DDL</strong> diseña la estructura, <strong>DML</strong> trabaja con los datos,
+        <strong> DCL</strong> controla los permisos y <strong>TCL</strong> controla las transacciones.
+      </div>
+    </article>
+  </details>
+</section>
+
+{/* ================================  
+    INSTRUCCIÓN SQL (estructura)
+   ================================ */}
+<section className="section" id="estructura-instruccion-sql">
+  <details>
+    <summary>📘 ¿Cómo se compone una instrucción SQL?</summary>
+
+    <article className="card">
+
+      <h2>La estructura de una instrucción SQL</h2>
+
+      <p>
+        Todas las sentencias SQL que usamos en <strong>MySQL</strong> siguen una estructura
+        lógica. Aunque algunas partes son obligatorias y otras opcionales, casi todas las
+        instrucciones pueden descomponerse en cuatro elementos principales:
+      </p>
+
+      <div className="cuadro-didactico">
+  <h4>📘 Tipos de elementos que forman una instrucción SQL</h4>
   <p>
-    Este método es el más recomendado si estás trabajando con phpMyAdmin.  
-    No tienes que memorizar comandos y puedes visualizar todo fácilmente.
+    Una sentencia SQL está formada por diferentes piezas. Cada una tiene una función
+    distinta: unas indican <strong>cómo obtener</strong> datos (cláusulas), otras permiten
+    <strong>filtrar o comparar</strong> información (operadores y condiciones) y otras
+    <strong>calcular o procesar</strong> datos (funciones).
   </p>
+
+  <div className="cuadro-didactico__grid">
+
+    {/* 1. CLÁUSULAS */}
+    <div className="cuadro-didactico__item">
+      <h5>1. Cláusulas</h5>
+      <p>Son palabras clave que indican <strong>cómo se debe ejecutar</strong> el comando.</p>
+      <p><strong>Principales cláusulas:</strong></p>
+      <ul className="lista-simple">
+        <li>
+          <code className="etiqueta-codigo">FROM</code>: indica la tabla o tablas de las que
+          se obtienen los registros.
+        </li>
+        <li>
+          <code className="etiqueta-codigo">WHERE</code>: filtra los registros según una condición.
+        </li>
+        <li>
+          <code className="etiqueta-codigo">GROUP BY</code>: agrupa filas que comparten valores.
+        </li>
+        <li>
+          <code className="etiqueta-codigo">HAVING</code>: filtra los grupos antes creados.
+        </li>
+        <li>
+          <code className="etiqueta-codigo">ORDER BY</code>: ordena los resultados.
+        </li>
+        <li>
+          <code className="etiqueta-codigo">LIMIT</code>: limita el número de filas mostradas.
+        </li>
+        <li>
+          <code className="etiqueta-codigo">JOIN ... ON</code>: une tablas relacionadas entre sí.
+        </li>
+      </ul>
+    </div>
+
+    {/* 2. OPERADORES */}
+    <div className="cuadro-didactico__item">
+      <h5>2. Operadores</h5>
+      <p>Sirven para <strong>comparar, relacionar o combinar valores</strong> dentro de cláusulas.</p>
+
+      <p><strong>Operadores de comparación:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">=</code>: igual a</li>
+        <li><code className="etiqueta-codigo">&gt;</code>: mayor que</li>
+        <li><code className="etiqueta-codigo">&lt;</code>: menor que</li>
+        <li><code className="etiqueta-codigo">&gt;=</code>: mayor o igual</li>
+        <li><code className="etiqueta-codigo">&lt;=</code>: menor o igual</li>
+        <li><code className="etiqueta-codigo">&lt;&gt;</code>: distinto de</li>
+      </ul>
+
+      <p><strong>Operadores especiales:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">LIKE</code>: búsqueda por coincidencia</li>
+        <li><code className="etiqueta-codigo">IN</code>: comprueba si un valor está en una lista</li>
+        <li><code className="etiqueta-codigo">BETWEEN</code>: rango entre dos valores</li>
+        <li><code className="etiqueta-codigo">IS NULL</code>: valores nulos</li>
+      </ul>
+
+      <p><strong>Operadores lógicos:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">AND</code>: se deben cumplir ambas condiciones</li>
+        <li><code className="etiqueta-codigo">OR</code>: se cumple una de las condiciones</li>
+        <li><code className="etiqueta-codigo">NOT</code>: niega una condición</li>
+      </ul>
+    </div>
+
+    {/* 3. CONDICIONES */}
+    <div className="cuadro-didactico__item">
+      <h5>3. Condiciones</h5>
+      <p>
+        Combinación de operadores + campos + valores.  
+        Permiten definir <strong>qué registros deben mostrarse</strong>.
+      </p>
+
+      <p><strong>Ejemplos típicos:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">edad &gt;= 18</code> → mayores de edad</li>
+        <li><code className="etiqueta-codigo">nombre LIKE 'A%'</code> → nombres que empiezan por A</li>
+        <li><code className="etiqueta-codigo">precio BETWEEN 10 AND 50</code> → precio entre 10 y 50</li>
+        <li><code className="etiqueta-codigo">pais IN ('España','Francia')</code> → coincide con uno de ellos</li>
+      </ul>
+
+      <p>
+        Las condiciones se suelen usar dentro de <code className="etiqueta-codigo">WHERE</code> y
+        <code className="etiqueta-codigo">HAVING</code>.
+      </p>
+    </div>
+
+    {/* 4. FUNCIONES */}
+    <div className="cuadro-didactico__item">
+      <h5>4. Funciones</h5>
+      <p>
+        Son herramientas predefinidas que permiten <strong>calcular, transformar o formatear</strong> datos.
+      </p>
+
+      <p><strong>Funciones de agregación:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">COUNT()</code>: contar filas</li>
+        <li><code className="etiqueta-codigo">SUM()</code>: sumar valores</li>
+        <li><code className="etiqueta-codigo">AVG()</code>: media</li>
+        <li><code className="etiqueta-codigo">MAX()</code>: valor máximo</li>
+        <li><code className="etiqueta-codigo">MIN()</code>: valor mínimo</li>
+      </ul>
+
+      <p><strong>Funciones de texto:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">UPPER()</code>: convertir a mayúsculas</li>
+        <li><code className="etiqueta-codigo">LOWER()</code>: convertir a minúsculas</li>
+        <li><code className="etiqueta-codigo">CONCAT()</code>: unir cadenas</li>
+      </ul>
+
+      <p><strong>Funciones de fecha y hora:</strong></p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">NOW()</code>: fecha y hora actual</li>
+        <li><code className="etiqueta-codigo">CURDATE()</code>: fecha actual</li>
+        <li><code className="etiqueta-codigo">YEAR()</code>: extraer el año</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div className="cuadro-didactico__nota">
+    <strong>💡 Resumen:</strong>  
+    Las <strong>cláusulas</strong> definen la estructura, los <strong>operadores</strong> comparan,
+    las <strong>condiciones</strong> filtran y las <strong>funciones</strong> calculan y procesan información.
+  </div>
 </div>
 
-<hr />
 
-<h3>⌨️ 2) Crear una base de datos usando SQL</h3>
+      <h3>📌 Ejemplo práctico</h3>
 
-<p>
-  Además de la interfaz, MySQL/MariaDB permite crear bases de datos mediante
-  sentencias SQL. Es una forma más profesional y necesaria cuando trabajes
-  en proyectos backend o en servidores.
-</p>
+      <p>Si unimos todos los elementos, una instrucción SQL completa podría ser:</p>
 
-<p>Sentencia básica:</p>
+      <pre className="bloque-codigo">
+{`SELECT nombre, edad
+FROM alumnos
+WHERE edad >= 18
+ORDER BY nombre ASC;`}
+      </pre>
 
-<pre><code className="language-sql">
-{`CREATE DATABASE curso_fullstack;`}
-</code></pre>
+      <p>
+        En este ejemplo:
+      </p>
 
-<p>
-  Una versión más completa y recomendada, incluyendo el conjunto de caracteres:
-</p>
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Elemento</th>
+              <th>Fragmento del ejemplo</th>
+              <th>Función</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Comando</td>
+              <td><code>SELECT</code></td>
+              <td>Indica que vamos a consultar datos</td>
+            </tr>
+            <tr>
+              <td>Cláusulas</td>
+              <td><code>FROM</code>, <code>WHERE</code>, <code>ORDER BY</code></td>
+              <td>Organizan cómo obtener y mostrar la información</td>
+            </tr>
+            <tr>
+              <td>Operador</td>
+              <td><code>&gt;=</code></td>
+              <td>Filtra datos según una condición</td>
+            </tr>
+            <tr>
+              <td>Función</td>
+              <td>—</td>
+              <td>No se usa ninguna en este ejemplo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-<pre><code className="language-sql">
-{`CREATE DATABASE IF NOT EXISTS curso_fullstack
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_general_ci;`}
-</code></pre>
+    </article>
+  </details>
+</section>
 
-<ul>
-  <li><strong>IF NOT EXISTS</strong> → evita error si la BD ya existe.</li>
-  <li><strong>CHARACTER SET utf8mb4</strong> → soporta tildes y emojis.</li>
-  <li><strong>COLLATE utf8mb4_general_ci</strong> → define cómo se ordena y compara el texto.</li>
-</ul>
 
-<hr />
-
-<h3>📌 3) Seleccionar la base de datos con la que vamos a trabajar</h3>
-
-<p>
-  Después de crearla, debemos indicar a MySQL qué base de datos queremos usar.
-  Esto se hace con la sentencia <code>USE</code>:
-</p>
-
-<pre><code className="language-sql">
-{`USE curso_fullstack;`}
-</code></pre>
-
-<p>
-  En phpMyAdmin, esto sucede automáticamente cuando haces clic en la BD desde el menú lateral.
-</p>
-
-<hr />
-
-<h3>🎓 Resumen </h3>
-
-<ul>
-  <li>Una base de datos es el contenedor donde estarán todas las tablas.</li>
-  <li>Podemos crearla desde phpMyAdmin o con SQL.</li>
-  <li>Siempre es recomendable usar <strong>utf8mb4</strong> para evitar problemas de caracteres.</li>
-  <li>Después de crearla, usa <code>USE nombre_bd;</code> para empezar a trabajar en ella.</li>
-</ul>
-
-<div className="callout callout--info">
-  <p>
-    Crear la base de datos es el primer paso para comenzar cualquier proyecto SQL.
-    A partir de aquí ya podemos crear tablas, insertar datos y hacer consultas.
-  </p>
-</div>
-
-            </article>
-          </details>
-        </section>
+            
 
         {/* 6. TIPOS DE DATOS Y CLAVES */}
         <section className="section" id="tipos-claves">

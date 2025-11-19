@@ -1,3 +1,44 @@
+/**
+ * Bloque2Consultas
+ *
+ * Componente de página que renderiza el "Bloque 2 · Consultas SQL y diseño de modelos"
+ * del curso. Proporciona una guía didáctica completa sobre cómo pasar del modelo de datos
+ * a tablas SQL y cómo trabajar con CRUD y consultas (INSERT, SELECT, WHERE, ORDER BY,
+ * JOIN, VISTAS, UPDATE, DELETE), además de buenas prácticas, ejemplos, ejercicios y
+ * actividades finales.
+ *
+ * Contenido y estructura principal:
+ * - HERO: kicker, título y subtítulo explicativo.
+ * - Navegación (TOC) con enlaces ancla a las secciones internas.
+ * - Secciones detalladas (cada una con explicación, ejemplos y fragmentos SQL):
+ *   - #introduccion-modelos        : visión general y flujo ERL → modelo físico → SQL
+ *   - #tablas-columnas            : tablas, columnas, tipos de datos, PK, FK, DEFAULT, ENUM, fechas
+ *   - #crear-tablas-modelo        : creación de tablas, valores por defecto, FK, reglas de integridad
+ *   - #crud-insert                : INSERT (individual, múltiple, con FK, DEFAULT)
+ *   - #crud-select                : SELECT básico, alias, LIMIT
+ *   - #filtros                    : WHERE, operadores, LIKE, IN, BETWEEN, IS NULL
+ *   - #ordenaciones               : ORDER BY (ASC/DESC, múltiples columnas, alias)
+ *   - #sql-vistas                 : creación, uso, modificación y eliminación de vistas
+ *   - #crud-update                : UPDATE seguro, expresiones, errores comunes
+ *   - #crud-delete                : DELETE, borrado lógico, CASCADE y precauciones
+ *   - #joins                      : INNER/LEFT/RIGHT JOIN, múltiples tablas y buenas prácticas
+ *   - #buenas_practicas           : checklist y recomendaciones de modelado y consultas
+ *   - #actividades                : proyectos propuestos y entregable mínimo
+ *   - #bonus                      : exportar .sql, estructura de proyecto y README para portfolio
+ *
+ * Consideraciones de implementación:
+ * - Componente estático, sin props; pensado como página informativa/documental.
+ * - Ejemplos SQL se presentan en bloques <pre><code> para facilitar la lectura.
+ * - Se emplean etiquetas semánticas (main, header, nav, section) para mejorar accesibilidad.
+ * - Las anclas permiten navegación rápida entre los temas del bloque.
+ *
+ * Uso:
+ * import Bloque2Consultas from './pages/Bloque2';
+ * <Bloque2Consultas />
+ *
+ * @component
+ * @returns {JSX.Element} Página completa del Bloque 2 con explicaciones y ejemplos SQL.
+ */
 export default function Bloque2Consultas() {
   return (
     <main className="bloque bloque-sql">
@@ -28,6 +69,8 @@ export default function Bloque2Consultas() {
             <li><a href="#crud-select">R → SELECT (leer datos)</a></li>
               <li><a href="#filtros">Filtros con WHERE</a></li>
              <li><a href="#ordenaciones">Ordenaciones con ORDER BY</a></li>
+             <li><a href="#funciones-agregacion">Funciones de agregación</a></li>
+             <li><a href="#consultas-calculo">Consultas de cálculo</a></li>
              <li><a href="#vistas">Crear y usar vistas</a></li>
             <li><a href="#crud-update">U → UPDATE (modificar datos)</a></li>
             <li><a href="#crud-delete">D → DELETE (eliminar datos)</a></li>
@@ -35,6 +78,7 @@ export default function Bloque2Consultas() {
          
             
             <li><a href="#joins">Relaciones entre tablas y JOIN</a></li>
+            <li><a href="#indice">Índices y rendimiento</a></li>
             <li><a href="#buenas-practicas">Buenas prácticas de modelado y consultas</a></li>
             <li><a href="#actividades">Actividades del bloque</a></li>
           </ol>
@@ -252,7 +296,7 @@ FOREIGN KEY (categoria_id) REFERENCES categorias(id)`}</code>
     <article className="card">
 
       {/* INTRODUCCIÓN */}
-      <h3>1.1 Introducción y conceptos básicos</h3>
+      <h3>3.1 Introducción y conceptos básicos</h3>
       <p>
         Cuando pasamos del modelo lógico (ERL) al modelo físico en SQL, transformamos:
       </p>
@@ -270,7 +314,7 @@ FOREIGN KEY (categoria_id) REFERENCES categorias(id)`}</code>
       </p>
 
       {/* 1.2 CREAR TABLAS A PARTIR DEL MODELO */}
-      <h3>1.2. Crear tablas a partir del modelo físico</h3>
+      <h3>3.2. Crear tablas a partir del modelo físico</h3>
       <p>
         Cada entidad del modelo se convierte en una tabla.  
         Siempre empezamos por las tablas que no dependen de ninguna otra: las <strong>tablas padre</strong>.
@@ -313,7 +357,7 @@ FOREIGN KEY (categoria_id) REFERENCES categorias(id)`}</code>
 
       <hr />
 
-      <h3>1.3. Uso de valores por defecto (DEFAULT)</h3>
+      <h3>3.3. Uso de valores por defecto (DEFAULT)</h3>
 
       <p>
         Un valor por defecto sirve para que una columna tenga un valor automático si
@@ -416,7 +460,7 @@ VALUES ('Reloj digital', 19.90);`}</code>
      
 
       {/* TABLA RESUMEN */}
-      <h3>1.4. Resumen: propiedades de columna en MySQL</h3>
+      <h3>3.4. Resumen: propiedades de columna en MySQL</h3>
 
       <div className="contenedor-tabla">
          <table className="tabla-datos">
@@ -476,8 +520,43 @@ VALUES ('Reloj digital', 19.90);`}</code>
 
             <hr />
 
+             <h3>3.5 Valores ENUM</h3>
+
+      <p>
+        Cuando seleccionamos el tipo <code className="etiqueta-codigo">ENUM</code> en phpMyAdmin,
+        el campo <strong>Longitud/Valores</strong> no sirve para poner un número, sino para indicar
+        <strong>qué valores permitidos tendrá esa columna</strong>.
+      </p>
+
+      <p>
+        Para hacerlo correctamente, debemos escribir las opciones entre comillas simples y 
+        separadas por comas:
+      </p>
+
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Tipo</th>
+              <th>Valores</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>estado</td>
+              <td>ENUM</td>
+              <td><code>'pendiente','procesando','enviado','entregado'</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+
            {/*Fechas y horas*/}
-<h3>1.5. Cómo trabajar con fechas y horas en MySQL</h3>
+<h3>3.6 Cómo trabajar con fechas y horas en MySQL</h3>
 
 <p>
   MySQL ofrece varios tipos de datos para manejar fechas, horas y momentos exactos 
@@ -1267,14 +1346,14 @@ LIMIT 5;`}</code>
 
       <h3>5.5. Orden mental para leer un SELECT básico</h3>
       <p>
-        Aunque escribimos la consulta empezando por <code>SELECT</code>, es útil enseñar al
-        alumnado a leerla así:
+        ¿Cómo leer una consulta SELECT básica?
       </p>
 
       <pre>
-        <code>{`1) FROM → de qué tabla vienen los datos
-2) SELECT → qué columnas vamos a mostrar
-3) LIMIT → cuántas filas queremos ver`}</code>
+        <code>{`
+        1) SELECT → qué columnas vamos a mostrar
+        2) FROM → de qué tabla vienen los datos
+        3) LIMIT → cuántas filas queremos ver`}</code>
       </pre>
 
       <p>
@@ -1313,23 +1392,16 @@ FROM productos
 LIMIT 5;`}</code>
       </pre>
 
-      <h3>5.7. Ejercicios recomendados</h3>
+      <h3>5.7. Resumen de SELECT básico</h3>
+
+      <p>
+        La instrucción <strong>SELECT</strong> es fundamental para leer datos en SQL.  
+        Con ella podemos:
+      </p>
       <ul>
-        <li>Muestra todos los datos de la tabla <code>categorias</code>.</li>
-        <li>
-          Muestra solo el <code>nombre</code> y el <code>stock</code> de la tabla 
-          <code> productos</code>.
-        </li>
-        <li>
-          Muestra solo el <code>nombre</code> de las categorías usando un alias 
-          (por ejemplo <code>AS tipo_categoria</code>).
-        </li>
-        <li>
-          Muestra los 3 primeros productos de la tabla usando <code>LIMIT</code>.
-        </li>
-        <li>
-          Crea una consulta que devuelva nombre y precio con alias en ambas columnas.
-        </li>
+        <li>Seleccionar todas las columnas (<code>*</code>) o solo las que necesitamos.</li>
+        <li>Renombrar columnas con <code>AS</code> para mayor claridad.</li>
+        <li>Limitar el número de filas mostradas con <code>LIMIT</code>.</li>
       </ul>
 
       <p>
@@ -1638,6 +1710,8 @@ WHERE nombre LIKE '%Cafetera%';`}</code>
         <code>ORDER BY</code>.
       </p>
 
+      <p> Cuando utilizamos <code className="etiqueta-codigo">ORDER BY</code> sin indicar ningún modificador, MySQL aplica por defecto un orden <strong>ascendente (ASC)</strong>. Esto significa que los resultados se organizan de menor a mayor: los números más pequeños aparecen primero y los textos se ordenan alfabéticamente según el collation de la base de datos. Además, los valores <code className="etiqueta-codigo">NULL</code> se sitúan antes que el resto. Por tanto, escribir <code className="etiqueta-codigo">ORDER BY precio</code> y <code className="etiqueta-codigo">ORDER BY precio ASC</code> produce exactamente el mismo resultado. Solo es necesario usar <code className="etiqueta-codigo">DESC</code> cuando queremos invertir este orden. </p>
+
       <h3>9.1. Sintaxis básica de ORDER BY</h3>
 
       <pre>
@@ -1830,6 +1904,591 @@ ORDER BY categoria_id ASC, nombre ASC;`}</code>
     </article>
   </details>
 </section>
+
+<section className="section" id="funciones-agregacion">
+
+  <details>
+    <summary>Funciones de agregación (AVG, COUNT, SUM, MAX, MIN) y la cláusula HAVING</summary>
+
+    <article className="card">
+
+      <h2>Funciones de agregación y la cláusula HAVING</h2>
+
+      <p>
+        Las funciones de agregación son herramientas que permiten obtener 
+        <strong> resultados resumidos</strong> a partir de un conjunto de datos: promedios, totales, 
+        máximos, mínimos o conteos.  
+        Estas funciones son fundamentales en las consultas con 
+        <code className="etiqueta-codigo">GROUP BY</code>, ya que se aplican a cada grupo 
+        generado.
+      </p>
+
+      <hr />
+
+      <h3>📌 Funciones principales de agregación</h3>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Función</th>
+              <th>Descripción detallada</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td><code className="etiqueta-codigo">AVG(campo)</code></td>
+              <td>
+                Calcula el <strong>promedio</strong> de los valores numéricos de un campo. 
+                Ignora los valores <code className="etiqueta-codigo">NULL</code>.
+                <br /><br />
+                Ejemplo: precio medio de los productos:
+                <div className="bloque-codigo">
+                  SELECT AVG(precio) FROM productos;
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><code className="etiqueta-codigo">COUNT(campo)</code></td>
+              <td>
+                Cuenta cuántos registros hay en un campo.  
+                <strong>COUNT(*)</strong> cuenta todas las filas, incluso si alguno de sus valores es NULL.  
+                <strong>COUNT(campo)</strong> solo cuenta las filas donde ese campo no es NULL.
+                <br /><br />
+                Ejemplo: cuántos clientes tenemos:
+                <div className="bloque-codigo">
+                  SELECT COUNT(*) FROM clientes;
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><code className="etiqueta-codigo">SUM(campo)</code></td>
+              <td>
+                Suma los valores numéricos de un campo.  
+                Ideal para calcular totales de ventas, gastos o cantidades.
+                <br /><br />
+                Ejemplo: total vendido:
+                <div className="bloque-codigo">
+                  SELECT SUM(precio_unitario * cantidad) FROM detalle_pedido GROUP BY pedido_id;
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><code className="etiqueta-codigo">MAX(campo)</code></td>
+              <td>
+                Devuelve el valor más alto dentro del conjunto.  
+                Muy útil para saber el producto más caro, la fecha más reciente, etc.
+                <br /><br />
+                Ejemplo: precio máximo:
+                <div className="bloque-codigo">
+                  SELECT MAX(precio) FROM productos;
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td><code className="etiqueta-codigo">MIN(campo)</code></td>
+              <td>
+                Devuelve el valor más bajo.  
+                Perfecto para encontrar el producto más barato o la primera fecha registrada.
+                <br /><br />
+                Ejemplo: precio mínimo:
+                <div className="bloque-codigo">
+                  SELECT MIN(precio) FROM productos;
+                </div>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <hr />
+
+      <h3>📊 Agrupar resultados con GROUP BY</h3>
+      <p>
+        Si queremos aplicar estas funciones según una categoría (por ejemplo, ciudad, categoría
+        o cliente), debemos combinar la función con 
+        <code className="etiqueta-codigo">GROUP BY</code>.
+      </p>
+
+      <div className="bloque-codigo">
+        SELECT ciudad, COUNT(*) AS total<br />
+        FROM clientes<br />
+        GROUP BY ciudad;
+      </div>
+
+      <p>
+        En este ejemplo, obtenemos cuántos clientes hay en cada ciudad.
+      </p>
+
+      <hr />
+
+      <section className="section" id="funciones-agrupacion-ejemplo">
+  <details>
+    <summary>Ejemplo práctico: Agrupar y sumar precios por sección</summary>
+
+    <article className="card">
+
+      <h2>Ejemplo: Agrupar artículos por sección y calcular la suma de precios</h2>
+
+      <p>
+        Imagina que tenemos una tabla <code>productos</code> con diferentes artículos de un comercio:
+        lámparas, tubos, raquetas, coches teledirigidos, etc.  
+        Queremos saber <strong>cuánto dinero suman todos los artículos de cada sección</strong>
+        (ferretería, cerámica, deportes, juguetería…).
+      </p>
+
+      <p>
+        Para ello usamos una función de agrupación (<code>SUM()</code>) junto con 
+        <code>GROUP BY</code>. MySQL agrupa los productos por su sección y calcula la suma
+        del precio dentro de cada grupo.
+      </p>
+
+      <pre><code>
+SELECT 
+    SECCIÓN,
+    NOMBREARTICULO,
+    SUM(PRECIO) AS SUMA_ARTICULOS
+FROM productos
+GROUP BY SECCIÓN
+ORDER BY SUMA_ARTICULOS;
+      </code></pre>
+
+      <h3>¿Qué está ocurriendo aquí?</h3>
+
+      <ul className="lista-simple">
+        <li><code>SECCIÓN</code> → es el campo por el que agrupamos.</li>
+        <li><code>SUM(PRECIO)</code> → calcula la suma de todos los precios de esa sección.</li>
+        <li><code>GROUP BY</code> → indica a MySQL que debe crear un grupo por cada sección.</li>
+        <li><code>ORDER BY SUMA_ARTICULOS</code> → ordena los resultados de menor a mayor suma total.</li>
+      </ul>
+
+      <h3>Resultado (interpretación de la imagen)</h3>
+
+      <p>
+        El resultado muestra cada sección junto con la <strong>suma total</strong> del precio de los 
+        artículos que pertenecen a ella. Por ejemplo:
+      </p>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>SECCIÓN</th>
+              <th>NOMBREARTICULO</th>
+              <th>SUMA_ARTICULOS</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>CERÁMICA</td>
+              <td>TUBOS</td>
+              <td>442.3498</td>
+            </tr>
+
+            <tr>
+              <td>DEPORTES</td>
+              <td>RAQUETA TENIS</td>
+              <td>1305.8123</td>
+            </tr>
+
+            <tr>
+              <td>JUGUETERÍA</td>
+              <td>COCHE TELEDIRIGIDO</td>
+              <td>2516.7141</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="callout">
+        Observa que MySQL muestra un <strong>artículo representativo</strong> de cada sección, pero 
+        la suma incluye <strong>todos los artículos</strong> de esa categoría, aunque no aparezcan listados.
+      </div>
+
+      <p className="nota nota-importante">
+        Este es un ejemplo claro de cómo usar funciones de agrupación para obtener 
+        <strong>totales por categorías</strong>, muy útil en informes, estadísticas y análisis de ventas.
+      </p>
+
+    </article>
+  </details>
+</section>
+
+
+      {/* ============================
+          SECCIÓN HAVING
+      ============================ */}
+
+      <h3>🔎 ¿Qué es HAVING y para qué sirve?</h3>
+
+      <p>
+        La cláusula <code className="etiqueta-codigo">HAVING</code> funciona como un filtro,
+        pero se utiliza <strong>después de agrupar</strong>.  
+        Mientras que <code className="etiqueta-codigo">WHERE</code> filtra filas individuales,
+        <code className="etiqueta-codigo">HAVING</code> filtra grupos completos.
+      </p>
+
+      <div className="cuadro-didactico">
+        <h4>Diferencia clave</h4>
+        <p>
+          <strong>WHERE</strong> → filtra antes de agrupar  
+          <br />
+          <strong>HAVING</strong> → filtra después de agrupar
+        </p>
+      </div>
+
+      <h3>📌 Ejemplo de HAVING: solo ciudades con más de 3 clientes</h3>
+
+      <div className="bloque-codigo">
+        SELECT ciudad, COUNT(*) AS total<br />
+        FROM clientes<br />
+        GROUP BY ciudad<br />
+        HAVING COUNT(*) &gt; 3;
+      </div>
+
+      <p>
+        En este caso, solo aparecerán las ciudades cuyo total de clientes sea mayor de 3.  
+        Este filtro no podría hacerse con <code>WHERE</code>, porque 
+        <strong>WHERE no puede usar funciones de agregación</strong>.
+      </p>
+
+      <hr />
+
+      <h3>💡 Ejemplo avanzado: categorías cuyo precio medio es superior a 200€</h3>
+
+      <div className="bloque-codigo">
+        SELECT categoria_id, AVG(precio) AS precio_medio<br />
+        FROM productos<br />
+        GROUP BY categoria_id<br />
+        HAVING AVG(precio) &gt; 200;
+      </div>
+
+      <p>
+        Gracias a <code>HAVING</code>, podemos mostrar solo las categorías cuyo precio medio 
+        supera un valor determinado.
+      </p>
+
+    </article>
+
+  </details>
+
+</section>
+
+<section className="section" id="funciones-agrupacion-having">
+  <details>
+    <summary>Ejemplo práctico: Calcular la media de precios y filtrar grupos con HAVING</summary>
+
+    <article className="card">
+
+      <h2>Ejemplo: Calcular la media de precios por sección y filtrar grupos con <code>HAVING</code></h2>
+
+      <p>
+        En este ejemplo queremos obtener la <strong>media del precio</strong> de los productos
+        agrupados por <code>SECCIÓN</code>.  
+        Sin embargo, no queremos ver todas las secciones, sino solo dos de ellas:
+        <strong>DEPORTES</strong> y <strong>CONFECCIÓN</strong>.
+      </p>
+
+      <p>
+        Para conseguirlo utilizamos <strong>GROUP BY</strong> para agrupar por sección y 
+        <strong>HAVING</strong> para filtrar los grupos una vez creados.
+      </p>
+
+      <hr />
+
+      <h3>🔎 ¿Qué hace exactamente esta consulta?</h3>
+
+      <pre><code>
+SELECT 
+    SECCIÓN,
+    AVG(PRECIO) AS MEDIA_ARTICULOS
+FROM productos
+GROUP BY SECCIÓN
+HAVING SECCIÓN = 'DEPORTES'
+    OR SECCIÓN = 'CONFECCIÓN'
+ORDER BY MEDIA_ARTICULOS DESC;
+      </code></pre>
+
+      <p>
+        La consulta sigue este proceso de izquierda a derecha y de arriba a abajo:
+      </p>
+
+      <ol className="lista-simple">
+        <li><strong>SELECT</strong>: elegimos qué columnas queremos ver.</li>
+        <li><strong>FROM</strong>: indicamos la tabla origen.</li>
+        <li><strong>GROUP BY SECCIÓN</strong>: MySQL forma un “grupo” por cada sección distinta.</li>
+        <li><strong>AVG(PRECIO)</strong>: calcula la media dentro de cada grupo.</li>
+        <li><strong>HAVING</strong>: descarta los grupos que no sean DEPORTES o CONFECCIÓN.</li>
+        <li><strong>ORDER BY</strong>: ordena los grupos resultantes.</li>
+      </ol>
+
+      <p>
+        El resultado es una tabla resumen donde solo aparecen las secciones que hemos filtrado con HAVING.
+      </p>
+
+      <hr />
+
+      <h3>📘 Diferencia fundamental entre WHERE y HAVING</h3>
+
+      <div className="callout">
+        <strong>WHERE</strong> → filtra filas **antes** del GROUP BY. <br />
+        <strong>HAVING</strong> → filtra grupos **después** del GROUP BY.
+      </div>
+
+      <p>
+        Esto significa que <strong>WHERE no puede usar funciones de agregación</strong>, pero HAVING sí.
+      </p>
+
+      <ul className="lista-simple">
+        <li>✔ <code>HAVING AVG(precio) &gt; 50</code> → correcto</li>
+        <li>❌ <code>WHERE AVG(precio) &gt; 50</code> → error</li>
+      </ul>
+
+      <hr />
+
+      <h3>📝 Resultado esperado</h3>
+
+      <p>Algo parecido a esto:</p>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>SECCIÓN</th>
+              <th>MEDIA_ARTICULOS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>DEPORTES</td>
+              <td>103.50</td>
+            </tr>
+            <tr>
+              <td>CONFECCIÓN</td>
+              <td>72.40</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr />
+
+      <h3>⚠️ Errores frecuentes del alumnado</h3>
+
+      <ul className="lista-simple">
+        <li>Confundir <code>WHERE</code> con <code>HAVING</code>.</li>
+        <li>Intentar poner <code>AVG()</code> dentro de <code>WHERE</code>.</li>
+        <li>No agrupar correctamente por la columna indicada.</li>
+        <li>Ordenar por un alias sin haberlo nombrado correctamente.</li>
+      </ul>
+
+      <div className="nota nota-importante">
+        Consejo del profesor: cuando uses AVG, SUM, COUNT, MIN o MAX con GROUP BY,
+        recuerda: <strong>si vas a filtrar, utiliza HAVING</strong>.
+      </div>
+
+      <hr />
+
+      <h3>💡 Otro ejemplo alternativo (muy típico)</h3>
+
+      <p>Mostrar solo las secciones cuya media de precio sea mayor de 50€:</p>
+
+      <pre><code>
+SELECT SECCIÓN, AVG(PRECIO) AS media
+FROM productos
+GROUP BY SECCIÓN
+HAVING AVG(PRECIO) &gt; 50;
+      </code></pre>
+
+      <p>
+        Aquí HAVING se usa para filtrar no por valores exactos, sino por un 
+        <strong>cálculo agregado</strong>.
+      </p>
+
+      <hr />
+
+      <h3>🎯 Mini-ejercicio final</h3>
+
+      <p>
+        Realiza estas consultas y comprueba tus resultados:
+      </p>
+
+      <ol className="lista-simple">
+        <li>Muestra la suma del precio por sección y quédate solo con las secciones cuya suma supere 300€.</li>
+        <li>Obtén el precio medio por sección, pero solo muestra las secciones cuyos nombres contengan la letra “A”.</li>
+        <li>Muestra cuántos productos hay por sección, pero solo aquellas con más de 2 productos.</li>
+      </ol>
+
+      <p>
+        Si puedes resolver estos ejercicios, ya dominas perfectamente GROUP BY + HAVING.
+      </p>
+
+    </article>
+  </details>
+</section>
+
+{/* ============================CONSULTAS DE CALCULO============================ */}
+
+<section className="section" id="consultas-calculo">
+
+  <details>
+    <summary>Funciones frecuentes en MySQL</summary>
+
+    <article className="card">
+      <h2>Funciones útiles y frecuentes en MySQL</h2>
+
+      <p>
+        MySQL incluye funciones muy prácticas para trabajar con fechas, números y textos.
+        Estas funciones nos permiten obtener información adicional sin tener que procesar 
+        los datos fuera de la base de datos.
+      </p>
+
+      <hr />
+
+      {/* ============================
+          NOW()
+      ============================ */}
+      <h3>⏱️ NOW(): fecha y hora actuales</h3>
+      <p>Devuelve la <strong>fecha y hora actuales</strong> del servidor MySQL.</p>
+      <div className="bloque-codigo">SELECT NOW();</div>
+
+      <p>Muy útil para registrar cuándo se crea un pedido, usuario o registro.</p>
+
+      <hr />
+
+      {/* ============================
+          DATEDIFF()
+      ============================ */}
+      <h3>📅 DATEDIFF(): diferencia entre dos fechas</h3>
+      <p>Calcula cuántos <strong>días</strong> hay entre dos fechas.</p>
+
+      <div className="bloque-codigo">
+        SELECT DATEDIFF(NOW(), fecha_registro) AS dias_antiguedad<br />
+        FROM clientes;
+      </div>
+
+      <p>Así obtenemos la antigüedad de cada cliente en días.</p>
+
+      <hr />
+
+      {/* ============================
+          DATE_FORMAT()
+      ============================ */}
+      <h3>🗂️ DATE_FORMAT(): formatear fechas</h3>
+      <p>Permite mostrar una fecha con el formato que queramos.</p>
+
+      <div className="bloque-codigo">
+        SELECT DATE_FORMAT(fecha_pedido, '%d/%m/%Y') AS fecha_legible<br />
+        FROM pedidos;
+      </div>
+
+      <p>Perfecto para informes o pantallas donde queremos fechas claras y legibles.</p>
+
+      <hr />
+
+      {/* ============================
+          CONCAT()
+      ============================ */}
+      <h3>🔤 CONCAT(): unir textos</h3>
+      <p>Combina varios textos o columnas en uno solo.</p>
+
+      <div className="bloque-codigo">
+        SELECT CONCAT(nombre, ' - ', ciudad) AS cliente<br />
+        FROM clientes;
+      </div>
+
+      <p>Útil para mostrar campos combinados (nombre + ciudad, nombre + categoría...).</p>
+
+      <hr />
+
+      {/* ============================
+          UPPER() y LOWER()
+      ============================ */}
+      <h3>🔠 UPPER() / LOWER(): texto en mayúsculas o minúsculas</h3>
+      <p>Transforman cadenas a mayúsculas o minúsculas.</p>
+
+      <div className="bloque-codigo">
+        SELECT UPPER(nombre) AS nombre_mayus, LOWER(ciudad) AS ciudad_minus<br />
+        FROM clientes;
+      </div>
+
+      <p>Muy útil para búsquedas sin distinguir mayúsculas.</p>
+
+      <hr />
+
+      {/* ============================
+          LENGTH()
+      ============================ */}
+      <h3>📏 LENGTH(): longitud de un texto</h3>
+      <p>Devuelve cuántos caracteres tiene una cadena.</p>
+
+      <div className="bloque-codigo">
+        SELECT nombre, LENGTH(nombre) AS longitud<br />
+        FROM clientes;
+      </div>
+
+      <p>Perfecto para validar longitudes o detectar datos incompletos.</p>
+
+      <hr />
+
+      {/* ============================
+          IFNULL()
+      ============================ */}
+      <h3>❓ IFNULL(): reemplazar valores nulos</h3>
+      <p>Permite mostrar un valor alternativo cuando una columna es NULL.</p>
+
+      <div className="bloque-codigo">
+        SELECT IFNULL(telefono, 'Sin teléfono') AS telefono_mostrado<br />
+        FROM clientes;
+      </div>
+
+      <p>Muy usado en informes y pantallas de usuario.</p>
+
+      <hr />
+
+      {/* ============================
+          ROUND()
+      ============================ */}
+      <h3>🎯 ROUND(): redondear números</h3>
+      <p>Redondea un número al número de decimales indicado.</p>
+
+      <div className="bloque-codigo">
+        SELECT ROUND(AVG(precio), 2) AS precio_medio_redondeado<br />
+        FROM productos;
+      </div>
+
+      <p>Ideal para informes financieros o precios.</p>
+
+      <hr />
+
+      {/* ============================
+          TRUNCATE()
+      ============================ */}
+      <h3>✂️ TRUNCATE(): cortar decimales</h3>
+      <p>Corta un número a un número de decimales sin redondear.</p>
+
+      <div className="bloque-codigo">
+        SELECT TRUNCATE(AVG(precio), 2) AS precio_truncado<br />
+        FROM productos;
+      </div>
+
+      <p>A diferencia de <code>ROUND()</code>, no redondea sino que elimina decimales.</p>
+
+    </article>
+  </details>
+
+</section>
+
+
+
+        {/* SQL VISTAS */}
 <section className="section" id="sql-vistas">
   <details>
     <summary>Crear y usar VISTAS en SQL</summary>
@@ -2648,6 +3307,150 @@ RIGHT JOIN categorias c ON p.categoria_id = c.id;`}</code>
     </article>
   </details>
 </section>
+
+<section className="section" id="indice">
+  <details>
+    <summary> ¿Qué son los índices (INDEX) en MySQL?</summary>
+
+    <article className="card">
+
+      <h2>¿Qué es un índice en MySQL?</h2>
+
+      <p>
+        Un <strong>índice</strong> es una estructura que MySQL crea para
+        <strong>acelerar la búsqueda de datos</strong> dentro de una tabla.
+        Funciona igual que el índice de un libro: en lugar de revisar todas
+        las páginas, vas directamente a la que necesitas.
+      </p>
+
+      <div className="callout">
+        Sin índice → búsqueda lenta (MySQL revisa fila por fila). <br />
+        Con índice → búsqueda rápida (MySQL va directo a los datos).
+      </div>
+
+      <hr />
+
+      <h3>¿Para qué sirven los índices?</h3>
+
+      <ul className="lista-simple">
+        <li>Para que <strong>WHERE</strong> sea más rápido.</li>
+        <li>Para optimizar <strong>JOIN</strong> entre tablas.</li>
+        <li>Para acelerar <strong>ORDER BY</strong> y <strong>GROUP BY</strong>.</li>
+        <li>Para evitar duplicados con <strong>UNIQUE</strong>.</li>
+      </ul>
+
+      <p>
+        Los índices NO cambian los datos de la tabla, solo mejoran 
+        <strong>la velocidad de acceso</strong>.
+      </p>
+
+      <hr />
+
+      <h3>Tipos principales de índices</h3>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>¿Qué hace?</th>
+              <th>Ejemplo típico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>PRIMARY KEY</strong></td>
+              <td>Identifica de forma única la fila. Es un índice obligatorio.</td>
+              <td><code>id_cliente</code></td>
+            </tr>
+
+            <tr>
+              <td><strong>UNIQUE</strong></td>
+              <td>Evita duplicados. También acelera búsquedas.</td>
+              <td><code>dni</code>, <code>email</code></td>
+            </tr>
+
+            <tr>
+              <td><strong>INDEX</strong></td>
+              <td>Acelera búsquedas en columnas muy consultadas.</td>
+              <td><code>ciudad</code>, <code>categoria</code></td>
+            </tr>
+
+            <tr>
+              <td><strong>FOREIGN KEY</strong></td>
+              <td>No es un índice como tal, pero MySQL crea uno automáticamente para hacer los JOIN más rápidos.</td>
+              <td><code>id_cliente</code> en <code>pedidos</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <hr />
+
+      <h3>¿Cuándo es útil crear un índice?</h3>
+
+      <ul className="lista-simple">
+        <li>Cuando una columna se usa mucho en <strong>WHERE</strong>.</li>
+        <li>Cuando se usa frecuentemente en <strong>JOIN</strong>.</li>
+        <li>Cuando ordenamos muchas veces por esa columna (<code>ORDER BY</code>).</li>
+        <li>Cuando necesitamos evitar duplicados (UNIQUE).</li>
+      </ul>
+
+      <h4>Ejemplos del proyecto <code>bazar</code>:</h4>
+      <ul className="lista-simple">
+        <li><code>dni</code> → ideal para un índice UNIQUE.</li>
+        <li><code>id_cliente</code> en <code>pedidos</code> → índice automático por foreign key.</li>
+        <li><code>categoria</code> en <code>productos</code> → índice útil para búsquedas frecuentes.</li>
+      </ul>
+
+      <hr />
+
+      <h3>Sintaxis básica de creación</h3>
+
+      <pre><code>
+-- Índice normal
+CREATE INDEX idx_categoria ON productos(categoria);
+
+-- Índice único (no permite duplicados)
+CREATE UNIQUE INDEX idx_dni ON clientes(dni);
+      </code></pre>
+
+      <hr />
+
+      <h3>¿Cuándo NO debes usar índices?</h3>
+
+      <ul className="lista-simple">
+        <li>En columnas con valores muy repetidos (ej.: "Sevilla").</li>
+        <li>En tablas pequeñas (no aporta nada).</li>
+        <li>En columnas que cambian constantemente (muchos INSERT/UPDATE).</li>
+      </ul>
+
+      <div className="nota nota-importante">
+        Los índices mejoran la velocidad de lectura, pero pueden ralentizar 
+        la escritura (INSERT/UPDATE) si se abusa de ellos.
+      </div>
+
+      <hr />
+
+      <h3>Conclusión</h3>
+
+      <p>
+        Los índices son una herramienta clave para optimizar consultas en MySQL.
+        Ten en cuenta:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Que hacen que las búsquedas sean más rápidas.</li>
+        <li>Que PRIMARY KEY y UNIQUE son índices especiales.</li>
+        <li>Que ayudan mucho al trabajar con relaciones (JOIN).</li>
+      </ul>
+
+      
+
+    </article>
+  </details>
+</section>
+
 
 
         {/* 11. BUENAS PRÁCTICAS */}

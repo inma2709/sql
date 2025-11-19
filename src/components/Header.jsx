@@ -37,6 +37,15 @@ function Header() {
           <NavLink to="/Bloque2" className="enlace-navegacion">
             Consultas SQL
           </NavLink>
+          <NavLink to="/Bloque3Backend" className="enlace-navegacion">
+            Backend
+          </NavLink>
+          <NavLink to="/Bloque4Front" className="enlace-navegacion">
+            Frontend
+          </NavLink>
+          <NavLink to="/Actividad" className="enlace-navegacion">
+            Actividad
+          </NavLink>
         </nav>
       </div>
     </header>

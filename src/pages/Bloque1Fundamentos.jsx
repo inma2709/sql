@@ -700,24 +700,13 @@ export default function Bloque1Fundamentos() {
 <h4>🌍 Clave ajena (Foreign Key)</h4>
 
 <p>
-  Una <strong>clave ajena</strong> o <strong>foreign key</strong> es simplemente un
-  campo que sirve para decir: <em>“este dato pertenece a esta otra tabla”</em>.  
+  Una <strong>clave ajena</strong> o <strong>foreign key</strong> es un atributo que sirve para decir: <em>“este dato pertenece a esta otra tabla”</em>.  
   Funciona como un enlace que une dos tablas entre sí.
 </p>
 
-<p>
-  Gracias a la foreign key, la base de datos comprueba que el valor que escribimos 
-  en la tabla hija <strong>realmente existe</strong> en la tabla padre.  
-  Así evitamos errores como pedir un cliente que no existe o asignar una categoría 
-  que no está creada.
-</p>
 
-<p>
-  En resumen: la foreign key es una forma de asegurarse de que <strong>lo que 
-  escribimos está bien</strong> y <strong>conecta correctamente</strong> los datos de una tabla con otra.
-</p>
 
-<h5>📌 Ejemplo clásico</h5>
+<h5>📌 Ejemplo </h5>
 
 <p>Un pedido siempre pertenece a un cliente:</p>
 
@@ -741,17 +730,7 @@ fecha
 id_cliente  (FK) → referencia a clientes.id_cliente
 </code></pre>
 
-<h5>📐 Diagrama simple</h5>
-<pre><code>
-   (id_cliente) PK
-        |
-   [ Cliente ]
-        |
-        |  (id_cliente) FK
-        v
-   [ Pedido ]
-</code></pre>
-
+<p> No puede existir un pedido sin cliente. La tabla pedidos es la tabla hijo que depende de cliente.</p>
 <h5>✔ ¿Para qué sirve una foreign key?</h5>
 <ul>
   <li><strong>Enlaza</strong> dos tablas entre sí.</li>
@@ -765,16 +744,10 @@ id_cliente  (FK) → referencia a clientes.id_cliente
   <li><strong>Debe coincidir</strong> con el tipo de dato de la clave primaria que referencia.</li>
   <li><strong>No crea valores nuevos</strong>: solo acepta valores existentes en la otra tabla. Por ejemplo la id del alumno.</li>
   
-  <li>Permite definir acciones como:
-    <ul>
-      <li><code>ON DELETE CASCADE</code> → si borro un cliente, se borran también sus pedidos.</li>
-      <li><code>ON UPDATE CASCADE</code> → si cambia la PK del cliente, se actualiza en pedidos.</li>
-      <li><code>RESTRICT</code> → impide borrar el padre si tiene elementos hijos.</li>
-    </ul>
-  </li>
+  
 </ul>
 
-<h5>🛠 Ejemplo SQL en MySQL/MariaDB</h5>
+<h5>🛠 Ejemplo SQL</h5>
 
 <pre><code className="language-sql">
 CREATE TABLE clientes (
@@ -786,17 +759,12 @@ CREATE TABLE pedidos (
   id_pedido INT PRIMARY KEY AUTO_INCREMENT,
   fecha DATE NOT NULL,
   id_cliente INT,
-  FOREIGN KEY (id_cliente) 
+  FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente)
     
 );
 </code></pre>
 
-<div className="callout callout--success">
-  <p>
-    En MySQL/MariaDB las foreign keys solo funcionan con motores que soportan 
-    integridad referencial, como <strong>InnoDB</strong> (el motor por defecto en MariaDB).
-  </p>
-</div>
+
 
 
 
@@ -846,19 +814,16 @@ CREATE TABLE pedidos (
             <summary>Cardinalidad</summary>
             <article className="card">
 
-<h3>🔢 Cardinalidad: ¿cuántas entidades se relacionan?</h3>
+<h3>Cardinalidad: proporción entre registros de dos tablas (1-1, 1-N, N-N)</h3>
 
-<p>
-  La <strong>cardinalidad</strong> indica cuántos elementos de un conjunto pueden relacionarse con cuántos del otro.
-  Es una de las decisiones más importantes al diseñar una base de datos, porque define la “forma” de la relación.
-</p>
+<p> La <strong>cardinalidad</strong> describe <strong>cuántos registros de una tabla pueden aparecer asociados a registros de otra tabla</strong>. Es una decisión clave en el diseño de una base de datos, porque determina si la relación será <em>uno a uno</em>, <em>uno a muchos</em> o <em>muchos a muchos</em>, y por tanto define la “forma” en la que ambas tablas interactúan. </p>
 
 <p>
   Para que sea fácil de entender, podemos decir que la cardinalidad responde a estas dos preguntas:
 </p>
 
 <ul>
-  <li><strong>¿Cuántos del lado A pueden estar relacionados con un elemento del lado B?</strong></li>
+  <li><strong>¿Cuántos campos de la tabla A pueden aparecer en la tabla B?</strong></li>
   <li><strong>¿Y cuántos del lado B pueden estar relacionados con un elemento del lado A?</strong></li>
 </ul>
 
@@ -872,7 +837,7 @@ CREATE TABLE pedidos (
 <h4>1️⃣ Relación 1 : 1 (uno a uno)</h4>
 
 <p>
-  Una entidad del primer conjunto solo se relaciona con una del segundo, y viceversa.
+Un campo de una tabla sólo puede aparecer una vez en la otra tabla, y viceversa.
   No hay repeticiones: es una relación exclusiva.
 </p>
 

@@ -24,8 +24,9 @@ export default function Bloque1Fundamentos() {
             <li><a href="#mysql-mariadb">MySQL, MariaDB y XAMPP/phpMyAdmin</a></li>
             <li><a href="#modelo-er">Diseño de bases de datos: Modelo Entidad–Relación</a></li>
             <li><a href="#crear-bd">Crear bases de datos</a></li>
+            <li><a href="#cardinalidad">Cardinalidad</a></li>
             <li><a href="#tipos-comandos-sql">Comandos SQL básicos</a></li>
-            <li><a href="#estructura-instruccion-sql">Estructura instrucción sql</a></li>
+            <li><a href="#estructura-instruccion-sql"> Instruccion SQL: estructura.</a></li>
             <li><a href="#tipos-claves">Tipos de datos básicos y claves</a></li>
             <li><a href="#use">Seleccionar bbdd</a></li>
             <li><a href="#crear-tablas">Crear tablas</a></li>          
@@ -699,14 +700,21 @@ export default function Bloque1Fundamentos() {
 <h4>🌍 Clave ajena (Foreign Key)</h4>
 
 <p>
-  Una <strong><u>clave ajena</u></strong> (foreign key) es un atributo que <strong>hace referencia</strong> 
-  a la <strong>clave primaria</strong> de otra tabla.  
-  Sirve para crear relaciones entre entidades y garantizar la <strong>integridad referencial</strong>.
+  Una <strong>clave ajena</strong> o <strong>foreign key</strong> es simplemente un
+  campo que sirve para decir: <em>“este dato pertenece a esta otra tabla”</em>.  
+  Funciona como un enlace que une dos tablas entre sí.
 </p>
 
-<p>En otras palabras:</p>
 <p>
-  Una foreign key asegura que un valor en una tabla <strong>exista</strong> en la tabla relacionada.
+  Gracias a la foreign key, la base de datos comprueba que el valor que escribimos 
+  en la tabla hija <strong>realmente existe</strong> en la tabla padre.  
+  Así evitamos errores como pedir un cliente que no existe o asignar una categoría 
+  que no está creada.
+</p>
+
+<p>
+  En resumen: la foreign key es una forma de asegurarse de que <strong>lo que 
+  escribimos está bien</strong> y <strong>conecta correctamente</strong> los datos de una tabla con otra.
 </p>
 
 <h5>📌 Ejemplo clásico</h5>
@@ -755,8 +763,8 @@ id_cliente  (FK) → referencia a clientes.id_cliente
 <h5>⚙ Características de una clave ajena</h5>
 <ul>
   <li><strong>Debe coincidir</strong> con el tipo de dato de la clave primaria que referencia.</li>
-  <li><strong>No crea valores nuevos</strong>: solo acepta valores existentes en la otra tabla.</li>
-  <li><strong>Puede ser NULL</strong> en relaciones opcionales (por ejemplo, un producto sin categoría).</li>
+  <li><strong>No crea valores nuevos</strong>: solo acepta valores existentes en la otra tabla. Por ejemplo la id del alumno.</li>
+  
   <li>Permite definir acciones como:
     <ul>
       <li><code>ON DELETE CASCADE</code> → si borro un cliente, se borran también sus pedidos.</li>
@@ -829,6 +837,15 @@ CREATE TABLE pedidos (
 
 <hr />
 
+</article>
+          </details>
+        </section>
+
+<section className="section" id="cardinalidad">
+          <details>
+            <summary>Cardinalidad</summary>
+            <article className="card">
+
 <h3>🔢 Cardinalidad: ¿cuántas entidades se relacionan?</h3>
 
 <p>
@@ -846,6 +863,11 @@ CREATE TABLE pedidos (
 </ul>
 
 <hr />
+<h4>Tipos de relaciones</h4>
+
+<p>
+  Existen tres tipos principales de relaciones entre entidades:
+</p>
 
 <h4>1️⃣ Relación 1 : 1 (uno a uno)</h4>
 
@@ -863,6 +885,115 @@ CREATE TABLE pedidos (
     Las relaciones 1:1 no son muy comunes.  
     A veces se usan para separar información sensible, dividir tablas grandes o mejorar el rendimiento.
   </p>
+  <div className="cuadro-didactico">
+  <h4>Relación 1 : 1 — ¿Cómo funciona realmente?</h4>
+
+  <p>
+    En una relación <strong>1 : 1</strong> cada registro de la primera tabla se asocia 
+    con <strong>solo un</strong> registro de la segunda, y viceversa.  
+    Para representarlo en SQL, una de las tablas debe contener una 
+    <strong>clave foránea</strong> que además sea <strong>UNIQUE</strong> 
+    para asegurar que no se repita.
+  </p>
+
+  <div className="cuadro-didactico__grid">
+
+    {/* Ejemplo 1 */}
+    <div className="cuadro-didactico__item">
+      <h5>Ejemplo 1: Persona ↔ DNI</h5>
+      <p>
+        Una persona tiene un único DNI, y cada DNI pertenece a una sola persona.  
+        La tabla <strong>dni</strong> suele tener la FK:
+        <br />
+        <code className="etiqueta-codigo">persona_id UNIQUE</code>
+      </p>
+    </div>
+
+    {/* Ejemplo 2 */}
+    <div className="cuadro-didactico__item">
+      <h5>Ejemplo 2: Usuario ↔ Perfil</h5>
+      <p>
+        Cada usuario tiene un perfil, y cada perfil describe a un único usuario.  
+        La FK suele estar en <strong>perfiles</strong>:
+        <br />
+        <code className="etiqueta-codigo">usuario_id UNIQUE</code>
+      </p>
+    </div>
+
+    {/* Ejemplo 3 */}
+    <div className="cuadro-didactico__item">
+      <h5>Ejemplo 3: Cliente ↔ Dirección</h5>
+      <p>
+        Una dirección pertenece a un solo cliente, y ese cliente solo tiene una 
+        dirección principal.  
+        La FK suele estar en <strong>direcciones</strong>:
+        <br />
+        <code className="etiqueta-codigo">cliente_id UNIQUE</code>
+      </p>
+    </div>
+
+    {/* Explicación clave */}
+    <div className="cuadro-didactico__item">
+      <h5>Regla esencial</h5>
+      <p>
+        Para que la relación sea realmente 1 : 1, la clave foránea debe ser 
+        <strong>UNIQUE</strong>.  
+        Esto garantiza que la FK no pueda repetirse y que cada fila solo pueda 
+        relacionarse con una del otro lado.
+      </p>
+    </div>
+  </div>
+
+  <h5 className="cuadro-didactico__nota">
+    En resumen: una relación 1 : 1 sí necesita clave foránea, pero solo en una de 
+    las dos tablas y obligatoriamente con restricción UNIQUE para evitar repeticiones.
+  </h5>
+</div>
+<div className="cuadro-didactico">
+  <h4>¿Dirección como VARCHAR o como Tabla independiente?</h4>
+
+  <div className="cuadro-didactico__grid">
+
+    <div className="cuadro-didactico__item">
+      <h5>Opción 1: Un solo atributo VARCHAR</h5>
+      <p>
+        Se guarda todo en un único campo, por ejemplo:  
+        <code className="etiqueta-codigo">'Calle Sol, 12, Sevilla'</code>.
+        <br/><br/>
+        ✔ Fácil y rápido<br/>
+        ❌ No permite buscar por ciudad, CP o provincia<br/>
+        ❌ Difícil de validar y mantener<br/>
+        ❌ No escala si luego quieres varios tipos de dirección
+      </p>
+    </div>
+
+    <div className="cuadro-didactico__item">
+      <h5>Opción 2: Tabla DIRECCIONES (relación 1 : 1)</h5>
+      <p>
+        Se crea una tabla independiente: calle, ciudad, código postal, etc.
+        <br/><br/>
+        ✔ Datos más ordenados  
+        ✔ Búsquedas reales (por ciudad, CP…)  
+        ✔ La dirección puede ser opcional  
+        ✔ Preparado para un futuro 1 : N  
+        ✔ Más normalizado y limpio  
+        <br/><br/>
+        La FK lleva <strong>UNIQUE</strong> para garantizar la relación 1 : 1.
+      </p>
+    </div>
+
+  </div>
+
+  <p className="cuadro-didactico__nota">
+    Usa un solo VARCHAR solo si la dirección es decorativa.  
+    Usa una tabla independiente si la dirección tiene estructura, puede crecer
+    o si necesitas hacer búsquedas reales. Por ejemplo quieres buscar por códigos postales. 
+    Una dirección metida en un solo VARCHAR se puede buscar con LIKE,
+pero solo si no necesitas precisión, velocidad o estructura.
+Si la dirección importa de verdad, debe ir en su propia tabla
+  </p>
+</div>
+
 </div>
 
 <hr />
@@ -873,6 +1004,83 @@ CREATE TABLE pedidos (
   Una entidad del primer conjunto puede relacionarse con muchas del segundo, 
   pero las entidades del segundo conjunto solo pertenecen a una del primero.
 </p>
+<p>
+  En una relación <strong>1–N</strong> como <em>Cliente → Pedido</em>, es fundamental 
+  entender por qué la tabla hija (en este caso, <strong>pedidos</strong>) es la que 
+  recibe la <strong>clave foránea</strong>. Cuando un cliente puede realizar muchos 
+  pedidos, lo que realmente se está repitiendo en la base de datos no es el cliente, 
+  sino los pedidos. Por eso, cada pedido necesita incluir una columna que indique 
+  <em>a qué cliente pertenece</em>. Esa columna es precisamente la 
+  <code className="etiqueta-codigo">cliente_id</code>.
+</p>
+
+<p>
+  La clave foránea en la tabla hija <strong>puede repetirse tantas veces como sea 
+  necesario</strong>, porque representa la idea de que muchos registros de la tabla 
+  hija pertenecen al mismo registro de la tabla padre. Así, si un cliente realiza 
+  cinco pedidos, veremos cinco filas en la tabla <strong>pedidos</strong>, todas ellas 
+  con el mismo valor en la columna 
+  <code className="etiqueta-codigo">cliente_id</code>. Esto no solo es correcto, sino 
+  que es exactamente como una base de datos relacional debe almacenar una relación 
+  1–N.
+</p>
+
+<div className="cuadro-didactico">
+  <h4>¿Qué significa que la FK se repita?</h4>
+  <p>
+    Que múltiples registros de la tabla hija señalan al mismo registro de la tabla 
+    padre. Este comportamiento permite que MySQL comprenda correctamente la relación 
+    1–N: <em>muchos pedidos</em> → <em>un único cliente</em>.
+  </p>
+
+  <div className="contenedor-tabla espacio-arriba">
+    <table className="tabla-datos tabla-datos--compacta">
+      <thead>
+        <tr>
+          <th>id_pedido</th>
+          <th>fecha</th>
+          <th>cliente_id (FK)</th>
+          <th>Interpretación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>10</td>
+          <td>2025-02-01</td>
+          <td>1</td>
+          <td>Ana hizo este pedido</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>2025-02-05</td>
+          <td>1</td>
+          <td>Ana hizo este otro pedido</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>2025-03-01</td>
+          <td>3</td>
+          <td>Lucía hizo este pedido</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p className="cuadro-didactico__nota">
+    Observa que el valor <code>1</code> aparece dos veces en 
+    <strong>cliente_id</strong>: esto significa que ambas filas corresponden a la 
+    misma persona (<em>Ana</em>). Así interpreta MySQL la relación <strong>1–N</strong>.
+  </p>
+</div>
+
+<p>
+  En resumen, la clave foránea se coloca en la tabla hija porque es la tabla que 
+  <strong>depende</strong> de otra y necesita saber a qué registro padre pertenece. 
+  Esta estructura es la que permite representar relaciones reales como 
+  clientes–pedidos, categorías–productos o profesores–alumnos dentro de una base 
+  de datos relacional.
+</p>
+
 
 <pre><code>[ Cliente ] 1 — N [ Pedido ]</code></pre>
 
@@ -919,6 +1127,267 @@ CREATE TABLE pedidos (
     Por ejemplo: <code>matricula</code>.
   </p>
 </div>
+
+
+  <p className="cuadro-didactico__nota">
+    En resumen: una relación N : M siempre se resuelve con una tabla intermedia que 
+    contiene dos foreign keys, una primary key compuesta y, si lo necesita el modelo, 
+    más atributos que describen la relación.
+  </p>
+<div className="cuadro-didactico">
+  <h4>¿Qué es una tabla intermedia en una relación N : M?</h4>
+
+  <p>
+    En una relación <strong>N : M</strong> (muchos a muchos), ni la tabla A ni la tabla B 
+    pueden guardar por sí solas la relación, porque <strong>las dos se repiten</strong>.  
+    Ejemplo clásico: un alumno puede cursar muchas asignaturas y una asignatura puede tener 
+    muchos alumnos.  
+    Para representar esto correctamente en MySQL, creamos una <strong>tabla intermedia</strong> 
+    (también llamada tabla puente o tabla de unión). Cada fila de esa tabla representa una 
+    matrícula concreta: “este alumno está en esta asignatura”.
+  </p>
+
+  <div className="cuadro-didactico__grid">
+
+    {/* Bloque 1: por qué hace falta */}
+    <div className="cuadro-didactico__item--full">
+      <h5>1. ¿Por qué necesitamos una tabla intermedia?</h5>
+      <p>
+        En una relación <strong>N : M</strong> los dos lados se repiten:
+      </p>
+      <ul className="lista-simple">
+        <li>Un <strong>alumno</strong> puede estar en muchas asignaturas.</li>
+        <li>Una <strong>asignatura</strong> puede tener muchos alumnos.</li>
+      </ul>
+      <p>
+        Si intentáramos poner una foreign key solo en <strong>alumnos</strong> o solo en 
+        <strong>asignaturas</strong>, romperíamos la lógica (no podríamos representar todos los casos).  
+        Por eso creamos una tercera tabla, por ejemplo <code className="etiqueta-codigo">matricula</code>, 
+        que se dedica solo a guardar las parejas alumno–asignatura.
+      </p>
+    </div>
+
+    {/* Bloque 2: qué columnas tiene */}
+    <div className="cuadro-didactico__item--full">
+      <h5>2. ¿Qué columnas tiene una tabla intermedia?</h5>
+      <p>
+        En un diseño sencillo y muy práctico para empezar, la tabla intermedia suele tener:
+      </p>
+      <ul className="lista-simple">
+        <li>
+          Un <strong>id propio</strong> con 
+          <code className="etiqueta-codigo">AUTO_INCREMENT</code>  
+          (por ejemplo <code className="etiqueta-codigo">id_matricula</code>) que sirve como 
+          identificador único de la fila.
+        </li>
+        <li>
+          Dos <strong>claves foráneas</strong>:
+          <ul className="lista-simple">
+            <li><code className="etiqueta-codigo">alumno_id</code> → apunta a la tabla <strong>alumnos</strong>.</li>
+            <li><code className="etiqueta-codigo">asignatura_id</code> → apunta a la tabla <strong>asignaturas</strong>.</li>
+          </ul>
+        </li>
+      </ul>
+      <p>
+        Con eso ya podemos saber de forma clara: “qué alumno” está “en qué asignatura”, sin 
+        necesidad de claves primarias compuestas ni diseños complicados.
+      </p>
+    </div>
+
+    {/* Bloque 3: qué representa cada fila */}
+    <div className="cuadro-didactico__item--full">
+      <h5>3. ¿Qué representa cada fila?</h5>
+      <p>
+        Cada fila de la tabla intermedia representa una <strong>relación concreta</strong> 
+        entre dos entidades. En este ejemplo:
+      </p>
+      <pre className="bloque-codigo">
+{`id_matricula | alumno_id | asignatura_id
+-------------+-----------+--------------
+      1      |     3     |      2      → el alumno 3 está en la asignatura 2
+      2      |     3     |      5      → el alumno 3 está en la asignatura 5
+      3      |     7     |      2      → el alumno 7 está en la asignatura 2`}
+      </pre>
+      <p>
+        Fíjate que <strong>ni alumno_id ni asignatura_id son únicos</strong> por separado:  
+        se repiten, porque esa es precisamente la idea de una relación muchos a muchos.
+      </p>
+    </div>
+
+    {/* Bloque 4: campos extra */}
+    <div className="cuadro-didactico__item--full">
+      <h5>4. ¿Puede tener más campos?</h5>
+      <p>
+        Sí. La tabla intermedia es el lugar perfecto para guardar información adicional sobre 
+        la relación, no sobre el alumno o la asignatura por separado. Por ejemplo:
+      </p>
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">fecha_matricula</code> → cuándo se apuntó.</li>
+        <li><code className="etiqueta-codigo">nota_final</code> → nota en esa asignatura.</li>
+        <li><code className="etiqueta-codigo">grupo</code> o <code className="etiqueta-codigo">turno</code>.</li>
+      </ul>
+      <p>
+        Estos campos describen la <strong>relación alumno–asignatura</strong>, no al alumno 
+        en general ni a la asignatura en general.
+      </p>
+    </div>
+
+    {/* Bloque 5: representación visual */}
+    <div className="cuadro-didactico__item--full">
+      <h5>5. Representación visual</h5>
+      <p>Podemos verlo así:</p>
+      <pre>
+{`[ Alumno ]   N  —  M   [ Asignatura ]
+    │                    │
+    │                    │
+    └─────── matricula ──┘
+
+matricula
+---------------------------------------
+id_matricula       → identificador propio
+alumno_id (FK)     → apunta a alumnos
+asignatura_id (FK) → apunta a asignaturas
+otros campos...    → fecha_matricula, nota, grupo...`}
+      </pre>
+    </div>
+
+    {/* Bloque 6: ejemplo SQL sin PK compuesta */}
+    <div className="cuadro-didactico__item--full">
+      <h5>6. Ejemplo de diseño SQL </h5>
+      <p>
+        Un diseño muy utilizado  y sencillo para una tabla intermedia es darle
+        un <strong>id AUTO_INCREMENT</strong> y dos foreign keys:
+      </p>
+      <pre className="bloque-codigo">
+        <code>
+{`CREATE TABLE matricula (
+  id_matricula   INT AUTO_INCREMENT PRIMARY KEY,
+  alumno_id      INT NOT NULL,
+  asignatura_id  INT NOT NULL,
+  fecha_matricula DATE DEFAULT CURRENT_DATE,
+
+  FOREIGN KEY (alumno_id)
+    REFERENCES alumnos(id_alumno),
+
+  FOREIGN KEY (asignatura_id)
+    REFERENCES asignaturas(id_asignatura)
+);`}
+        </code>
+      </pre>
+      <p>
+        Aquí la tabla <code className="etiqueta-codigo">matricula</code> tiene su propio 
+        identificador y se relaciona con <code className="etiqueta-codigo">alumnos</code> y 
+        <code className="etiqueta-codigo">asignaturas</code> gracias a las dos claves foráneas. 
+        Es un diseño claro, muy práctico y perfecto para aprender.
+      </p>
+    </div>
+
+  </div>
+
+  <p className="cuadro-didactico__nota">
+    En resumen: una tabla intermedia en una relación N : M es una tabla que guarda pares 
+    de identificadores (por ejemplo alumno–asignatura) y, si hace falta, más información 
+    sobre esa relación. Para empezar, es suficiente con darle un 
+    <strong> id AUTO_INCREMENT</strong> y dos <strong>foreign keys</strong>.
+  </p>
+</div>
+
+<div className="cuadro-didactico">
+  <h4>Tabla intermedia en la relación Pedidos–Productos (N : M)</h4>
+
+  <p>
+    La relación entre <strong>pedidos</strong> y <strong>productos</strong> es 
+    <strong>N : M</strong>: un pedido puede incluir varios productos y un producto puede 
+    aparecer en muchos pedidos. Para representarlo correctamente en MySQL, necesitamos 
+    una <strong>tabla intermedia</strong>, que almacena la relación entre un pedido 
+    concreto y un producto concreto.
+  </p>
+
+  <div className="cuadro-didactico__grid">
+
+    {/* Bloque 1 */}
+    <div className="cuadro-didactico__item">
+      <h5>1. Dos claves foráneas</h5>
+      <p>
+        La tabla intermedia contiene:
+        <br/>
+        – <code className="etiqueta-codigo">pedido_id</code> → apunta a <strong>pedidos</strong>  
+        – <code className="etiqueta-codigo">producto_id</code> → apunta a <strong>productos</strong>  
+        Cada fila representa un producto incluido en un pedido.
+      </p>
+    </div>
+
+    {/* Bloque 2 */}
+    <div className="cuadro-didactico__item">
+      <h5>2. Primary Key compuesta</h5>
+      <p>
+        La clave primaria es la combinación:
+        <br/>
+        <code className="etiqueta-codigo">PRIMARY KEY (pedido_id, producto_id)</code>  
+        Así evitamos duplicar el mismo producto dentro del mismo pedido.linea-pedido no tendría una id propia pero 
+        tenemos que seguir referenciando a las dos FK. Se trata digamos de una doble medida de seguridad.
+        No obstante, de momento no vamos a crear PK compuestas y no afectará a nuestro funcionamiento es sólo 
+        diferentes formas de hacer. 
+      </p>
+    </div>
+
+    {/* Bloque 3 */}
+    <div className="cuadro-didactico__item">
+      <h5>3. Campos propios de la relación</h5>
+      <p>
+        La tabla intermedia guarda información que no pertenece ni a pedidos ni a productos,
+        sino a la <strong>relación</strong> entre ambos:
+        <br/>
+        – <code className="etiqueta-codigo">cantidad</code><br/>
+        – <code className="etiqueta-codigo">precio_unitario</code><br/>
+        – <em>subtotal, descuento…</em>
+      </p>
+    </div>
+
+    {/* Bloque 4 */}
+    <div className="cuadro-didactico__item">
+      <h5>4. Representación visual</h5>
+      <pre>
+{`[ Producto ]  N — M  [ Pedido ]
+           │       │
+           └── lineas_pedido ──┘
+producto_id (FK) | pedido_id (FK)
+PK compuesta: (pedido_id, producto_id)
+campos: cantidad, precio_unitario...
+`}
+      </pre>
+    </div>
+
+    {/* Bloque 5 */}
+    <div className="
+.cuadro-didactico__item--full">
+      <h5>5. Ejemplo SQL</h5>
+      <pre className="bloque-codigo">
+        <code>
+{`CREATE TABLE lineas_pedido (
+  pedido_id INT NOT NULL,
+  producto_id INT NOT NULL,
+  cantidad INT DEFAULT 1,
+  precio_unitario DECIMAL(10,2) NOT NULL,
+
+  PRIMARY KEY (pedido_id, producto_id),
+
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id_pedido),
+  FOREIGN KEY (producto_id) REFERENCES productos(id_producto)
+);`}
+        </code>
+      </pre>
+    </div>
+
+  </div>
+
+  <p className="cuadro-didactico__nota">
+    En pedidos–productos, la tabla intermedia es imprescindible: contiene las dos claves 
+    foráneas, la clave primaria compuesta y los datos propios de cada producto dentro 
+    del pedido, como la cantidad o el precio unitario.
+  </p>
+</div>
+
 
 <hr />
 
@@ -1224,206 +1693,219 @@ N:M   →  [A] N — M [B]  (→ tabla intermedia)
    ================================ */}
 <section className="section" id="estructura-instruccion-sql">
   <details>
-    <summary>📘 ¿Cómo se compone una instrucción SQL?</summary>
+    <summary> ¿Cómo se compone una instrucción SQL?</summary>
 
     <article className="card">
 
-      <h2>La estructura de una instrucción SQL</h2>
+     
+     <h2>La estructura de una instrucción SQL</h2>
 
       <p>
         Todas las sentencias SQL que usamos en <strong>MySQL</strong> siguen una estructura
         lógica. Aunque algunas partes son obligatorias y otras opcionales, casi todas las
-        instrucciones pueden descomponerse en cuatro elementos principales:
+        instrucciones pueden descomponerse en cuatro elementos principales.
       </p>
-
-      <div className="cuadro-didactico">
-  <h4>📘 Tipos de elementos que forman una instrucción SQL</h4>
-  <p>
-    Una sentencia SQL está formada por diferentes piezas. Cada una tiene una función
-    distinta: unas indican <strong>cómo obtener</strong> datos (cláusulas), otras permiten
-    <strong>filtrar o comparar</strong> información (operadores y condiciones) y otras
-    <strong>calcular o procesar</strong> datos (funciones).
-  </p>
-
-  <div className="cuadro-didactico__grid">
-
-    {/* 1. CLÁUSULAS */}
-    <div className="cuadro-didactico__item">
-      <h5>1. Cláusulas</h5>
-      <p>Son palabras clave que indican <strong>cómo se debe ejecutar</strong> el comando.</p>
-      <p><strong>Principales cláusulas:</strong></p>
-      <ul className="lista-simple">
-        <li>
-          <code className="etiqueta-codigo">FROM</code>: indica la tabla o tablas de las que
-          se obtienen los registros.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">WHERE</code>: filtra los registros según una condición.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">GROUP BY</code>: agrupa filas que comparten valores.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">HAVING</code>: filtra los grupos antes creados.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">ORDER BY</code>: ordena los resultados.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">LIMIT</code>: limita el número de filas mostradas.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">JOIN ... ON</code>: une tablas relacionadas entre sí.
-        </li>
-      </ul>
-    </div>
-
-    {/* 2. OPERADORES */}
-    <div className="cuadro-didactico__item">
-      <h5>2. Operadores</h5>
-      <p>Sirven para <strong>comparar, relacionar o combinar valores</strong> dentro de cláusulas.</p>
-
-      <p><strong>Operadores de comparación:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">=</code>: igual a</li>
-        <li><code className="etiqueta-codigo">&gt;</code>: mayor que</li>
-        <li><code className="etiqueta-codigo">&lt;</code>: menor que</li>
-        <li><code className="etiqueta-codigo">&gt;=</code>: mayor o igual</li>
-        <li><code className="etiqueta-codigo">&lt;=</code>: menor o igual</li>
-        <li><code className="etiqueta-codigo">&lt;&gt;</code>: distinto de</li>
-      </ul>
-
-      <p><strong>Operadores especiales:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">LIKE</code>: búsqueda por coincidencia</li>
-        <li><code className="etiqueta-codigo">IN</code>: comprueba si un valor está en una lista</li>
-        <li><code className="etiqueta-codigo">BETWEEN</code>: rango entre dos valores</li>
-        <li><code className="etiqueta-codigo">IS NULL</code>: valores nulos</li>
-      </ul>
-
-      <p><strong>Operadores lógicos:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">AND</code>: se deben cumplir ambas condiciones</li>
-        <li><code className="etiqueta-codigo">OR</code>: se cumple una de las condiciones</li>
-        <li><code className="etiqueta-codigo">NOT</code>: niega una condición</li>
-      </ul>
-    </div>
-
-    {/* 3. CONDICIONES */}
-    <div className="cuadro-didactico__item">
-      <h5>3. Condiciones</h5>
-      <p>
-        Combinación de operadores + campos + valores.  
-        Permiten definir <strong>qué registros deben mostrarse</strong>.
-      </p>
-
-      <p><strong>Ejemplos típicos:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">edad &gt;= 18</code> → mayores de edad</li>
-        <li><code className="etiqueta-codigo">nombre LIKE 'A%'</code> → nombres que empiezan por A</li>
-        <li><code className="etiqueta-codigo">precio BETWEEN 10 AND 50</code> → precio entre 10 y 50</li>
-        <li><code className="etiqueta-codigo">pais IN ('España','Francia')</code> → coincide con uno de ellos</li>
-      </ul>
 
       <p>
-        Las condiciones se suelen usar dentro de <code className="etiqueta-codigo">WHERE</code> y
-        <code className="etiqueta-codigo">HAVING</code>.
+        Lo primero que aparece en una instrucción es siempre el <strong>comando principal</strong>
+        o <strong>verbo SQL</strong> (por ejemplo, 
+        <code className="etiqueta-codigo">SELECT</code>, 
+        <code className="etiqueta-codigo">INSERT</code>, 
+        <code className="etiqueta-codigo">UPDATE</code>, 
+        <code className="etiqueta-codigo">DELETE</code>, 
+        <code className="etiqueta-codigo">CREATE</code>…).  
+        Después de ese comando, añadimos <strong>cláusulas</strong>, 
+        <strong>operadores</strong>, <strong>condiciones</strong> y
+        <strong>funciones</strong> según lo que queramos hacer.
       </p>
-    </div>
-
-    {/* 4. FUNCIONES */}
-    <div className="cuadro-didactico__item">
-      <h5>4. Funciones</h5>
-      <p>
-        Son herramientas predefinidas que permiten <strong>calcular, transformar o formatear</strong> datos.
-      </p>
-
-      <p><strong>Funciones de agregación:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">COUNT()</code>: contar filas</li>
-        <li><code className="etiqueta-codigo">SUM()</code>: sumar valores</li>
-        <li><code className="etiqueta-codigo">AVG()</code>: media</li>
-        <li><code className="etiqueta-codigo">MAX()</code>: valor máximo</li>
-        <li><code className="etiqueta-codigo">MIN()</code>: valor mínimo</li>
-      </ul>
-
-      <p><strong>Funciones de texto:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">UPPER()</code>: convertir a mayúsculas</li>
-        <li><code className="etiqueta-codigo">LOWER()</code>: convertir a minúsculas</li>
-        <li><code className="etiqueta-codigo">CONCAT()</code>: unir cadenas</li>
-      </ul>
-
-      <p><strong>Funciones de fecha y hora:</strong></p>
-      <ul className="lista-simple">
-        <li><code className="etiqueta-codigo">NOW()</code>: fecha y hora actual</li>
-        <li><code className="etiqueta-codigo">CURDATE()</code>: fecha actual</li>
-        <li><code className="etiqueta-codigo">YEAR()</code>: extraer el año</li>
-      </ul>
-    </div>
-
-  </div>
-
-  <div className="cuadro-didactico__nota">
-    <strong>💡 Resumen:</strong>  
-    Las <strong>cláusulas</strong> definen la estructura, los <strong>operadores</strong> comparan,
-    las <strong>condiciones</strong> filtran y las <strong>funciones</strong> calculan y procesan información.
-  </div>
-</div>
 
 
-      <h3>📌 Ejemplo práctico</h3>
+      <div className="cuadro-didactico__grid">
+
+          {/* 0. COMANDO PRINCIPAL */}
+          <div className="cuadro-didactico__item">
+            <h5>0. Comando principal (verbo SQL)</h5>
+            <p>
+              Es la primera palabra de la instrucción y marca <strong>qué queremos hacer</strong>
+              con la base de datos.
+            </p>
+            <p><strong>Ejemplos habituales:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">SELECT</code> → consultar datos</li>
+              <li><code className="etiqueta-codigo">INSERT</code> → insertar registros nuevos</li>
+              <li><code className="etiqueta-codigo">UPDATE</code> → modificar registros existentes</li>
+              <li><code className="etiqueta-codigo">DELETE</code> → borrar registros</li>
+              <li><code className="etiqueta-codigo">CREATE</code> → crear tablas, bases de datos, vistas…</li>
+              <li><code className="etiqueta-codigo">ALTER</code> → modificar la estructura de una tabla</li>
+              <li><code className="etiqueta-codigo">DROP</code> → eliminar tablas o bases de datos</li>
+            </ul>
+          </div>
+
+          {/* 1. CLÁUSULAS */}
+          <div className="cuadro-didactico__item">
+            <h5>1. Cláusulas</h5>
+            <p>Son palabras clave que indican <strong>cómo se debe ejecutar</strong> el comando.</p>
+            <p><strong>Principales cláusulas:</strong></p>
+            <ul className="lista-simple">
+              <li>
+                <code className="etiqueta-codigo">FROM</code>: indica la tabla o tablas de las que
+                se obtienen los registros.
+              </li>
+              <li>
+                <code className="etiqueta-codigo">WHERE</code>: filtra los registros según una condición.
+              </li>
+              <li>
+                <code className="etiqueta-codigo">GROUP BY</code>: agrupa filas que comparten valores.
+              </li>
+              <li>
+                <code className="etiqueta-codigo">HAVING</code>: filtra los grupos antes creados.
+              </li>
+              <li>
+                <code className="etiqueta-codigo">ORDER BY</code>: ordena los resultados.
+              </li>
+              <li>
+                <code className="etiqueta-codigo">LIMIT</code>: limita el número de filas mostradas.
+              </li>
+              <li>
+                <code className="etiqueta-codigo">JOIN ... ON</code>: une tablas relacionadas entre sí.
+              </li>
+            </ul>
+          </div>
+
+          {/* 2. OPERADORES */}
+          <div className="cuadro-didactico__item">
+            <h5>2. Operadores</h5>
+            <p>Sirven para <strong>comparar, relacionar o combinar valores</strong> dentro de cláusulas.</p>
+
+            <p><strong>Operadores de comparación:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">=</code>: igual a</li>
+              <li><code className="etiqueta-codigo">&gt;</code>: mayor que</li>
+              <li><code className="etiqueta-codigo">&lt;</code>: menor que</li>
+              <li><code className="etiqueta-codigo">&gt;=</code>: mayor o igual</li>
+              <li><code className="etiqueta-codigo">&lt;=</code>: menor o igual</li>
+              <li><code className="etiqueta-codigo">&lt;&gt;</code>: distinto de</li>
+            </ul>
+
+            <p><strong>Operadores especiales:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">LIKE</code>: búsqueda por coincidencia</li>
+              <li><code className="etiqueta-codigo">IN</code>: comprueba si un valor está en una lista</li>
+              <li><code className="etiqueta-codigo">BETWEEN</code>: rango entre dos valores</li>
+              <li><code className="etiqueta-codigo">IS NULL</code>: valores nulos</li>
+            </ul>
+
+            <p><strong>Operadores lógicos:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">AND</code>: se deben cumplir ambas condiciones</li>
+              <li><code className="etiqueta-codigo">OR</code>: se cumple una de las condiciones</li>
+              <li><code className="etiqueta-codigo">NOT</code>: niega una condición</li>
+            </ul>
+          </div>
+
+          {/* 3. CONDICIONES */}
+          <div className="cuadro-didactico__item">
+            <h5>3. Condiciones</h5>
+            <p>
+              Combinación de operadores + campos + valores.  
+              Permiten definir <strong>qué registros deben mostrarse</strong>.
+            </p>
+
+            <p><strong>Ejemplos típicos:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">edad &gt;= 18</code> → mayores de edad</li>
+              <li><code className="etiqueta-codigo">nombre LIKE 'A%'</code> → nombres que empiezan por A</li>
+              <li><code className="etiqueta-codigo">precio BETWEEN 10 AND 50</code> → precio entre 10 y 50</li>
+              <li><code className="etiqueta-codigo">pais IN ('España','Francia')</code> → coincide con uno de ellos</li>
+            </ul>
+
+            <p>
+              Las condiciones se suelen usar dentro de <code className="etiqueta-codigo">WHERE</code> y
+              <code className="etiqueta-codigo">HAVING</code>.
+            </p>
+          </div>
+
+          {/* 4. FUNCIONES */}
+          <div className="cuadro-didactico__item">
+            <h5>4. Funciones</h5>
+            <p>
+              Son herramientas predefinidas que permiten <strong>calcular, transformar o formatear</strong> datos.
+            </p>
+
+            <p><strong>Funciones de agregación:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">COUNT()</code>: contar filas</li>
+              <li><code className="etiqueta-codigo">SUM()</code>: sumar valores</li>
+              <li><code className="etiqueta-codigo">AVG()</code>: media</li>
+              <li><code className="etiqueta-codigo">MAX()</code>: valor máximo</li>
+              <li><code className="etiqueta-codigo">MIN()</code>: valor mínimo</li>
+            </ul>
+
+            <p><strong>Funciones de texto:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">UPPER()</code>: convertir a mayúsculas</li>
+              <li><code className="etiqueta-codigo">LOWER()</code>: convertir a minúsculas</li>
+              <li><code className="etiqueta-codigo">CONCAT()</code>: unir cadenas</li>
+            </ul>
+
+            <p><strong>Funciones de fecha y hora:</strong></p>
+            <ul className="lista-simple">
+              <li><code className="etiqueta-codigo">NOW()</code>: fecha y hora actual</li>
+              <li><code className="etiqueta-codigo">CURDATE()</code>: fecha actual</li>
+              <li><code className="etiqueta-codigo">YEAR()</code>: extraer el año</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <div className="cuadro-didactico__nota">
+          <strong>💡 Resumen:</strong>  
+          El <strong>comando principal</strong> indica qué queremos hacer (SELECT, INSERT, CREATE…);  
+          las <strong>cláusulas</strong> definen la estructura de la instrucción;  
+          los <strong>operadores</strong> comparan valores;  
+          las <strong>condiciones</strong> filtran registros  
+          y las <strong>funciones</strong> calculan o transforman la información.
+        </div>
+        <hr />
+
+
+
+           <h3>📌 Ejemplo práctico</h3>
 
       <p>Si unimos todos los elementos, una instrucción SQL completa podría ser:</p>
 
-      <pre className="bloque-codigo">
-{`SELECT nombre, edad
-FROM alumnos
-WHERE edad >= 18
-ORDER BY nombre ASC;`}
-      </pre>
+COMANDO (qué quiero hacer)
+      │
+      ▼
+CLÁUSULAS (de dónde, cómo, en qué orden…)
+      │
+      ▼
+CONDICIONES (qué filas deben cumplirse)
+      │
+      ▼
+OPERADORES (cómo comparo valores)
+      │
+      ▼
+FUNCIONES (cálculos, textos, fechas…)
 
-      <p>
-        En este ejemplo:
-      </p>
 
-      <div className="contenedor-tabla">
-        <table className="tabla-datos tabla-datos--compacta">
-          <thead>
-            <tr>
-              <th>Elemento</th>
-              <th>Fragmento del ejemplo</th>
-              <th>Función</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Comando</td>
-              <td><code>SELECT</code></td>
-              <td>Indica que vamos a consultar datos</td>
-            </tr>
-            <tr>
-              <td>Cláusulas</td>
-              <td><code>FROM</code>, <code>WHERE</code>, <code>ORDER BY</code></td>
-              <td>Organizan cómo obtener y mostrar la información</td>
-            </tr>
-            <tr>
-              <td>Operador</td>
-              <td><code>&gt;=</code></td>
-              <td>Filtra datos según una condición</td>
-            </tr>
-            <tr>
-              <td>Función</td>
-              <td>—</td>
-              <td>No se usa ninguna en este ejemplo</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+<p>Ejemplos de estructura de una consulta:</p>
+SELECT nombre, edad             ← Comando + columnas
+FROM alumnos                    ← Cláusula FROM
+WHERE edad '=' 18                ← Condición + operador
+ORDER BY nombre ASC;            ← Cláusula ORDER BY
 
-    </article>
+
+</article>
   </details>
 </section>
+
+
+
+
+
+
+
 
 
             
@@ -1604,7 +2086,12 @@ ORDER BY nombre ASC;`}
 
 <p>
   Representa valores lógicos: verdadero o falso.
-</p>
+   En MySQL, el tipo BOOLEAN realmente es un alias de TINYINT(1), por lo que sus valores se almacenan como 1 para TRUE y 0 para FALSE. <p>
+  Se usa para campos que solo pueden tener dos estados, como “activo/inactivo”, “verificado/no verificado” o “acepta términos”.
+   </p>
+        Un booleano no nace en TRUE por defecto, a menos que el desarrollador lo indique explícitamente mediante DEFAULT 1. Si la columna permite valores nulos y no tiene un valor por defecto, el registro se creará con NULL; en cambio, si la columna es NOT NULL y no se especifica un valor, MySQL asignará automáticamente 0 (FALSE). Por ello, es importante definir claramente el DEFAULT del campo para evitar comportamientos inesperados y asegurar que los registros comiencen con el estado que realmente necesitas.</p>
+
+
 
 <div className="contenedor-tabla">
   <table className="tabla-datos tabla-datos--compacta">
@@ -1793,47 +2280,13 @@ USE escuela;`}
 
 <hr />
 
-<h3>📘 Ejemplo: tabla <code>alumnos</code></h3>
-
-<p>
-  Vamos a crear una tabla muy sencilla llamada <strong>alumnos</strong> con estos datos:
-</p>
-
-<div className="contenedor-tabla">
-  <table className="tabla-datos tabla-datos--compacta">
-    <thead>
-      <tr>
-        <th>Campo</th>
-        <th>Tipo</th>
-        <th>Descripción</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>id_alumno</strong></td>
-        <td>INT</td>
-        <td>Identificador único (clave primaria)</td>
-      </tr>
-      <tr>
-        <td><strong>nombre</strong></td>
-        <td>VARCHAR(100)</td>
-        <td>Nombre del alumno</td>
-      </tr>
-      <tr>
-        <td><strong>email</strong></td>
-        <td>VARCHAR(150)</td>
-        <td>Correo electrónico</td>
-      </tr>
-      <tr>
-        <td><strong>fecha_registro</strong></td>
-        <td>DATE</td>
-        <td>Fecha de alta del alumno</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-<p>
+      {/* ================================
+         3.3 GUÍA PHPMYADMIN
+      ================================= */}
+      <section className="section" id="guiar-crear-tablas-phpmyadmin">
+        <details>
+          <summary>3.3. Guía: cómo rellenar la estructura de una tabla en phpMyAdmin</summary>
+          <p>
   Antes de escribir el código SQL, vamos a recordar una regla básica de todas las tablas:
 </p>
 
@@ -1842,6 +2295,266 @@ USE escuela;`}
     Toda tabla debe tener una <strong>clave primaria</strong> que identifique de forma única cada registro.
   </p>
 </div>
+
+
+          <article className="card">
+            <h2>Guía: cómo rellenar la estructura de una tabla en phpMyAdmin</h2>
+
+            <p>
+              Cuando creamos una tabla desde <strong>phpMyAdmin</strong> tenemos que ir
+              completando cada fila de la estructura: nombre del campo, tipo de dato,
+              si admite valores nulos, índices, etc. Esta guía resume qué significa
+              cada opción y qué debemos escribir en cada caso.
+            </p>
+
+            {/* Tabla principal: significado de cada campo */}
+            <h3>1. Campos básicos de la estructura</h3>
+
+            <div className="contenedor-tabla">
+              <table className="tabla-datos tabla-datos--compacta">
+                <thead>
+                  <tr>
+                    <th>Elemento de la columna</th>
+                    <th>¿Qué significa?</th>
+                    <th>¿Qué debes poner?</th>
+                    <th>Ejemplos</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Nombre</strong></td>
+                    <td>Nombre del campo (atributo) dentro de la tabla.</td>
+                    <td>Describe el dato que va a guardar.</td>
+                    <td>
+                      <code className="etiqueta-codigo">id</code>,{" "}
+                      <code className="etiqueta-codigo">nombre</code>,{" "}
+                      <code className="etiqueta-codigo">precio</code>,{" "}
+                      <code className="etiqueta-codigo">categoria_id</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tipo</strong></td>
+                    <td>Tipo de datos que almacenará la columna.</td>
+                    <td>Selecciona en el desplegable el tipo adecuado.</td>
+                    <td>
+                      <code className="etiqueta-codigo">INT</code>,{" "}
+                      <code className="etiqueta-codigo">VARCHAR</code>,{" "}
+                      <code className="etiqueta-codigo">DECIMAL</code>,{" "}
+                      <code className="etiqueta-codigo">DATE</code>,{" "}
+                      <code className="etiqueta-codigo">ENUM</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Longitud/Valores</strong></td>
+                    <td>
+                      Tamaño máximo del dato o lista de valores permitidos (según el tipo).
+                    </td>
+                    <td>
+                      Para <code className="etiqueta-codigo">VARCHAR</code> escribe el nº de
+                      caracteres. Para <code className="etiqueta-codigo">INT</code> se puede
+                      dejar vacío. Para <code className="etiqueta-codigo">ENUM</code> escribe
+                      aquí los valores.
+                    </td>
+                    <td>
+                      <code className="etiqueta-codigo">100</code> ·{" "}
+                      <code className="etiqueta-codigo">11</code> ·{" "}
+                      <code className="etiqueta-codigo">
+                        'pendiente','en_proceso','enviado'
+                      </code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Predeterminado</strong></td>
+                    <td>
+                      Valor que se utilizará automáticamente si no se indica otro al insertar.
+                    </td>
+                    <td>
+                      Puedes elegir <em>Ninguno</em> o un valor definido por el usuario.
+                    </td>
+                    <td>
+                      <code className="etiqueta-codigo">0</code>,{" "}
+                      <code className="etiqueta-codigo">'pendiente'</code>,{" "}
+                      <code className="etiqueta-codigo">CURRENT_TIMESTAMP</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Cotejamiento</strong></td>
+                    <td>
+                      Juego de caracteres y reglas de ordenación para campos de texto.
+                    </td>
+                    <td>
+                      Normalmente lo dejamos vacío y se usa el valor por defecto de la BD.
+                    </td>
+                    <td>
+                      <code className="etiqueta-codigo">utf8_general_ci</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Atributos</strong></td>
+                    <td>Modificadores del tipo de dato.</td>
+                    <td>Opcional; suele dejarse en blanco.</td>
+                    <td>
+                      <code className="etiqueta-codigo">UNSIGNED</code>, etc.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Nulo</strong></td>
+                    <td>
+                      Indica si la columna puede quedar sin valor ("NULL") o es obligatoria.
+                    </td>
+                    <td>
+                      ✅ Casilla marcada → el campo <strong>puede ser NULL</strong> (no
+                      obligatorio).<br />
+                      ⛔ Casilla sin marcar → el campo es{" "}
+                      <strong>NOT NULL</strong> (obligatorio).
+                    </td>
+                    <td>
+                      ✔ → puede quedar vacío <br />
+                      ✘ → siempre debe tener un valor
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Índice</strong></td>
+                    <td>
+                      Sirve para marcar claves primarias, únicas o columnas que se usan
+                      para búsquedas y relaciones.
+                    </td>
+                    <td>
+                      Usa <strong>PRIMARY</strong> para la clave primaria,{" "}
+                      <strong>UNIQUE</strong> si no se pueden repetir valores,{" "}
+                      <strong>INDEX</strong> para otros índices (en columnas que serán
+                      foreign key se suele marcar como INDEX).
+                    </td>
+                    <td>
+                      <code className="etiqueta-codigo">PRIMARY</code>,{" "}
+                      <code className="etiqueta-codigo">UNIQUE</code>,{" "}
+                      <code className="etiqueta-codigo">INDEX</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>A_I (Auto Increment)</strong></td>
+                    <td>
+                      Hace que el valor numérico aumente automáticamente en cada nuevo
+                      registro.
+                    </td>
+                    <td>
+                      Se utiliza normalmente en la clave primaria numérica de la tabla.
+                    </td>
+                    <td>
+                      <code className="etiqueta-codigo">id INT AUTO_INCREMENT</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>Comentarios, Virtualidad, Mover columna…</strong></td>
+                    <td>
+                      Opciones avanzadas de documentación o posición de la columna.
+                    </td>
+                    <td>Son opcionales; pueden dejarse vacías.</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* ENUM */}
+            <h3>2. Cómo crear un campo <code className="etiqueta-codigo">ENUM</code></h3>
+
+            <div className="contenedor-tabla">
+              <table className="tabla-datos tabla-datos--compacta">
+                <thead>
+                  <tr>
+                    <th>Paso</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1</strong></td>
+                    <td>
+                      En la columna que quieras, en <strong>Tipo</strong> elige{" "}
+                      <code className="etiqueta-codigo">ENUM</code>.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>2</strong></td>
+                    <td>
+                      En <strong>Longitud/Valores</strong> escribe los valores permitidos,
+                      entre comillas simples y separados por comas:<br />
+                      <code className="etiqueta-codigo">
+                        'alta','media','baja'
+                      </code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>3</strong></td>
+                    <td>
+                      Decide si el campo puede ser nulo: marca o no la casilla{" "}
+                      <strong>Nulo</strong>.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>4</strong></td>
+                    <td>
+                      Si quieres un valor por defecto, en{" "}
+                      <strong>Predeterminado</strong> elige “Definido por el usuario” y
+                      escribe, por ejemplo,{" "}
+                      <code className="etiqueta-codigo">pendiente</code>.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </details>
+      </section>
+
+      {/* ================================
+         EJEMPLO TABLA CATEGORÍAS
+      ================================= */}
+      <section className="section" id="ejemplo-tabla-categorias">
+        <details>
+          <summary>Ejemplo: tabla categorías (tabla padre)</summary>
+
+          <article className="card">
+            <h4>Ejemplo: tabla categorías (tabla padre)</h4>
+
+            <pre className="bloque-codigo">
+              <code>{`CREATE TABLE categorias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL
+);`}</code>
+            </pre>
+
+            <h4>Explicación de esta estructura:</h4>
+
+            <ul>
+              <li>
+                <strong>id INT AUTO_INCREMENT PRIMARY KEY</strong><br />
+                Este campo es la clave primaria.  
+                Es numérica y se incrementa automáticamente en cada inserción.
+              </li>
+
+              <li>
+                <strong>¿Es obligatorio poner AUTO_INCREMENT?</strong><br />
+                Sí. MySQL no hace AUTO_INCREMENT por defecto.  
+                Si no lo defines tú, MySQL no creará números secuenciales.
+              </li>
+
+              <li>
+                <strong>¿Es obligatorio incluir la id en un INSERT?</strong><br />
+                No. Si el campo tiene AUTO_INCREMENT, se genera solo.
+              </li>
+
+              <li>
+                <strong>nombre VARCHAR NOT NULL</strong><br />
+                Obligatoria. Si no la especificas, el INSERT fallará.
+              </li>
+            </ul>
+          </article>
+        </details>
+      </section>
+
+
 
 <hr />
 
@@ -1871,145 +2584,9 @@ USE escuela;`}
 
 <hr />
 
-<h3>📍 Crear la tabla desde phpMyAdmin (modo gráfico)</h3>
 
-<ol>
-  <li>Accede a <code>http://localhost/phpmyadmin</code>.</li>
-  <li>En el panel izquierdo, selecciona la base de datos.</li>
-  <li>Haz clic en la pestaña <strong>“Crear tabla”</strong>.</li>
-  <li>Escribe el nombre: <strong>alumnos</strong>.</li>
-  <li>Indica el número de columnas: <strong>4</strong>.</li>
-  <li>Rellena cada campo como aparece en la tabla anterior.</li>
-  <li>Marca <strong>id_alumno</strong> como <strong>PRIMARY KEY</strong> y activa <strong>A_I (AUTO_INCREMENT)</strong>.</li>
-  <li>Guarda los cambios con <strong>Crear</strong>.</li>
-</ol>
 
-<section class="card" id="tabla-contenedor">
-  <h3>📌 Cómo rellenar los campos al crear una tabla en phpMyAdmin</h3>
 
-  <p>
-    Cuando creamos una tabla desde phpMyAdmin, debemos completar varias columnas para definir
-    correctamente cada campo. Esta tabla resume qué significa cada apartado y qué debemos escribir.
-  </p>
-
-  <table class="tabla-datos">
-    <thead>
-      <tr>
-        <th>Columna</th>
-        <th>¿Qué poner?</th>
-        <th>Ejemplo</th>
-        <th>Descripción</th>
-      </tr>
-    </thead>
-
-    <tbody>
-
-     
-      <tr>
-        <td><strong>Nombre</strong></td>
-        <td>Nombre de la columna</td>
-        <td><code>id_libro</code>, <code>titulo</code></td>
-        <td>Identifica la columna dentro de la tabla. Debe ser único.</td>
-      </tr>
-
-      
-      <tr>
-        <td><strong>Tipo</strong></td>
-        <td>Tipo de dato del campo</td>
-        <td><code>INT</code>, <code>VARCHAR</code>, <code>DATE</code></td>
-        <td>
-          MySQL necesita saber si almacenará texto, números, fechas, decimales, etc.
-        </td>
-      </tr>
-
-     
-      <tr>
-        <td><strong>Longitud / Valores</strong></td>
-        <td>Solo si el tipo lo requiere</td>
-        <td><code>150</code> (para VARCHAR),<code>10,2</code> (para DECIMAL)</td>
-        <td>
-          Para tipos como VARCHAR o DECIMAL debemos indicar el tamaño.  
-          Para INT, DATE o BOOLEAN → <strong>se deja vacío</strong>.
-        </td>
-      </tr>
-
-      
-      <tr>
-        <td><strong>Predeterminado</strong></td>
-        <td>Valor por defecto</td>
-        <td><code>1</code>, <code>NULL</code></td>
-        <td>
-          Se usa si queremos que el campo tenga un valor automático si no se especifica ninguno.
-        </td>
-      </tr>
-
-      
-      <tr>
-        <td><strong>Atributos</strong></td>
-        <td>Opcional</td>
-        <td><code>UNSIGNED</code></td>
-        <td>
-          “UNSIGNED” indica que el número no puede ser negativo.  
-          Se recomienda en claves primarias.
-        </td>
-      </tr>
-
-      
-      <tr>
-        <td><strong>Nulo</strong></td>
-        <td>¿Permitir valores vacíos?</td>
-        <td><code>NOT NULL</code></td>
-        <td>
-          Si está marcado, el campo puede quedarse vacío.  
-          Si NO está marcado, el campo debe rellenarse siempre.
-        </td>
-      </tr>
-
-      
-      <tr>
-        <td><strong>Índice</strong></td>
-        <td>Tipo de índice</td>
-        <td><code>PRIMARY</code>, <code>UNIQUE</code>, <code>FOREIGN KEY</code></td>
-        <td>
-          PRIMARY es obligatorio y debe existir al menos uno en cada tabla.
-        </td>
-      </tr>
-
-     
-      <tr>
-        <td><strong>A_I (Auto Incremento)</strong></td>
-        <td>Marcar solo en claves numéricas</td>
-        <td><code>AUTO_INCREMENT</code></td>
-        <td>
-          El valor aumenta automáticamente con cada nuevo registro.  
-          Ideal para columnas <strong>id</strong>.
-        </td>
-      </tr>
-
-     
-      <tr>
-        <td><strong>Motor de almacenamiento</strong></td>
-        <td><code>InnoDB</code></td>
-        <td></td>
-        <td>
-          Permite claves foráneas y asegura integridad referencial.  
-          Es el recomendado.
-        </td>
-      </tr>
-
-     
-      <tr>
-        <td><strong>Cotejamiento</strong></td>
-        <td><code>utf8mb4_general_ci</code></td>
-        <td></td>
-        <td>
-          Gestiona acentos y caracteres especiales.  
-          Normalmente se deja el valor por defecto.
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
 
   <div class="callout callout--success">
     <p>
@@ -2030,18 +2607,13 @@ USE escuela;`}
   específico no se repita en la tabla.
 </p>
 
-</section>
 
 
 
 
 
-<div className="callout callout--success">
-  <p>
-    phpMyAdmin genera automáticamente el código SQL equivalente.  
-    Puedes verlo en la pestaña <strong>“SQL”</strong> después de crear la tabla.
-  </p>
-</div>
+
+
 
 <hr />
 

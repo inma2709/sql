@@ -44,6 +44,15 @@ body {
   color: var(--color-texto);
   line-height: 1.5;
 }
+.section p {
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+.callout p {
+  line-height: 1.65;
+}
+
+
 
 /* ================================
    🔗 ENLACE SALTAR CONTENIDO
@@ -334,6 +343,12 @@ body {
   font-size: 0.95rem;
   color: #333;
 }
+
+.cuadro-didactico__item--full {
+  grid-column: 1 / -1;   /* Ocupa todas las columnas del grid */
+  width: 100%;
+}
+
 
 .cuadro-didactico__nota {
   margin-top: 1.5rem;

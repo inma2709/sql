@@ -141,39 +141,39 @@ export default function Bloque3() {
 
       <ol className="lista-simple">
         <li>
-          <strong>1. Diseñar el modelo ERL</strong>  
-          Definimos entidades, atributos y relaciones (clientes, productos, pedidos, tabla intermedia).
+          <strong>Diseñar el modelo ERL</strong> Definimos entidades, atributos y relaciones (clientes, productos, pedidos, tabla intermedia).
         </li>
         <li>
-          <strong>2. Crear la base de datos vacía</strong>  
+          <strong>Crear la base de datos vacía</strong>  
+
           Solo la BBDD (ej. <code>bazar</code>) desde phpMyAdmin.
         </li>
         <li>
-          <strong>3. Crear un script de inicialización con Node.js</strong>  
-          Este script creará todas las tablas automáticamente (clientes, productos, pedidos, pedidos_productos).
+          <strong> Crear un script de inicialización con Node.js</strong>  
+          Este script creará todas las tablas automáticamente (clientes, productos, pedidos, pedidos_productos, categorias).
         </li>
         <li>
-          <strong>4. Montar el proyecto Node + Express</strong>  
+          <strong>Montar el proyecto Node + Express</strong>  
           Con estructura MVC: <code>config/</code>, <code>models/</code>, <code>controllers/</code>, <code>routes/</code>.
         </li>
         <li>
-          <strong>5. Ejecutar el script</strong>  
-          <code>npm run init-db</code> para que Node.js construya todas las tablas.
+          <strong> Ejecutar el script</strong>  
+          <code> npm run init-db </code> para que Node.js construya todas las tablas.
         </li>
         <li>
-          <strong>6. Crear el CRUD de productos</strong>  
+          <strong>Crear el CRUD de productos</strong>  
           Con borrado lógico, categoría y URL de imagen.
         </li>
         <li>
-          <strong>7. Crear el CRUD de clientes</strong>  
+          <strong> Crear el CRUD de clientes</strong>  
           Preparando el sistema para registro y login.
         </li>
         <li>
-          <strong>8. Crear el CRUD de pedidos</strong>  
-          Incluye su tabla intermedia y la gestión de estados.
+          <strong> Crear el CRUD de pedidos</strong>  
+          Incluye su tabla intermedia, la gestión de estados y las categorías.
         </li>
         <li>
-          <strong>9. (Opcional) Añadir autenticación</strong>  
+          <strong> Añadir autenticación</strong>  
           Registro con contraseña encriptada y login con token.
         </li>
       </ol>
@@ -254,7 +254,7 @@ export default function Bloque3() {
 
 <div className="nota">
   Es muy importante respetar los nombres de carpetas y archivos, porque luego 
-  los <code>require()</code> y los <code>import</code> dependen de esas rutas.
+  los <code>require()</code> y los <code> import </code> dependen de esas rutas.
 </div>
 
 <h3>🧩 ¿Cómo funciona el patrón MVC en nuestro backend?</h3>
@@ -337,304 +337,7 @@ export default function Bloque3() {
 </section>
 
         
-        {/* ====================== 
-  3.X SCRIPT DE INICIALIZACIÓN DE TABLAS
-====================== */}
-<section className="section" id="b3-init-script">
-  <details>
-    <summary>Script de inicialización para crear las tablas del proyecto</summary>
-
-    <article className="card">
-        
-      <h3>🧩 Actividad: definir el modelo entidad–relación del bazar</h3>
-
-<p>
-A partir de la descripción del proyecto <strong>bazar</strong>, define el modelo
-entidad–relación (ERL) usando rectángulos para las entidades y óvalos para los
-atributos. No te preocupes todavía por el código SQL, solo por el diseño.
-</p>
-
-<p>Requisitos del sistema:</p>
-
-<ul className="lista-simple">
-  <li>La base de datos debe gestionar <strong>clientes</strong>, <strong>productos</strong> y <strong>pedidos</strong>.</li>
-  <li>Un <strong>cliente</strong> puede hacer muchos pedidos, pero un pedido solo puede pertenecer a un cliente.</li>
-  <li>Cada <strong>pedido</strong> puede incluir muchos productos y cada producto puede aparecer en muchos pedidos.</li>
-  <li>Para representar la relación muchos a muchos entre pedidos y productos, se utilizará una tabla intermedia (por ejemplo, <code>lineas_pedido</code> o <code>pedidos_productos</code>).</li>
-  <li>Los <strong>productos</strong> deben almacenar: nombre, precio, stock, una categoría (texto) y una URL de imagen.</li>
-  <li>Los <strong>pedidos</strong> deben tener fecha y estado, con valores como: pendiente, en_proceso, terminado.</li>
-  <li>Los <strong>clientes</strong> deben poder registrarse más adelante, por lo que habrá que guardar al menos nombre, email y una contraseña (password).</li>
-  <li>Queremos poder aplicar un <strong>borrado lógico</strong> de productos, de modo que se puedan desactivar sin borrarlos físicamente.</li>
-</ul>
-
-<p>
-Con esta información, realiza el diagrama ERL indicando:
-</p>
-
-<ul className="lista-simple">
-  <li>Las <strong>entidades</strong> principales (clientes, productos, pedidos, tabla intermedia).</li>
-  <li>Los <strong>atributos</strong> más importantes de cada entidad (incluyendo la clave primaria).</li>
-  <li>Las <strong>relaciones</strong> entre entidades y sus <strong>cardinalidades</strong> (1 a N, N a M).</li>
-</ul>
-
-<div className="nota">
-  Recuerda: todavía no estamos pensando en tipos de datos concretos
-  (VARCHAR, INT...), solo en <strong>qué información</strong> queremos almacenar
-  y cómo se relacionan las entidades entre sí.
-</div>
-      <h2> Script de inicialización para crear las tablas del proyecto</h2>
-
-      <p>
-        En este bloque vamos a trabajar con varias tablas relacionadas:
-        <strong> clientes</strong>, <strong>productos</strong>,{" "}
-        <strong>pedidos</strong> y una tabla intermedia{" "}
-        <strong>pedidos_productos</strong> (o <em>pedidos_creados</em>) que nos permitirá
-        reflejar que un pedido puede tener muchos productos y un producto puede aparecer en muchos pedidos.
-      </p>
-
-      <p>
-        Además, los productos admitirán una <strong>URL de imagen</strong>, los pedidos
-        tendrán <strong>estado</strong> (<em>pendiente, en proceso, terminado</em>) y{" "}
-        <strong>fecha</strong>, y los clientes podrán registrarse más adelante para
-        autenticarse y ver sus pedidos.
-      </p>
-
-      <div className="cuadro-didactico">
-        <h4>¿Por qué usar un script de inicialización?</h4>
-        <div className="cuadro-didactico__grid">
-          <div className="cuadro-didactico__item">
-            <h5>Repetible</h5>
-            <p>
-              El script se puede ejecutar en cualquier equipo para
-              crear las tablas con la misma estructura.
-            </p>
-          </div>
-          <div className="cuadro-didactico__item">
-            <h5>Rápido</h5>
-            <p>
-              No hace falta ir creando tablas a mano en phpMyAdmin: basta con lanzar
-              un comando de Node.
-            </p>
-          </div>
-          <div className="cuadro-didactico__item">
-            <h5>Controlado</h5>
-            <p>
-              El código que crea las tablas queda guardado en el proyecto, por lo que
-              es fácil revisarlo, versionarlo en Git y mejorarlo.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <h3>1️⃣ ¿Debe existir la base de datos antes de ejecutar el script?</h3>
-
-      <p>
-        En este curso vamos a seguir una estrategia sencilla y didáctica:
-      </p>
-
-      <ul className="lista-simple">
-        <li>
-          La <strong>base de datos</strong> (por ejemplo{" "}
-          <code className="etiqueta-codigo">bazar</code>) se crea una sola vez desde
-          <strong> phpMyAdmin</strong> o con un comando SQL simple:
-          <pre className="bloque-codigo">
-            <code>{`CREATE DATABASE bazar;`}</code>
-          </pre>
-        </li>
-        <li>
-          El archivo <code className="etiqueta-codigo">.env</code> debe apuntar a esa
-          base de datos:
-          <pre className="bloque-codigo">
-            <code>
-{`DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=
-DB_NAME=bazar
-DB_PORT=3306
-
-PORT=3000`}
-            </code>
-          </pre>
-        </li>
-        <li>
-          El <strong>script de inicialización</strong> se encarga de crear{" "}
-          <em>las tablas dentro de esa base de datos</em>: clientes, productos,
-          pedidos y la tabla intermedia de pedidos.
-        </li>
-      </ul>
-
-      <div className="nota nota-importante">
-        Técnicamente se podría crear también la base de datos desde Node, pero es más claro separar:
-        <strong> 1) crear la BBDD en phpMyAdmin</strong> y{" "}
-        <strong>2) dejar que el script cree las tablas</strong>.
-      </div>
-
-      <h3>2️⃣ Crear el archivo <code>init-db.js</code></h3>
-
-      <p>
-        Vamos a crear un archivo llamado{" "}
-        <code className="etiqueta-codigo">init-db.js</code> en la raíz del proyecto.
-        Este archivo se conectará a MySQL usando el mismo{" "}
-        <code className="etiqueta-codigo">pool</code> que ya tenemos en{" "}
-        <code className="etiqueta-codigo">config/db.js</code> y ejecutará los{" "}
-        <code className="etiqueta-codigo">CREATE TABLE</code> necesarios.
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`// init-db.js
-require('dotenv').config();
-const pool = require('./config/db');
-
-async function crearTablas() {
-  try {
-    // Aquí definiremos las tablas de nuestro proyecto:
-    // clientes, productos, pedidos y pedidos_productos (tabla intermedia).
-
-    // Ejemplo de estructura general (más adelante la detallamos):
-    await pool.query(\`
-      CREATE TABLE IF NOT EXISTS clientes (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nombre VARCHAR(100) NOT NULL,
-        email VARCHAR(150) NOT NULL UNIQUE,
-        password VARCHAR(255) NULL,
-        creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    \`);
-
-    await pool.query(\`
-      CREATE TABLE IF NOT EXISTS productos (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        nombre VARCHAR(100) NOT NULL,
-        precio DECIMAL(10,2) NOT NULL,
-        stock INT DEFAULT 0,
-        categoria VARCHAR(100) DEFAULT NULL,
-        imagen_url VARCHAR(255) DEFAULT NULL,
-        activo TINYINT(1) DEFAULT 1
-      )
-    \`);
-
-    await pool.query(\`
-      CREATE TABLE IF NOT EXISTS pedidos (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        cliente_id INT NOT NULL,
-        estado ENUM('pendiente','en_proceso','terminado') DEFAULT 'pendiente',
-        fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (cliente_id) REFERENCES clientes(id)
-      )
-    \`);
-
-    await pool.query(\`
-      CREATE TABLE IF NOT EXISTS pedidos_productos (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        pedido_id INT NOT NULL,
-        producto_id INT NOT NULL,
-        cantidad INT DEFAULT 1,
-        FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
-        FOREIGN KEY (producto_id) REFERENCES productos(id)
-      )
-    \`);
-
-    console.log('✅ Tablas creadas (si no existían).');
-    process.exit(0);
-  } catch (error) {
-    console.error('❌ Error al crear las tablas:', error);
-    process.exit(1);
-  }
-}
-
-crearTablas();`}
-        </code>
-      </pre>
-
-      <div className="callout">
-        En lecciones posteriores detallaremos la estructura de cada tabla y la
-        relación entre ellas (clientes, productos, pedidos y la tabla intermedia).
-        De momento, lo importante es entender la <strong>idea del script</strong>:
-        un único archivo que prepara el “esqueleto” de la base de datos.
-      </div>
-
-      <h3>3️⃣ Añadir un script en <code>package.json</code></h3>
-
-      <p>
-        Para no tener que escribir{" "}
-        <code className="etiqueta-codigo">node init-db.js</code> cada vez, añadimos
-        un script cómodo en <code className="etiqueta-codigo">package.json</code>:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`"scripts": {
-  "start": "node server.js",
-  "dev": "nodemon server.js",
-  "init-db": "node init-db.js"
-}`}
-        </code>
-      </pre>
-
-      <p>
-        A partir de ahora, para crear las tablas del proyecto, basta con ejecutar:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>npm run init-db</code>
-      </pre>
-
-      <div className="nota nota-importante">
-        Recomendación:
-        <ul className="lista-simple">
-          <li>Primero: crear la BBDD <code>bazar</code> en phpMyAdmin.</li>
-          <li>
-            Comprobar que el archivo <code>.env</code> apunta a{" "}
-            <code>DB_NAME=bazar</code>.
-          </li>
-          <li>
-            Ejecutar <code>npm run init-db</code> y revisar en phpMyAdmin que se
-            han creado las tablas.
-          </li>
-        </ul>
-      </div>
-
-      <h3>🧪 Actividad guiada</h3>
-      <ul className="lista-simple">
-        <li>
-          Crea la base de datos{" "}
-          <code className="etiqueta-codigo">bazar</code> y configure su{" "}
-          <code>.env</code>.
-        </li>
-        <li>
-          Que añadan el archivo <code>init-db.js</code> al proyecto y el script{" "}
-          <code>"init-db"</code> en <code>package.json</code>.
-        </li>
-        <li>
-          Que ejecuten <code>npm run init-db</code> y comprueben en phpMyAdmin las
-          tablas <strong>clientes</strong>, <strong>productos</strong>,{" "}
-          <strong>pedidos</strong> y <strong>pedidos_productos</strong>.
-        </li>
-      </ul>
-
-      <h3>✅ Resumen de la sección</h3>
-      <ul className="lista-simple">
-        <li>Hemos visto qué tablas formarán parte del proyecto final (bazar).</li>
-        <li>Hemos entendido la utilidad de un script de inicialización.</li>
-        <li>
-          Hemos creado un archivo <code>init-db.js</code> que construye las tablas
-          necesarias si no existen.
-        </li>
-        <li>
-          Hemos añadido el comando <code>npm run init-db</code> para automatizar
-          la creación de tablas.
-        </li>
-        <li>
-          Hemos aclarado que la base de datos (por ejemplo,{" "}
-          <code>bazar</code>) debe existir antes de ejecutar el script.
-        </li>
-      </ul>
-
-
-    </article>
-  </details>
-</section>
+ 
 
 
        {/* ====================== 
@@ -738,50 +441,95 @@ mkdir routes`}
       </div>
 
       {/* 2️⃣ Paso 2: Crear el paquete y las dependencias */}
-      <h3>2️⃣ Paso 2: Crear el paquete y las dependencias</h3>
+    <h3>2️⃣ Paso 2: Crear el paquete y las dependencias</h3>
 
-      <p>
-        Ahora convertimos esta carpeta en un proyecto Node y añadimos las dependencias básicas
-        que usaremos en todos nuestros backends:
-      </p>
+<p>
+  Ahora convertimos esta carpeta en un proyecto Node y añadimos las dependencias básicas
+  que usaremos en todos nuestros backends:
+</p>
 
-      <ul className="lista-simple">
-        <li>
-          <code className="etiqueta-codigo">express</code>: para crear el servidor y las rutas.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">cors</code>: para permitir que un frontend (por ejemplo,
-          un proyecto en React en <code>http://localhost:5173</code>) pueda hacer peticiones a este
-          backend aunque estén en orígenes distintos.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">dotenv</code>: para leer variables de entorno desde
-          el archivo <code>.env</code>.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">mysql2</code>: para conectarnos a MySQL usando{" "}
-          <code>async/await</code>.
-        </li>
-        <li>
-          <code className="etiqueta-codigo">nodemon</code>: (solo desarrollo) reinicia el servidor
-          automáticamente cada vez que guardemos cambios.
-        </li>
-      </ul>
+<ul className="lista-simple">
+  <li>
+    <code className="etiqueta-codigo">express</code>: para crear el servidor y las rutas.
+  </li>
+  <li>
+    <code className="etiqueta-codigo">cors</code>: para permitir que un frontend (por ejemplo,
+    un proyecto en React en <code>http://localhost:5173</code>) pueda hacer peticiones a este
+    backend aunque estén en orígenes distintos.
+  </li>
+  <li>
+    <code className="etiqueta-codigo">dotenv</code>: para leer variables de entorno desde
+    el archivo <code>.env</code>.
+  </li>
+  <li>
+    <code className="etiqueta-codigo">mysql2</code>: para conectarnos a MySQL usando{" "}
+    <code>async/await</code>.
+  </li>
+  <li>
+    <code className="etiqueta-codigo">nodemon</code>: (solo desarrollo) reinicia el servidor
+    automáticamente cada vez que guardemos cambios.
+  </li>
+</ul>
 
-      <pre className="bloque-codigo">
-        <code>
+<pre className="bloque-codigo">
+  <code>
 {`npm init -y
 
 npm install express cors dotenv mysql2
 npm install --save-dev nodemon`}
-        </code>
-      </pre>
+  </code>
+</pre>
 
-      <div className="callout">
-        <strong>Recuerda:</strong> las dependencias normales van en{" "}
-        <code>dependencies</code> y las de desarrollo, como nodemon, en{" "}
-        <code>devDependencies</code>.
-      </div>
+<div className="callout">
+  <strong>Recuerda:</strong> las dependencias normales van en{" "}
+  <code>dependencies</code> y las de desarrollo, como nodemon, en{" "}
+  <code>devDependencies</code>.
+</div>
+
+<h4>🛠 Activar ES Modules (import/export)</h4>
+<p>
+  Por defecto, Node usa <strong>require</strong> y <strong>module.exports</strong>.  
+  Sin embargo, en nuestros proyectos vamos a trabajar con <strong>ES Modules</strong>,  
+  es decir, <code>import</code> y <code>export</code>.
+</p>
+
+<p>Para activar este modo, abrimos el archivo <code>package.json</code> y añadimos la propiedad:</p>
+
+<pre className="bloque-codigo">
+  <code>
+{`{
+  "name": "bazar-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",   // ← Añadir esta línea
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0",
+    "mysql2": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}`}
+  </code>
+</pre>
+
+<p>
+  A partir de ahora podremos usar en todas nuestras rutas y archivos:
+</p>
+
+<pre className="bloque-codigo">
+  <code>
+{`import express from 'express';
+import productosRouter from './routes/productos.routes.js';`}
+  </code>
+</pre>
+
 
       {/* 3️⃣ Paso 3: Crear .env, config/db.js y .gitignore */}
       <h3>3️⃣ Paso 3: Crear el archivo .env, config/db.js y .gitignore</h3>
@@ -816,11 +564,10 @@ PORT=3000`}
         <code className="etiqueta-codigo">db.js</code> con la configuración de la conexión
         a MySQL:
       </p>
-
-      <pre className="bloque-codigo">
-        <code>
+<pre className="bloque-codigo">
+  <code>
 {`// config/db.js
-const mysql = require('mysql2/promise');
+import mysql from 'mysql2/promise';
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -833,9 +580,9 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-module.exports = pool;`}
-        </code>
-      </pre>
+export default pool;`}
+  </code>
+</pre>
 
       <div className="cuadro-didactico">
         <h4>¿Qué hace este archivo?</h4>
@@ -886,15 +633,15 @@ module.exports = pool;`}
         <code className="etiqueta-codigo">server.js</code> en la raíz del proyecto:
       </p>
 
-      <pre className="bloque-codigo">
-        <code>
+     <pre className="bloque-codigo">
+  <code>
 {`// server.js
-require('dotenv').config();
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
 
-const express = require('express');
-const cors = require('cors');
-const pool = require('./config/db');
-const productosRoutes = require('./routes/productos.routes');
+import pool from './config/db.js';
+import productosRoutes from './routes/productos.routes.js';
 
 const app = express();
 
@@ -925,7 +672,7 @@ app.get('/api/probar-bbdd', async (req, res) => {
   }
 });
 
-// Rutas de productos (las definiremos en routes/productos.routes.js)
+// Rutas de productos
 app.use('/api/productos', productosRoutes);
 
 // Arrancar el servidor
@@ -934,8 +681,9 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(\`Servidor escuchando en http://localhost:\${PORT}\`);
 });`}
-        </code>
-      </pre>
+  </code>
+</pre>
+
 
       <h4>⚙️ Scripts en package.json</h4>
       <p>
@@ -962,11 +710,12 @@ app.listen(PORT, () => {
         de prueba:
       </p>
 
-      <pre className="bloque-codigo">
-        <code>
+    <pre className="bloque-codigo">
+  <code>
 {`// routes/productos.routes.js
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+
+const router = Router();
 
 // GET /api/productos
 router.get('/', (req, res) => {
@@ -976,9 +725,9 @@ router.get('/', (req, res) => {
   });
 });
 
-module.exports = router;`}
-        </code>
-      </pre>
+export default router;`}
+  </code>
+</pre>
 
       <div className="nota nota-importante">
         Más adelante, cuando implementemos el modelo MVC, estas rutas llamarán a{" "}
@@ -1013,6 +762,329 @@ module.exports = router;`}
       </ul>
 
     
+    </article>
+  </details>
+</section>
+
+       {/* ====================== 
+  3.X SCRIPT DE INICIALIZACIÓN DE TABLAS
+====================== */}
+<section className="section" id="b3-init-script">
+  <details>
+    <summary>Script de inicialización para crear las tablas del proyecto</summary>
+
+    <article className="card">
+        
+      <h3>🧩 Actividad: definir el modelo entidad–relación del bazar</h3>
+
+<p>
+A partir de la descripción del proyecto <strong>bazar</strong>, define el modelo
+entidad–relación (ERL) usando rectángulos para las entidades y óvalos para los
+atributos. No te preocupes todavía por el código SQL, solo por el diseño.
+</p>
+
+Te lo reescribo ya con **tabla `categorias` independiente** y la referencia desde `productos` 👇
+
+```jsx
+<p>Requisitos del sistema:</p>
+
+<ul className="lista-simple">
+  <li>La base de datos debe gestionar <strong>clientes</strong>, <strong>productos</strong>, <strong>pedidos</strong> y <strong>categorías</strong>.</li>
+  <li>Un <strong>cliente</strong> puede hacer muchos pedidos, pero un pedido solo puede pertenecer a un cliente.</li>
+  <li>Cada <strong>pedido</strong> puede incluir muchos productos y cada producto puede aparecer en muchos pedidos.</li>
+  <li>Para representar la relación muchos a muchos entre pedidos y productos, se utilizará una tabla intermedia (por ejemplo, <code>lineas_pedido</code> o <code>pedidos_productos</code>).</li>
+  <li>Los <strong>productos</strong> deben almacenar: nombre, precio, stock, una referencia a una <strong>categoría</strong> (no el texto directamente) y una URL de imagen.</li>
+  <li>Las <strong>categorías</strong> se guardarán en una tabla propia (por ejemplo, <code>categorias</code>) con su identificador y nombre.</li>
+  <li>Los <strong>pedidos</strong> deben tener fecha y estado, con valores como: pendiente, en_proceso, terminado.</li>
+  <li>Los <strong>clientes</strong> deben poder registrarse más adelante, por lo que habrá que guardar al menos nombre, email y una contraseña (password).</li>
+  <li>Queremos poder aplicar un <strong>borrado lógico</strong> de productos, de modo que se puedan desactivar sin borrarlos físicamente.</li>
+</ul>
+
+<p>
+  Con esta información, realiza el diagrama ERL indicando:
+</p>
+
+<ul className="lista-simple">
+  <li>Las <strong>entidades</strong> principales (clientes, productos, pedidos, categorías y la tabla intermedia).</li>
+  <li>Los <strong>atributos</strong> más importantes de cada entidad (incluyendo la clave primaria).</li>
+  <li>Las <strong>relaciones</strong> entre entidades y sus <strong>cardinalidades</strong> (1 a N, N a M). Por ejemplo:
+    <ul className="lista-simple">
+      <li>Un pedido pertenece a un cliente (1–N).</li>
+      <li>Un producto pertenece a una categoría (1–N).</li>
+      <li>Un pedido se relaciona con muchos productos a través de la tabla intermedia (N–M).</li>
+    </ul>
+  </li>
+</ul>
+
+<div className="nota">
+  Recuerda: todavía no estamos pensando en tipos de datos concretos
+  (VARCHAR, INT...), solo en <strong>qué información</strong> queremos almacenar
+  y cómo se relacionan las entidades entre sí.
+</div>
+
+<h2> Script de inicialización para crear las tablas del proyecto</h2>
+
+<p>
+  En este bloque vamos a trabajar con varias tablas relacionadas:
+  <strong> clientes</strong>, <strong>productos</strong>,{" "}
+  <strong>pedidos</strong>, <strong>categorias</strong> y una tabla intermedia{" "}
+  <strong>pedidos_productos</strong> (o <em>lineas_pedido</em>) que nos permitirá
+  reflejar que un pedido puede tener muchos productos y un producto puede aparecer en muchos pedidos.
+</p>
+
+<p>
+  Los productos tendrán una columna que apunte a la tabla <strong>categorias</strong>, 
+  de forma que cada producto pertenezca a una categoría concreta. Además, los productos
+  admitirán una <strong>URL de imagen</strong>, los pedidos tendrán <strong>estado</strong>{" "}
+  (<em>pendiente, en_proceso, terminado</em>) y <strong>fecha</strong>, y los clientes 
+  podrán registrarse más adelante para autenticarse y ver sus pedidos.
+</p>
+```
+
+
+      <div className="cuadro-didactico">
+        <h4>¿Por qué usar un script de inicialización?</h4>
+        <div className="cuadro-didactico__grid">
+          <div className="cuadro-didactico__item">
+            <h5>Repetible</h5>
+            <p>
+              El script se puede ejecutar en cualquier equipo para
+              crear las tablas con la misma estructura.
+            </p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Rápido</h5>
+            <p>
+              No hace falta ir creando tablas a mano en phpMyAdmin: basta con lanzar
+              un comando de Node.
+            </p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Controlado</h5>
+            <p>
+              El código que crea las tablas queda guardado en el proyecto, por lo que
+              es fácil revisarlo, versionarlo en Git y mejorarlo.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <h3>1️⃣ ¿Debe existir la base de datos antes de ejecutar el script?</h3>
+
+      <p>
+        En este curso vamos a seguir una estrategia sencilla y didáctica:
+      </p>
+
+      <ul className="lista-simple">
+        <li>
+          La <strong>base de datos</strong> (por ejemplo{" "}
+          <code className="etiqueta-codigo">bazar</code>) se crea una sola vez desde
+          <strong> phpMyAdmin</strong> o con un comando SQL simple:
+          <pre className="bloque-codigo">
+            <code>{`CREATE DATABASE bazar;`}</code>
+          </pre>
+        </li>
+        <li>
+          El archivo <code className="etiqueta-codigo">.env</code> debe apuntar a esa
+          base de datos:
+          <pre className="bloque-codigo">
+            <code>
+{`DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=bazar
+DB_PORT=3306
+
+PORT=3000`}
+            </code>
+          </pre>
+        </li>
+        <li>
+          El <strong>script de inicialización</strong> se encarga de crear{" "}
+          <em>las tablas dentro de esa base de datos</em>: clientes, productos,
+          pedidos y la tabla intermedia de pedidos.
+        </li>
+      </ul>
+
+      <div className="nota nota-importante">
+        Técnicamente se podría crear también la base de datos desde Node, pero es más claro separar:
+        <strong> 1) crear la BBDD en phpMyAdmin</strong> y{" "}
+        <strong>2) dejar que el script cree las tablas</strong>.
+      </div>
+
+      <h3>2️⃣ Crear el archivo <code> init-db.js</code></h3>
+
+      <p>
+        Vamos a crear un archivo llamado{" "}
+        <code className="etiqueta-codigo">init-db.js</code> en la raíz del proyecto.
+        Este archivo se conectará a MySQL usando el mismo{" "}
+        <code className="etiqueta-codigo">pool</code> que ya tenemos en{" "}
+        <code className="etiqueta-codigo">config/db.js</code> y ejecutará los{" "}
+        <code className="etiqueta-codigo">CREATE TABLE</code> necesarios.
+      </p>
+
+      <pre className="bloque-codigo">
+  <code>
+{`// init-db.js
+import 'dotenv/config';
+import pool from './config/db.js';
+
+async function crearTablas() {
+  try {
+    // TABLA CLIENTES
+    await pool.query(\`
+      CREATE TABLE IF NOT EXISTS clientes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL,
+        email VARCHAR(150) NOT NULL UNIQUE,
+        password VARCHAR(255) NULL,
+        creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    \`);
+
+    // TABLA CATEGORIAS
+    await pool.query(\`
+      CREATE TABLE IF NOT EXISTS categorias (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL
+      )
+    \`);
+
+    // TABLA PRODUCTOS
+    await pool.query(\`
+      CREATE TABLE IF NOT EXISTS productos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre VARCHAR(100) NOT NULL,
+        precio DECIMAL(10,2) NOT NULL,
+        stock INT DEFAULT 0,
+        categoria_id INT,
+        imagen_url VARCHAR(255) DEFAULT NULL,
+        activo TINYINT(1) DEFAULT 1,
+        FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+      )
+    \`);
+
+    // TABLA PEDIDOS
+    await pool.query(\`
+      CREATE TABLE IF NOT EXISTS pedidos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cliente_id INT NOT NULL,
+        estado ENUM('pendiente','en_proceso','terminado') DEFAULT 'pendiente',
+        fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+      )
+    \`);
+
+    // TABLA INTERMEDIA PEDIDOS_PRODUCTOS
+    await pool.query(\`
+      CREATE TABLE IF NOT EXISTS pedidos_productos (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        pedido_id INT NOT NULL,
+        producto_id INT NOT NULL,
+        cantidad INT DEFAULT 1,
+        FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+        FOREIGN KEY (producto_id) REFERENCES productos(id)
+      )
+    \`);
+
+    console.log('✅ Tablas creadas (si no existían).');
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Error al crear las tablas:', error);
+    process.exit(1);
+  }
+}
+
+crearTablas();`}
+  </code>
+</pre>
+
+
+      <div className="callout">
+        En lecciones posteriores detallaremos la estructura de cada tabla y la
+        relación entre ellas (clientes, productos, pedidos y la tabla intermedia).
+        De momento, lo importante es entender la <strong>idea del script</strong>:
+        un único archivo que prepara el “esqueleto” de la base de datos.
+      </div>
+
+      <h3>3️⃣ Añadir un script en <code>package.json</code></h3>
+
+      <p>
+        Para no tener que escribir{" "}
+        <code className="etiqueta-codigo">node init-db.js</code> cada vez, añadimos
+        un script cómodo en <code className="etiqueta-codigo">package.json</code>:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`"scripts": {
+  "start": "node server.js",
+  "dev": "nodemon server.js",
+  "init-db": "node init-db.js"
+}`}
+        </code>
+      </pre>
+
+      <p>
+        A partir de ahora, para crear las tablas del proyecto, basta con ejecutar:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>npm run init-db</code>
+      </pre>
+
+      <div className="nota nota-importante">
+        Recomendación:
+        <ul className="lista-simple">
+          <li>Primero: crear la BBDD <code>bazar</code> en phpMyAdmin.</li>
+          <li>
+            Comprobar que el archivo <code>.env</code> apunta a{" "}
+            <code>DB_NAME=bazar</code>.
+          </li>
+          <li>
+            Ejecutar <code>npm run init-db</code> y revisar en phpMyAdmin que se
+            han creado las tablas.
+          </li>
+        </ul>
+      </div>
+
+      <h3>🧪 Actividad guiada</h3>
+      <ul className="lista-simple">
+        <li>
+          Crea la base de datos{" "}
+          <code className="etiqueta-codigo">bazar</code> y configure su{" "}
+          <code>.env</code>.
+        </li>
+        <li>
+          Que añadan el archivo <code>init-db.js</code> al proyecto y el script{" "}
+          <code>"init-db"</code> en <code>package.json</code>.
+        </li>
+        <li>
+          Que ejecuten <code>npm run init-db</code> y comprueben en phpMyAdmin las
+          tablas <strong>clientes</strong>, <strong>productos</strong>,{" "}
+          <strong>pedidos</strong> y <strong>pedidos_productos</strong>.
+        </li>
+      </ul>
+
+      <h3>✅ Resumen de la sección</h3>
+      <ul className="lista-simple">
+        <li>Hemos visto qué tablas formarán parte del proyecto final (bazar).</li>
+        <li>Hemos entendido la utilidad de un script de inicialización.</li>
+        <li>
+          Hemos creado un archivo <code>init-db.js</code> que construye las tablas
+          necesarias si no existen.
+        </li>
+        <li>
+          Hemos añadido el comando <code>npm run init-db</code> para automatizar
+          la creación de tablas.
+        </li>
+        <li>
+          Hemos aclarado que la base de datos (por ejemplo,{" "}
+          <code>bazar</code>) debe existir antes de ejecutar el script.
+        </li>
+      </ul>
+
+
     </article>
   </details>
 </section>
@@ -1258,10 +1330,10 @@ Content-Type: application/json
   <pre className="bloque-codigo">
   <code>
 {`// models/productos.model.js
-const pool = require('../config/db');
+import pool from '../config/db.js';
 
 // Obtener todos los productos activos
-async function obtenerTodos() {
+export async function obtenerTodos() {
   const [rows] = await pool.query(
     \`SELECT id, nombre, precio, stock, categoria_id, activo
      FROM productos
@@ -1271,7 +1343,7 @@ async function obtenerTodos() {
 }
 
 // Obtener un producto por ID
-async function obtenerPorId(id) {
+export async function obtenerPorId(id) {
   const [rows] = await pool.query(
     \`SELECT id, nombre, precio, stock, categoria_id, activo
      FROM productos
@@ -1282,7 +1354,7 @@ async function obtenerPorId(id) {
 }
 
 // Crear un nuevo producto
-async function crear({ nombre, precio, stock = 0, categoria_id = null, activo = 1 }) {
+export async function crear({ nombre, precio, stock = 0, categoria_id = null, activo = 1 }) {
   const [result] = await pool.query(
     \`INSERT INTO productos (nombre, precio, stock, categoria_id, activo)
      VALUES (?, ?, ?, ?, ?)\`,
@@ -1300,7 +1372,7 @@ async function crear({ nombre, precio, stock = 0, categoria_id = null, activo = 
 }
 
 // Actualizar un producto
-async function actualizar(id, { nombre, precio, stock, categoria_id, activo }) {
+export async function actualizar(id, { nombre, precio, stock, categoria_id, activo }) {
   await pool.query(
     \`UPDATE productos
      SET nombre = ?, precio = ?, stock = ?, categoria_id = ?, activo = ?
@@ -1312,7 +1384,7 @@ async function actualizar(id, { nombre, precio, stock, categoria_id, activo }) {
 }
 
 // Borrado lógico (activo = 0)
-async function eliminar(id) {
+export async function eliminar(id) {
   await pool.query(
     \`UPDATE productos 
      SET activo = 0 
@@ -1323,7 +1395,7 @@ async function eliminar(id) {
   return { id, eliminado: true };
 }
 
-module.exports = {
+export default {
   obtenerTodos,
   obtenerPorId,
   crear,
@@ -1332,7 +1404,6 @@ module.exports = {
 };`}
   </code>
 </pre>
-
 
       <div className="cuadro-didactico">
         <h4>Qué hace cada función</h4>
@@ -1369,10 +1440,10 @@ module.exports = {
 <pre className="bloque-codigo">
   <code>
 {`// controllers/productos.controller.js
-const ProductosModel = require('../models/productos.model');
+import * as ProductosModel from '../models/productos.model.js';
 
 // GET /api/productos
-async function getProductos(req, res) {
+export async function getProductos(req, res) {
   try {
     const productos = await ProductosModel.obtenerTodos();
     res.json(productos);
@@ -1383,7 +1454,7 @@ async function getProductos(req, res) {
 }
 
 // GET /api/productos/:id
-async function getProductoPorId(req, res) {
+export async function getProductoPorId(req, res) {
   try {
     const { id } = req.params;
     const producto = await ProductosModel.obtenerPorId(id);
@@ -1400,11 +1471,10 @@ async function getProductoPorId(req, res) {
 }
 
 // POST /api/productos
-async function crearProducto(req, res) {
+export async function crearProducto(req, res) {
   try {
     const { nombre, precio, stock, categoria_id, activo } = req.body;
 
-    // nombre y precio son obligatorios en nuestra tabla
     if (!nombre || precio == null) {
       return res
         .status(400)
@@ -1427,7 +1497,7 @@ async function crearProducto(req, res) {
 }
 
 // PUT /api/productos/:id
-async function actualizarProducto(req, res) {
+export async function actualizarProducto(req, res) {
   try {
     const { id } = req.params;
     const { nombre, precio, stock, categoria_id, activo } = req.body;
@@ -1452,9 +1522,8 @@ async function actualizarProducto(req, res) {
   }
 }
 
-// DELETE /api/productos/:id
-// BORRADO LÓGICO → activo = 0
-async function eliminarProducto(req, res) {
+// DELETE /api/productos/:id  (borrado lógico)
+export async function eliminarProducto(req, res) {
   try {
     const { id } = req.params;
 
@@ -1463,7 +1532,7 @@ async function eliminarProducto(req, res) {
       return res.status(404).json({ mensaje: 'Producto no encontrado' });
     }
 
-    await ProductosModel.eliminar(id); // ahora hace UPDATE activo=0
+    await ProductosModel.eliminar(id);
     res.json({ mensaje: 'Producto eliminado correctamente (borrado lógico)' });
   } catch (error) {
     console.error('Error al eliminar producto:', error);
@@ -1471,7 +1540,7 @@ async function eliminarProducto(req, res) {
   }
 }
 
-module.exports = {
+export default {
   getProductos,
   getProductoPorId,
   crearProducto,
@@ -1495,31 +1564,39 @@ module.exports = {
         use las funciones del controlador en lugar de devolver texto fijo.
       </p>
 
-      <pre className="bloque-codigo">
-        <code>
+     <pre className="bloque-codigo">
+  <code>
 {`// routes/productos.routes.js
-const express = require('express');
-const router = express.Router();
-const productosController = require('../controllers/productos.controller');
+import { Router } from 'express';
+import {
+  getProductos,
+  getProductoPorId,
+  crearProducto,
+  actualizarProducto,
+  eliminarProducto
+} from '../controllers/productos.controller.js';
+
+const router = Router();
 
 // GET /api/productos
-router.get('/', productosController.getProductos);
+router.get('/', getProductos);
 
 // GET /api/productos/:id
-router.get('/:id', productosController.getProductoPorId);
+router.get('/:id', getProductoPorId);
 
 // POST /api/productos
-router.post('/', productosController.crearProducto);
+router.post('/', crearProducto);
 
 // PUT /api/productos/:id
-router.put('/:id', productosController.actualizarProducto);
+router.put('/:id', actualizarProducto);
 
 // DELETE /api/productos/:id
-router.delete('/:id', productosController.eliminarProducto);
+router.delete('/:id', eliminarProducto);
 
-module.exports = router;`}
-        </code>
-      </pre>
+export default router;`}
+  </code>
+</pre>
+
 
       <div className="cuadro-didactico">
         <h4>Flujo completo de una petición</h4>
@@ -1580,7 +1657,38 @@ module.exports = router;`}
         <code className="etiqueta-codigo">productos</code> correctamente creada.
       </div>
 
-      
+      <div className="cuadro-didactico">
+  <h4>¿Qué diferencia hay entre Modelo y Controlador?</h4>
+
+  <p>
+    En una API con Node.js, Express y MySQL separamos el código en capas
+    para que sea más fácil de entender y mantener.
+  </p>
+
+  <ul>
+    <li>
+      <strong>Modelo (Model)</strong>: es la capa que se comunica con la 
+      base de datos. Contiene funciones que hacen consultas SQL
+      (<code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, 
+      <code>DELETE</code>) y devuelven los datos al controlador.
+      No usa <code>req</code> ni <code>res</code>.
+    </li>
+    <li>
+      <strong>Controlador (Controller)</strong>: es la capa que recibe
+      la petición HTTP desde Express. Lee los datos de 
+      <code>req.params</code>, <code>req.body</code>, valida la información,
+      llama a las funciones del modelo y envía la respuesta al cliente
+      con <code>res.json()</code> y los códigos de estado HTTP.
+    </li>
+  </ul>
+
+  <p>
+    En resumen: el <strong>controlador</strong> decide qué hacer con la 
+    petición y el <strong>modelo</strong> se encarga de hablar con la 
+    base de datos.
+  </p>
+</div>
+
 
       <h3>✅ Resumen de la lección</h3>
       <ul className="lista-simple">
@@ -1608,28 +1716,27 @@ module.exports = router;`}
   </details>
 </section>
 
-
-
-      <section className="section" id="b3-leccion4">
+<section className="section" id="b3-leccion4">
   <details>
     <summary> Usuarios, registro y login (JWT)</summary>
     <article className="card">
-      <h2> Usuarios, registro y login (JWT)</h2>
+      <h2>Usuarios, registro y login (JWT)</h2>
 
       <p>
-        En esta lección vamos a añadir a nuestra API la posibilidad de que un 
-        <strong>cliente</strong> se registre y pueda iniciar sesión. Para ello 
+        En esta lección vamos a añadir a nuestra API la posibilidad de que un{" "}
+        <strong>cliente</strong> se registre y pueda iniciar sesión. Para ello
         usaremos dos herramientas muy habituales en el desarrollo backend:
       </p>
 
       <ul className="lista-simple">
         <li>
-          <code className="etiqueta-codigo">bcryptjs</code> para 
-          <strong>encriptar contraseñas</strong> (hash).
+          <code className="etiqueta-codigo">bcryptjs</code> para{" "}
+          <strong>encriptar contraseñas</strong> (generar un hash seguro).
         </li>
         <li>
-          <code className="etiqueta-codigo">jsonwebtoken</code> para generar 
-          <strong>tokens JWT</strong> que identifiquen al usuario en futuras peticiones.
+          <code className="etiqueta-codigo">jsonwebtoken</code> para generar{" "}
+          <strong>tokens JWT</strong> que identifiquen al usuario en futuras
+          peticiones.
         </li>
       </ul>
 
@@ -1639,148 +1746,178 @@ module.exports = router;`}
           <div className="cuadro-didactico__item">
             <h5>Registro</h5>
             <p>
-              Un cliente envía nombre, email y contraseña. Guardamos la contraseña 
-              <strong>encriptada</strong> en la base de datos.
+              Un cliente envía nombre, email y contraseña. Guardamos la
+              contraseña <strong>encriptada</strong> (hash) en la base de datos,
+              nunca en texto plano.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Login</h5>
             <p>
-              El cliente envía email y contraseña. Comprobamos la contraseña con bcrypt 
-              y, si es correcta, devolvemos un <strong>JWT</strong>.
+              El cliente envía email y contraseña. Comprobamos la contraseña con{" "}
+              <code>bcrypt</code> y, si es correcta, devolvemos un{" "}
+              <strong>JWT</strong>.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Token</h5>
             <p>
-              El token se enviará en las siguientes peticiones (cabecera 
-              <code>Authorization</code>) para acceder a rutas protegidas.
+              El token se enviará en las siguientes peticiones (cabecera{" "}
+              <code>Authorization</code>) para acceder a rutas protegidas como{" "}
+              <code>/api/mis-pedidos</code>.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Seguridad</h5>
             <p>
-              El frontend <strong>nunca ve el hash</strong> de la contraseña ni conoce 
-              el <code>JWT_SECRET</code>. Todo eso se gestiona en el servidor.
+              El frontend <strong>nunca ve el hash</strong> de la contraseña ni
+              conoce el <code>JWT_SECRET</code>. Todo eso se gestiona en el
+              servidor y se guarda en variables de entorno.
             </p>
           </div>
         </div>
       </div>
 
-      <h3>1️⃣ Preparar la tabla clientes</h3>
-      <p>
-        En nuestra base de datos <code className="etiqueta-codigo">bazar</code> vamos a 
-        usar una tabla <code className="etiqueta-codigo">clientes</code> pensada ya
-        para registro y login:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`CREATE TABLE IF NOT EXISTS clientes (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(100) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-);`}
-        </code>
-      </pre>
-
-      <p>
-        Fíjate en que el campo <code>password</code> será el que almacene el{" "}
-        <strong>hash</strong> de la contraseña, no la contraseña en texto plano.
-      </p>
-
-      <h3>2️⃣ Instalar bcryptjs y jsonwebtoken</h3>
-      <p>
-        Desde la carpeta del backend instalamos las librerías necesarias:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`npm install bcryptjs jsonwebtoken`}
-        </code>
-      </pre>
-
-      <p>
-        Además, añadimos a nuestro archivo <code className="etiqueta-codigo">.env</code> 
-        algunas variables específicas para JWT:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`JWT_SECRET=supersecreto-pon-aqui-una-cadena-larga
-JWT_EXPIRES_IN=1h`}
-        </code>
-      </pre>
-
-      <div className="nota nota-importante">
-        <strong>JWT_SECRET</strong> es la clave que se usa para firmar y verificar 
-        los tokens. Nunca debe compartirse ni subirse a GitHub.
+      <div className="nota">
+        <p>
+          En este bloque suponemos que tu proyecto backend tiene{" "}
+          <code>"type": "module"</code> en <code>package.json</code>. Por eso
+          usamos <code>import</code> y <code>export</code> en lugar de{" "}
+          <code>require</code> y <code>module.exports</code>.
+        </p>
       </div>
 
-      <h3>3️⃣ Crear el modelo de clientes</h3>
+      <h3>3️⃣ Modelo de clientes orientado a registro y login</h3>
       <p>
-        Dentro de la carpeta <code className="etiqueta-codigo">models</code> 
-        creamos el archivo{" "}
-        <code className="etiqueta-codigo">clientes.model.js</code> para hablar con 
-        la tabla <code>clientes</code>:
+        Antes de crear el controlador de autenticación, necesitamos un{" "}
+        <strong>modelo</strong> que sepa hablar con la tabla{" "}
+        <code>clientes</code>. En este proyecto, el frontend es el{" "}
+        <strong>front del cliente de la tienda</strong> (usuarios finales), así
+        que, de momento, solo necesitamos dos operaciones:
       </p>
 
-      <pre className="bloque-codigo">
-        <code>
-{`// models/clientes.model.js
-const pool = require('../config/db');
+      <ul className="lista-simple">
+        <li>
+          <strong>crearCliente</strong>: registrar un nuevo usuario.
+        </li>
+        <li>
+          <strong>buscarPorEmail</strong>: localizar un usuario al hacer login.
+        </li>
+      </ul>
 
-// Buscar cliente por email
-async function buscarPorEmail(email) {
+      <p>
+        No tiene sentido (por ahora) implementar métodos como{" "}
+        <code>obtenerTodos()</code> o <code>eliminarCliente()</code> en la API
+        pública, porque el cliente de la tienda nunca va a ver el listado de
+        todos los usuarios ni va a borrar usuarios. Esos métodos podrían tener
+        sentido en un <strong>panel de administración</strong>, pero eso sería
+        otro proyecto o, al menos, otro rol de usuario.
+      </p>
+
+      <p>Veamos el modelo de clientes adaptado a ES Modules:</p>
+
+      <pre className="bloque-codigo">
+        <code>{`// models/clientes.model.js
+// Importamos el pool de conexiones a la base de datos MySQL.
+// Este pool se configuró previamente en config/db.js
+import pool from '../config/db.js';
+
+/**
+ * Buscar cliente por email
+ * ------------------------
+ * - Recibe un email.
+ * - Lanza una consulta SELECT con un placeholder (?).
+ * - Devuelve el primer registro que coincida (o undefined si no hay resultados).
+ */
+export async function buscarPorEmail(email) {
+  // Ejecutamos la consulta de forma parametrizada:
+  // El ? se sustituye por el valor de [email].
   const [rows] = await pool.query(
     'SELECT id, nombre, email, password, creado_en FROM clientes WHERE email = ?',
     [email]
   );
-  return rows[0]; // undefined si no existe
+
+  // Devolvemos solo la primera fila.
+  // Si no hay filas, rows[0] será undefined.
+  return rows[0];
 }
 
-// Crear nuevo cliente
-async function crearCliente({ nombre, email, passwordHash }) {
+/**
+ * Crear nuevo cliente
+ * -------------------
+ * - Recibe un objeto con nombre, email y passwordHash.
+ * - Inserta un nuevo registro en la tabla clientes.
+ * - Devuelve un objeto "limpio" con la información básica del cliente creado.
+ */
+export async function crearCliente({ nombre, email, passwordHash }) {
+  // INSERT parametrizado. Los ? se rellenan con [nombre, email, passwordHash]
   const [result] = await pool.query(
     'INSERT INTO clientes (nombre, email, password) VALUES (?, ?, ?)',
     [nombre, email, passwordHash]
   );
 
+  // Devolvemos un objeto con los datos principales.
+  // result.insertId contiene el id autoincrement generado por MySQL.
   return {
     id: result.insertId,
     nombre,
     email
   };
-}
-
-module.exports = {
-  buscarPorEmail,
-  crearCliente
-};`}
-        </code>
+}`}</code>
       </pre>
 
-      <div className="nota">
-        En la base de datos guardamos <code>passwordHash</code>, no la contraseña 
-        directamente. Por eso en el modelo el campo se llama <code>password</code>, 
-        pero en el código le pasamos <code>passwordHash</code>.
+      <div className="cuadro-didactico">
+        <h4>🧩 ¿Qué hace y qué no hace este modelo?</h4>
+        <div className="cuadro-didactico__grid">
+          <div className="cuadro-didactico__item">
+            <h5>Lo que sí hace</h5>
+            <p>
+              Proporciona solo los métodos que necesita nuestro{" "}
+              <strong>front del cliente</strong>: registro y login. Nada más.
+            </p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Lo que no hace</h5>
+            <p>
+              No expone métodos para listar, actualizar o borrar clientes, porque
+              esas operaciones son más propias de un panel de administración,
+              no de la web pública de la tienda.
+            </p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>return → controlador</h5>
+            <p>
+              El <code>return</code> de cada función del modelo es exactamente lo
+              que recibirá el <strong>controlador</strong>. El modelo nunca llama
+              a <code>res.json</code>; solo devuelve datos.
+            </p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Seguridad</h5>
+            <p>
+              El modelo maneja el campo <code>password</code> pero, gracias al
+              controlador, <strong>nunca se devuelve al frontend</strong>. Solo se
+              utiliza para comparar contraseñas en el login.
+            </p>
+          </div>
+        </div>
       </div>
 
       <h3>4️⃣ Controlador de autenticación (registro y login)</h3>
       <p>
-        Creamos ahora un controlador específico para la autenticación, por ejemplo{" "}
+        Creamos ahora un controlador específico para la autenticación, por
+        ejemplo{" "}
         <code className="etiqueta-codigo">controllers/auth.controller.js</code>.
+        Recuerda que estamos usando ES Modules.
       </p>
 
       <pre className="bloque-codigo">
-        <code>
-{`// controllers/auth.controller.js
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const ClientesModel = require('../models/clientes.model');
+        <code>{`// controllers/auth.controller.js
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import * as ClientesModel from '../models/clientes.model.js';
 
+// Función auxiliar para generar un token JWT para un cliente
 function generarToken(cliente) {
   return jwt.sign(
     {
@@ -1788,7 +1925,7 @@ function generarToken(cliente) {
       email: cliente.email,
       nombre: cliente.nombre
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET, // Clave secreta guardada en .env
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '1h'
     }
@@ -1796,28 +1933,32 @@ function generarToken(cliente) {
 }
 
 // POST /api/auth/register
-async function register(req, res) {
+export async function register(req, res) {
   try {
     const { nombre, email, password } = req.body;
 
     if (!nombre || !email || !password) {
-      return res.status(400).json({ mensaje: 'Nombre, email y contraseña son obligatorios' });
+      return res
+        .status(400)
+        .json({ mensaje: 'Nombre, email y contraseña son obligatorios' });
     }
 
     // ¿Ya existe un cliente con ese email?
     const existente = await ClientesModel.buscarPorEmail(email);
     if (existente) {
-      return res.status(409).json({ mensaje: 'Ya existe un usuario con ese email' });
+      return res
+        .status(409)
+        .json({ mensaje: 'Ya existe un usuario con ese email' });
     }
 
-    // Encriptar contraseña
+    // Encriptar contraseña (hash)
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Crear cliente
+    // Crear cliente (el modelo devuelve un objeto sin el password)
     const nuevo = await ClientesModel.crearCliente({ nombre, email, passwordHash });
 
-    // Generar token
+    // Generar token JWT para el nuevo usuario
     const token = generarToken(nuevo);
 
     res.status(201).json({
@@ -1832,24 +1973,29 @@ async function register(req, res) {
 }
 
 // POST /api/auth/login
-async function login(req, res) {
+export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ mensaje: 'Email y contraseña son obligatorios' });
+      return res
+        .status(400)
+        .json({ mensaje: 'Email y contraseña son obligatorios' });
     }
 
+    // Buscar el cliente por email
     const cliente = await ClientesModel.buscarPorEmail(email);
     if (!cliente) {
       return res.status(401).json({ mensaje: 'Credenciales no válidas' });
     }
 
+    // Comparar la contraseña en texto plano con el hash almacenado
     const passwordCorrecta = await bcrypt.compare(password, cliente.password);
     if (!passwordCorrecta) {
       return res.status(401).json({ mensaje: 'Credenciales no válidas' });
     }
 
+    // Generar token a partir de los datos del cliente
     const token = generarToken(cliente);
 
     // No devolvemos el password ni el hash
@@ -1866,13 +2012,7 @@ async function login(req, res) {
     console.error('Error en login:', error);
     res.status(500).json({ mensaje: 'Error al iniciar sesión' });
   }
-}
-
-module.exports = {
-  register,
-  login
-};`}
-        </code>
+}`}</code>
       </pre>
 
       <div className="cuadro-didactico">
@@ -1882,28 +2022,34 @@ module.exports = {
             <h5>Registro</h5>
             <p>
               Comprueba que el email no exista, encripta la contraseña con{" "}
-              <code>bcrypt.hash</code> y crea el cliente. Después genera un token JWT.
+              <code>bcrypt.hash</code> y crea el cliente usando el modelo.
+              Después genera un token JWT y lo devuelve junto con los datos
+              básicos del usuario.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Login</h5>
             <p>
-              Busca al usuario por email, compara la contraseña con 
-              <code>bcrypt.compare</code> y, si coincide, genera y devuelve el token.
+              Busca al usuario por email, compara la contraseña con{" "}
+              <code>bcrypt.compare</code> y, si coincide, genera y devuelve el
+              token. Si algo falla, responde con el código HTTP adecuado.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Token</h5>
             <p>
-              El token contiene el id, email y nombre del cliente. No contiene la 
-              contraseña ni datos sensibles.
+              El token contiene el <code>id</code>, <code>email</code> y{" "}
+              <code>nombre</code> del cliente. No contiene la contraseña ni
+              datos especialmente sensibles. Sirve para identificar al usuario
+              en futuras peticiones.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Errores</h5>
             <p>
-              Se devuelven códigos de estado HTTP adecuados: 400 (datos incompletos),
-              401 (credenciales no válidas), 409 (email duplicado), 500 (error servidor).
+              Se devuelven códigos de estado HTTP adecuados: 400 (datos
+              incompletos), 401 (credenciales no válidas), 409 (email duplicado),
+              500 (error servidor). Esto facilita mucho depurar desde el frontend.
             </p>
           </div>
         </div>
@@ -1912,39 +2058,47 @@ module.exports = {
       <h3>5️⃣ Rutas de autenticación</h3>
       <p>
         Creamos un archivo de rutas específico para auth:{" "}
-        <code className="etiqueta-codigo">routes/auth.routes.js</code>.
+        <code className="etiqueta-codigo">routes/auth.routes.js</code>, también
+        usando ES Modules.
       </p>
 
       <pre className="bloque-codigo">
-        <code>
-{`// routes/auth.routes.js
-const express = require('express');
-const router = express.Router();
-const authController = require('../controllers/auth.controller');
+        <code>{`// routes/auth.routes.js
+import { Router } from 'express';
+import { register, login } from '../controllers/auth.controller.js';
+
+const router = Router();
 
 // Registro
-router.post('/register', authController.register);
+router.post('/register', register);
 
 // Login
-router.post('/login', authController.login);
+router.post('/login', login);
 
-module.exports = router;`}
-        </code>
+export default router;`}</code>
       </pre>
 
       <p>
-        Y en <code className="etiqueta-codigo">server.js</code> añadimos esta línea 
-        para montar el grupo de rutas:
+        Y en <code className="etiqueta-codigo">server.js</code> montamos este
+        grupo de rutas bajo <code>/api/auth</code> es una ampliacion del server que tienes.
       </p>
 
       <pre className="bloque-codigo">
-        <code>
-{`const authRoutes = require('./routes/auth.routes');
+        <code>{`// server.js (fragmento relevante)
+import express from 'express';
+import authRoutes from './routes/auth.routes.js';
 
-// ...
+const app = express();
 
-app.use('/api/auth', authRoutes);`}
-        </code>
+// Middleware para parsear JSON
+app.use(express.json());
+
+// ...otros middlewares y rutas...
+
+// Rutas de autenticación
+app.use('/api/auth', authRoutes);
+
+// ...listen, etc.`}</code>
       </pre>
 
       <h3>6️⃣ Probar registro y login</h3>
@@ -1962,32 +2116,37 @@ app.use('/api/auth', authRoutes);`}
           <tbody>
             <tr>
               <td>Registro</td>
-              <td><code>POST</code></td>
-              <td><code>/api/auth/register</code></td>
+              <td>
+                <code>POST</code>
+              </td>
+              <td>
+                <code>http://localhost:3000/api/auth/register
+</code>
+              </td>
               <td>
                 <pre className="bloque-codigo bloque-codigo--mini">
-                  <code>
-{`{
+                  <code>{`{
   "nombre": "Ana",
   "email": "ana@example.com",
   "password": "secreto123"
-}`}
-                  </code>
+}`}</code>
                 </pre>
               </td>
             </tr>
             <tr>
               <td>Login</td>
-              <td><code>POST</code></td>
-              <td><code>/api/auth/login</code></td>
+              <td>
+                <code>POST</code>
+              </td>
+              <td>
+                <code>/api/auth/login</code>
+              </td>
               <td>
                 <pre className="bloque-codigo bloque-codigo--mini">
-                  <code>
-{`{
+                  <code>{`{
   "email": "ana@example.com",
   "password": "secreto123"
-}`}
-                  </code>
+}`}</code>
                 </pre>
               </td>
             </tr>
@@ -1996,29 +2155,66 @@ app.use('/api/auth', authRoutes);`}
       </div>
 
       <div className="nota nota-importante">
-        Después de un login correcto, copia el <strong>token</strong> que devuelve
-        la API. El frontend deberá enviarlo en la cabecera
-        <code>Authorization: Bearer &lt;token&gt;</code> para acceder a rutas protegidas.
+        Después de un login correcto, copia el <strong>token</strong> que
+        devuelve la API. El frontend deberá enviarlo en la cabecera{" "}
+        <code>Authorization: Bearer &lt;token&gt;</code> para acceder a rutas
+        protegidas, como por ejemplo <code>/api/mis-pedidos</code>.
       </div>
 
       <h3>🧪 Actividad guiada</h3>
       <ul className="lista-simple">
-        <li>Registra al menos dos usuarios distintos y comprueba que se guardan en la tabla <code>clientes</code>.</li>
-        <li>Haz login con un usuario correcto y con uno incorrecto para observar las diferencias en las respuestas.</li>
-        <li>Identifica en la tabla <code>clientes</code> el hash generado por <code>bcrypt</code> y compáralo con la contraseña original.</li>
+        <li>
+          Registra al menos dos usuarios distintos y comprueba que se guardan en
+          la tabla <code>clientes</code>.
+        </li>
+        <li>
+          Haz login con un usuario correcto y con uno incorrecto para observar
+          las diferencias en las respuestas (códigos 200, 401, etc.).
+        </li>
+        <li>
+          Identifica en la tabla <code>clientes</code> el hash generado por{" "}
+          <code>bcrypt</code> y compáralo con la contraseña original. Comenta
+          por qué es imposible recuperar la contraseña a partir del hash.
+        </li>
+        <li>
+          Desde el frontend, guarda el token en memoria (contexto, estado,
+          etc.) y úsalo para llamar a una ruta protegida de prueba.
+        </li>
       </ul>
 
       <h3>✅ Resumen de la lección</h3>
       <ul className="lista-simple">
-        <li>Hemos creado la tabla <code>clientes</code> pensada para registro y login.</li>
-        <li>Hemos utilizado <code>bcryptjs</code> para encriptar y verificar contraseñas.</li>
-        <li>Hemos usado <code>jsonwebtoken</code> para generar tokens JWT.</li>
-        <li>Hemos creado un controlador y unas rutas de autenticación (<code>/api/auth/register</code> y <code>/api/auth/login</code>).</li>
-        <li>Hemos preparado la base para añadir, más adelante, rutas protegidas solo para usuarios autenticados.</li>
+        <li>
+          Hemos creado la tabla <code>clientes</code> pensando en registro y
+          login.
+        </li>
+        <li>
+          Hemos utilizado <code>bcryptjs</code> para encriptar y verificar
+          contraseñas.
+        </li>
+        <li>
+          Hemos usado <code>jsonwebtoken</code> para generar tokens JWT que
+          identifican al usuario.
+        </li>
+        <li>
+          Hemos creado un modelo mínimo de clientes con los métodos necesarios
+          para nuestro <strong>front del cliente</strong>.
+        </li>
+        <li>
+          Hemos creado un controlador y unas rutas de autenticación (
+          <code>/api/auth/register</code> y <code>/api/auth/login</code>).
+        </li>
+        <li>
+          Hemos preparado la base para añadir, más adelante, rutas protegidas
+          solo para usuarios autenticados, sin necesidad de exponer operaciones
+          de administración que el cliente no necesita.
+        </li>
       </ul>
     </article>
   </details>
 </section>
+
+
 
 <section className="section" id="b3-leccion5">
   <details>
@@ -2138,10 +2334,7 @@ CREATE TABLE IF NOT EXISTS pedidos_productos (
         </table>
       </div>
 
-      <div className="nota">
-        Más adelante podemos proteger estas rutas con JWT para que solo usuarios
-        autenticados puedan crear pedidos o ver los suyos.
-      </div>
+     
 
       <h3>3️⃣ Modelo de pedidos</h3>
       <p>
@@ -2149,13 +2342,34 @@ CREATE TABLE IF NOT EXISTS pedidos_productos (
         Crearemos el archivo <code className="etiqueta-codigo">models/pedidos.model.js</code>.
       </p>
 
-      <pre className="bloque-codigo">
-        <code>
+   <pre className="bloque-codigo">
+  <code>
 {`// models/pedidos.model.js
-const pool = require('../config/db');
+// ------------------------------------------------------
+// MODELO DE PEDIDOS (ES MODULES)
+// ------------------------------------------------------
+// Aquí centralizamos toda la lógica relacionada con la
+// gestión de pedidos y sus líneas en la base de datos.
+//
+// Este modelo forma parte del backend del cliente de la tienda,
+// por lo que solo implementamos las operaciones que éste necesita
+// (crear pedido, añadir productos, consultar pedidos...).
+// ------------------------------------------------------
 
-// Crear un pedido nuevo para un cliente
-async function crearPedido(clienteId) {
+import pool from '../config/db.js';
+
+/**
+ * Crear un pedido nuevo para un cliente
+ * ------------------------------------------------------
+ * Crea la "cabecera" del pedido en la tabla pedidos.
+ * Solo necesita el ID del cliente autenticado.
+ *
+ * Devuelve un objeto con:
+ *  - id: ID del pedido creado
+ *  - cliente_id
+ *  - estado inicial ("pendiente")
+ */
+export async function crearPedido(clienteId) {
   const [result] = await pool.query(
     'INSERT INTO pedidos (cliente_id) VALUES (?)',
     [clienteId]
@@ -2168,8 +2382,19 @@ async function crearPedido(clienteId) {
   };
 }
 
-// Añadir una línea de pedido (producto + cantidad)
-async function agregarProductoAPedido({ pedidoId, productoId, cantidad }) {
+/**
+ * Añadir un producto al pedido (línea de pedido)
+ * ------------------------------------------------------
+ * Inserta una línea en la tabla pedidos_productos.
+ * Esta tabla funciona como tabla intermedia N:M entre
+ * pedidos y productos.
+ *
+ * Parámetros:
+ *  - pedidoId
+ *  - productoId
+ *  - cantidad
+ */
+export async function agregarProductoAPedido({ pedidoId, productoId, cantidad }) {
   const [result] = await pool.query(
     'INSERT INTO pedidos_productos (pedido_id, producto_id, cantidad) VALUES (?, ?, ?)',
     [pedidoId, productoId, cantidad]
@@ -2183,19 +2408,36 @@ async function agregarProductoAPedido({ pedidoId, productoId, cantidad }) {
   };
 }
 
-// Obtener un pedido por id (cabecera)
-async function obtenerPedidoPorId(id) {
+/**
+ * Obtener un pedido por ID (solo cabecera)
+ * ------------------------------------------------------
+ * Devuelve la información general del pedido:
+ *  - cliente_id
+ *  - estado
+ *  - fecha
+ *
+ * Si no existe → retorna undefined.
+ */
+export async function obtenerPedidoPorId(id) {
   const [rows] = await pool.query(
     \`SELECT p.id, p.cliente_id, p.estado, p.fecha
      FROM pedidos p
      WHERE p.id = ?\`,
     [id]
   );
-  return rows[0]; // undefined si no existe
+  return rows[0];
 }
 
-// Obtener líneas de pedido con información del producto
-async function obtenerLineasDePedido(idPedido) {
+/**
+ * Obtener las líneas de un pedido con información del producto
+ * ------------------------------------------------------
+ * JOIN entre:
+ *   - pedidos_productos (líneas)
+ *   - productos (nombre, precio, imagen...)
+ *
+ * Devuelve un array de líneas de pedido.
+ */
+export async function obtenerLineasDePedido(idPedido) {
   const [rows] = await pool.query(
     \`SELECT 
         pp.id,
@@ -2212,8 +2454,13 @@ async function obtenerLineasDePedido(idPedido) {
   return rows;
 }
 
-// Obtener pedidos de un cliente
-async function obtenerPedidosDeCliente(clienteId) {
+/**
+ * Obtener todos los pedidos de un cliente
+ * ------------------------------------------------------
+ * Devuelve una lista de pedidos del cliente autenticado,
+ * ordenados por fecha (más recientes primero).
+ */
+export async function obtenerPedidosDeCliente(clienteId) {
   const [rows] = await pool.query(
     \`SELECT id, cliente_id, estado, fecha
      FROM pedidos
@@ -2224,8 +2471,15 @@ async function obtenerPedidosDeCliente(clienteId) {
   return rows;
 }
 
-// Actualizar el estado de un pedido
-async function actualizarEstado(idPedido, nuevoEstado) {
+/**
+ * Actualizar el estado de un pedido
+ * ------------------------------------------------------
+ * Permite actualizar el estado del pedido (pendiente, pagado,
+ * enviado, entregado, cancelado…).
+ *
+ * Devuelve un objeto confirmando el cambio.
+ */
+export async function actualizarEstado(idPedido, nuevoEstado) {
   await pool.query(
     'UPDATE pedidos SET estado = ? WHERE id = ?',
     [nuevoEstado, idPedido]
@@ -2233,17 +2487,10 @@ async function actualizarEstado(idPedido, nuevoEstado) {
 
   return { id: idPedido, estado: nuevoEstado };
 }
-
-module.exports = {
-  crearPedido,
-  agregarProductoAPedido,
-  obtenerPedidoPorId,
-  obtenerLineasDePedido,
-  obtenerPedidosDeCliente,
-  actualizarEstado
-};`}
-        </code>
-      </pre>
+`}
+  </code>
+</pre>
+<div className="callout"> <p> <strong>¿Por qué este modelo está tan estructurado?</strong> Cada función representa una operación concreta sobre los pedidos: crear uno, añadir productos, obtener la cabecera, obtener las líneas o actualizar su estado. De esta forma el controlador puede combinar estas funciones fácilmente para construir rutas limpias y profesionales. </p> <p> Además, recuerda que estamos desarrollando el <strong>frontend de cliente</strong>, por lo que no tiene sentido implementar funciones de administración como <em>"obtener todos los pedidos del sistema"</em> o <em>"modificar pedidos ajenos"</em>. Cada modelo en una API profesional debe ofrecer exactamente lo que ese rol de usuario necesita, y no más. </p> </div>
 
       <div className="cuadro-didactico">
         <h4>🧠 Ideas clave del modelo</h4>
@@ -2281,21 +2528,37 @@ module.exports = {
         <code className="etiqueta-codigo">controllers/pedidos.controller.js</code>.
       </p>
 
-      <pre className="bloque-codigo">
-        <code>
+  <pre className="bloque-codigo">
+  <code>
 {`// controllers/pedidos.controller.js
-const PedidosModel = require('../models/pedidos.model');
+// ------------------------------------------------------
+// CONTROLADOR DE PEDIDOS (ES MODULES)
+// ------------------------------------------------------
+// Un controlador recibe la petición del usuario, llama al
+// modelo correspondiente y devuelve una respuesta JSON.
+// ------------------------------------------------------
 
+import * as PedidosModel from '../models/pedidos.model.js';
+
+
+// ======================================================
 // POST /api/pedidos
-async function crearPedido(req, res) {
+// Crear un pedido para un cliente
+// ======================================================
+export async function crearPedido(req, res) {
   try {
     const { cliente_id } = req.body;
 
+    // Validación básica
     if (!cliente_id) {
-      return res.status(400).json({ mensaje: 'cliente_id es obligatorio' });
+      return res.status(400).json({
+        mensaje: 'cliente_id es obligatorio'
+      });
     }
 
+    // Creamos el pedido llamando al MODELO
     const pedido = await PedidosModel.crearPedido(cliente_id);
+
     res.status(201).json(pedido);
   } catch (error) {
     console.error('Error al crear pedido:', error);
@@ -2303,18 +2566,24 @@ async function crearPedido(req, res) {
   }
 }
 
+
+
+// ======================================================
 // POST /api/pedidos/:id/productos
-async function agregarProducto(req, res) {
+// Añadir producto (línea) a un pedido
+// ======================================================
+export async function agregarProducto(req, res) {
   try {
     const { id } = req.params;
     const { producto_id, cantidad } = req.body;
 
     if (!producto_id || !cantidad) {
-      return res
-        .status(400)
-        .json({ mensaje: 'producto_id y cantidad son obligatorios' });
+      return res.status(400).json({
+        mensaje: 'producto_id y cantidad son obligatorios'
+      });
     }
 
+    // Creamos una línea del pedido
     const linea = await PedidosModel.agregarProductoAPedido({
       pedidoId: id,
       productoId: producto_id,
@@ -2328,16 +2597,26 @@ async function agregarProducto(req, res) {
   }
 }
 
+
+
+// ======================================================
 // GET /api/pedidos/:id
-async function obtenerPedido(req, res) {
+// Obtener un pedido completo (cabecera + líneas)
+// ======================================================
+export async function obtenerPedido(req, res) {
   try {
     const { id } = req.params;
 
+    // 1) Obtenemos la cabecera
     const pedido = await PedidosModel.obtenerPedidoPorId(id);
+
     if (!pedido) {
-      return res.status(404).json({ mensaje: 'Pedido no encontrado' });
+      return res.status(404).json({
+        mensaje: 'Pedido no encontrado'
+      });
     }
 
+    // 2) Obtenemos las líneas (JOIN con productos)
     const lineas = await PedidosModel.obtenerLineasDePedido(id);
 
     res.json({
@@ -2350,55 +2629,68 @@ async function obtenerPedido(req, res) {
   }
 }
 
+
+
+// ======================================================
 // GET /api/pedidos/cliente/:clienteId
-async function obtenerPedidosDeCliente(req, res) {
+// Obtener todos los pedidos de un cliente
+// ======================================================
+export async function obtenerPedidosDeCliente(req, res) {
   try {
     const { clienteId } = req.params;
+
     const pedidos = await PedidosModel.obtenerPedidosDeCliente(clienteId);
+
     res.json(pedidos);
   } catch (error) {
     console.error('Error al obtener pedidos de cliente:', error);
-    res.status(500).json({ mensaje: 'Error al obtener pedidos de cliente' });
+    res.status(500).json({
+      mensaje: 'Error al obtener pedidos de cliente'
+    });
   }
 }
 
+
+
+
+// ======================================================
 // PUT /api/pedidos/:id/estado
-async function actualizarEstado(req, res) {
+// Cambiar estado de un pedido
+// ======================================================
+export async function actualizarEstado(req, res) {
   try {
     const { id } = req.params;
     const { estado } = req.body;
 
     if (!estado) {
-      return res.status(400).json({ mensaje: 'El campo estado es obligatorio' });
+      return res.status(400).json({
+        mensaje: 'El campo estado es obligatorio'
+      });
     }
 
-    const pedido = await PedidosModel.obtenerPedidoPorId(id);
-    if (!pedido) {
-      return res.status(404).json({ mensaje: 'Pedido no encontrado' });
+    // Verificamos que el pedido existe
+    const existe = await PedidosModel.obtenerPedidoPorId(id);
+    if (!existe) {
+      return res.status(404).json({
+        mensaje: 'Pedido no encontrado'
+      });
     }
 
     const actualizado = await PedidosModel.actualizarEstado(id, estado);
+
     res.json(actualizado);
   } catch (error) {
     console.error('Error al actualizar estado del pedido:', error);
-    res.status(500).json({ mensaje: 'Error al actualizar estado del pedido' });
+    res.status(500).json({
+      mensaje: 'Error al actualizar estado del pedido'
+    });
   }
 }
+`}
+  </code>
+</pre>
 
-module.exports = {
-  crearPedido,
-  agregarProducto,
-  obtenerPedido,
-  obtenerPedidosDeCliente,
-  actualizarEstado
-};`}
-        </code>
-      </pre>
-
-      <div className="nota">
-        En una versión más avanzada, el <code>cliente_id</code> podría obtenerse desde
-        el token JWT (usuario autenticado) en lugar de venir en el cuerpo de la petición.
-      </div>
+      
 
       <h3>5️⃣ Rutas de pedidos</h3>
       <p>
@@ -2408,30 +2700,45 @@ module.exports = {
       </p>
 
       <pre className="bloque-codigo">
-        <code>
+  <code>
 {`// routes/pedidos.routes.js
-const express = require('express');
-const router = express.Router();
-const pedidosController = require('../controllers/pedidos.controller');
+// ------------------------------------------------------
+// RUTAS DE PEDIDOS (ES MODULES)
+// ------------------------------------------------------
+// Conecta las URLs HTTP con las funciones del controlador.
+// ------------------------------------------------------
+
+import { Router } from 'express';
+import {
+  crearPedido,
+  agregarProducto,
+  obtenerPedido,
+  obtenerPedidosDeCliente,
+  actualizarEstado
+} from '../controllers/pedidos.controller.js';
+
+const router = Router();
 
 // Crear pedido
-router.post('/', pedidosController.crearPedido);
+router.post('/', crearPedido);
 
 // Añadir producto a un pedido
-router.post('/:id/productos', pedidosController.agregarProducto);
+router.post('/:id/productos', agregarProducto);
 
-// Obtener un pedido con sus productos
-router.get('/:id', pedidosController.obtenerPedido);
+// Obtener un pedido completo
+router.get('/:id', obtenerPedido);
 
-// Obtener todos los pedidos de un cliente
-router.get('/cliente/:clienteId', pedidosController.obtenerPedidosDeCliente);
+// Obtener pedidos de un cliente
+router.get('/cliente/:clienteId', obtenerPedidosDeCliente);
 
-// Actualizar estado de un pedido
-router.put('/:id/estado', pedidosController.actualizarEstado);
+// Actualizar el estado del pedido
+router.put('/:id/estado', actualizarEstado);
 
-module.exports = router;`}
-        </code>
-      </pre>
+export default router;
+`}
+  </code>
+</pre>
+
 
       <p>
         Y en <code className="etiqueta-codigo">server.js</code> añadimos la ruta base 
@@ -2439,14 +2746,20 @@ module.exports = router;`}
       </p>
 
       <pre className="bloque-codigo">
-        <code>
-{`const pedidosRoutes = require('./routes/pedidos.routes');
+  <code>
+{`// server.js (fragmento)
+import express from 'express';
+import pedidosRoutes from './routes/pedidos.routes.js';
 
-// ...
+const app = express();
 
-app.use('/api/pedidos', pedidosRoutes);`}
-        </code>
-      </pre>
+app.use(express.json());
+
+// Montamos el módulo de pedidos
+app.use('/api/pedidos', pedidosRoutes);
+`}
+  </code>
+</pre>
 
       <h3>6️⃣ Ejemplo de uso del flujo de pedidos</h3>
 
@@ -2496,6 +2809,8 @@ Content-Type: application/json
           </pre>
         </li>
       </ol>
+
+      <div className="callout"> <p> Cuando trabajamos con una API profesional, siempre separamos el código en capas: <strong>modelo → controlador → rutas</strong>. Esta estructura permite que el código sea limpio, escalable y fácil de mantener. </p> <p> En este capítulo, el controlador se encarga de: <ul> <li>validar lo que llega del frontend</li> <li>llamar al modelo (base de datos)</li> <li>gestionar errores</li> <li>devolver una respuesta JSON limpia</li> </ul> </p> <p> Gracias a los <strong>ES Modules</strong> (<code>import</code> / <code>export</code>) el código es más moderno y compatible con React, Vite y la mayoría de herramientas actuales. Además, separar las rutas en un archivo distinto permite añadir más módulos (productos, clientes, login, etc.) sin complicar <code>server.js</code>. </p> </div>
 
       <h3>🧪 Actividad guiada</h3>
       <ul className="lista-simple">
@@ -2689,73 +3004,104 @@ TABLA INTERMEDIA (pedidos_productos)
     </article>
   </details>
 </section>
-
 <section className="section" id="b3-leccion6">
   <details>
     <summary>Middlewares y protección de rutas con JWT</summary>
+
     <article className="card">
       <h2>Middlewares y protección de rutas con JWT</h2>
 
       <p>
-        En esta lección vamos a aprender qué es un <strong>middleware</strong> en Express,
-        para qué sirve y cómo podemos usarlo para <strong>proteger rutas</strong> de nuestra
-        API con <strong>tokens JWT</strong>.
+        En esta lección vamos a ver qué es un <strong>middleware</strong> en Express,
+        por qué es tan importante cuando trabajamos con un frontend en React y cómo
+        podemos usarlo para <strong>proteger rutas</strong> de nuestra API con
+        <strong> tokens JWT</strong>.
       </p>
 
       <p>
-        Los middlewares son uno de los conceptos más importantes del desarrollo backend 
-        con Node.js, porque nos permiten ejecutar lógica <em>antes</em> de llegar a una ruta 
-        o <em>entre medias</em> de varias rutas.
+        La idea general de nuestro proyecto es muy sencilla:
       </p>
 
-      <h3>1️⃣ ¿Qué es un middleware?</h3>
+      <ul className="lista-simple">
+        <li>
+          Cualquier usuario puede navegar por la tienda, ver productos y añadirlos
+          a un carrito local.
+        </li>
+        <li>
+          Cuando pulse el botón <strong>“Crear pedido”</strong>, si no está logado,
+          el frontend mostrará un aviso del tipo:
+          <em>“Por favor, regístrese o inicie sesión para completar su pedido.”</em>
+        </li>
+        <li>
+          Si el usuario <strong>sí está logado</strong>, podrá crear pedidos y ver
+          un botón de menú extra, como <strong>“Mi perfil”</strong>.
+        </li>
+      </ul>
 
       <p>
-        Un <strong>middleware</strong> en Express es una <strong>función</strong> que se ejecuta 
-        cada vez que llega una petición al servidor. Tiene siempre tres parámetros:
+        Para que todo esto funcione de forma segura, el backend necesita saber
+        quién es el usuario que hace la petición. Ahí entran en juego los
+        <strong> middlewares</strong> y los <strong>tokens JWT</strong>.
+      </p>
+
+      <h3>1️⃣ ¿Qué es un middleware en Express?</h3>
+
+      <p>
+        Un <strong>middleware</strong> en Express es una función que se ejecuta
+        <em>entre</em> la petición del cliente y la ruta final. Siempre recibe
+        tres parámetros:
       </p>
 
       <pre className="bloque-codigo">
         <code>
-{`function miMiddleware(req, res, next) {
+{`// Esquema general de un middleware en Express
+export function miMiddleware(req, res, next) {
   // 1. Podemos leer o modificar la petición (req)
-  // 2. Podemos decidir enviar una respuesta (res)
-  // 3. O podemos dejar que la petición continúe con next()
+  // 2. Podemos enviar una respuesta desde aquí (res)
+  // 3. O podemos dejar que la petición continúe llamando a next()
 
-  next(); // si no llamamos a next(), la petición se "queda atascada"
+  next(); // Si NO llamamos a next(), la petición se queda "atascada"
 }`}
         </code>
       </pre>
 
       <p>
-        Express va pasando la petición de un middleware a otro, como si fuera una 
-        <strong>cadena de montaje</strong>:
+        Express encadena los middlewares como una <strong>cadena de montaje</strong>:
       </p>
 
       <pre className="bloque-codigo">
         <code>
-{`Cliente → (Middleware 1) → (Middleware 2) → (Ruta) → Respuesta`}
+{`Cliente → (Middleware 1) → (Middleware 2) → (Ruta final) → Respuesta`}
         </code>
       </pre>
 
       <div className="cuadro-didactico">
-        <h4>🧠 ¿Para qué se usan los middlewares?</h4>
+        <h4>¿Para qué se usan los middlewares?</h4>
         <div className="cuadro-didactico__grid">
           <div className="cuadro-didactico__item">
-            <h5>Logs</h5>
-            <p>Apuntar en la consola qué peticiones llegan al servidor.</p>
+            <h5>Autenticación</h5>
+            <p>Comprobar si el usuario está logado mediante un token JWT.</p>
           </div>
           <div className="cuadro-didactico__item">
-            <h5>Seguridad</h5>
-            <p>Comprobar si el usuario está autenticado antes de entrar en una ruta.</p>
+            <h5>Protección</h5>
+            <p>
+              Bloquear rutas privadas (por ejemplo, crear pedido o ver pedidos)
+              a usuarios no autenticados.
+            </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Validación</h5>
-            <p>Revisar que el cuerpo de la petición contiene los datos correctos.</p>
+            <p>
+              Revisar que los datos que envía el frontend son correctos antes de
+              llegar al controlador.
+            </p>
           </div>
           <div className="cuadro-didactico__item">
-            <h5>Errores</h5>
-            <p>Capturar errores y devolver respuestas con un formato uniforme.</p>
+            <h5>Logs</h5>
+            <p>
+              Registrar qué peticiones llegan al servidor para poder depurar
+              mejor.
+            </p>
           </div>
         </div>
       </div>
@@ -2763,65 +3109,69 @@ TABLA INTERMEDIA (pedidos_productos)
       <h3>2️⃣ Primer ejemplo: middleware de log</h3>
 
       <p>
-        Vamos a crear un middleware muy sencillo que muestre en la consola el método y 
-        la URL de cada petición. Lo añadiremos directamente en{" "}
-        <code className="etiqueta-codigo">server.js</code>:
+        Empezamos con un middleware muy sencillo que muestra en la consola el
+        método y la URL de cada petición. Lo añadimos en{" "}
+        <code className="etiqueta-codigo">server.js</code>. Recuerda que
+        estamos trabajando con <strong>ES Modules</strong> (
+        <code>type="module"</code>).
       </p>
 
-     <pre className="bloque-codigo">
-  <code>
-    {`// server.js (fragmento)
+      <pre className="bloque-codigo">
+        <code>
+{`// server.js (fragmento)
 
 // Middleware de log sencillo
 app.use((req, res, next) => {
-  //console.log(\`[\\${new Date().toISOString()}] \\\${req.method} \\\${req.url}\`);
-  cuidado con esta linea (quita las barras de comentarios)
+  console.log("[" + new Date().toISOString() + "] " + req.method + " " + req.url);
   next(); // Continúa con el siguiente middleware o ruta
 });`}
-  </code>
-</pre>
+        </code>
+      </pre>
 
       <p>
-        Gracias a <code>app.use()</code>, este middleware se ejecuta en
-        <strong>todas las peticiones</strong> que lleguen al servidor.
+        Al usar <code>app.use()</code> sin ruta, este middleware se ejecuta en{" "}
+        <strong>todas las peticiones</strong> que lleguen al servidor. Es una
+        forma muy práctica de “ver” desde Node qué está haciendo nuestro
+        frontend en React.
       </p>
 
       <h3>3️⃣ Crear un middleware de autenticación con JWT</h3>
 
       <p>
-        Ahora vamos a crear un middleware más interesante: uno que compruebe si el 
-        usuario está autenticado, verificando el <strong>token JWT</strong> que se 
-        envía en la cabecera <code>Authorization</code>.
+        Ahora vamos a crear un middleware que compruebe si el usuario está
+        autenticado verificando el <strong>token JWT</strong> que el frontend
+        envía en la cabecera{" "}
+        <code className="etiqueta-codigo">Authorization</code>.
       </p>
 
       <p>
-        Creamos una nueva carpeta <code className="etiqueta-codigo">middlewares</code> 
-        (al mismo nivel que <code>models</code>, <code>controllers</code> y 
-        <code>routes</code>) y dentro un archivo llamado{" "}
+        Creamos una carpeta{" "}
+        <code className="etiqueta-codigo">middlewares</code> (al mismo nivel
+        que <code className="etiqueta-codigo">models</code>,{" "}
+        <code className="etiqueta-codigo">controllers</code> y{" "}
+        <code className="etiqueta-codigo">routes</code>) y dentro el archivo{" "}
         <code className="etiqueta-codigo">auth.middleware.js</code>.
       </p>
 
       <pre className="bloque-codigo">
         <code>
 {`// middlewares/auth.middleware.js
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken";
 
-function verifyToken(req, res, next) {
+export function verifyToken(req, res, next) {
   // 1. Leer la cabecera Authorization
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ mensaje: 'Falta cabecera Authorization' });
+    return res.status(401).json({ mensaje: "Falta cabecera Authorization" });
   }
 
-  // Esperamos un formato: "Bearer token"
-  const parts = authHeader.split(' ');
+  // Esperamos formato: "Bearer token"
+  const [bearer, token] = authHeader.split(" ");
 
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
-    return res.status(401).json({ mensaje: 'Formato de token no válido' });
+  if (bearer !== "Bearer" || !token) {
+    return res.status(401).json({ mensaje: "Formato de token no válido" });
   }
-
-  const token = parts[1];
 
   // 2. Verificar el token con JWT_SECRET
   try {
@@ -2837,44 +3187,46 @@ function verifyToken(req, res, next) {
     // 4. Continuar con la siguiente función de la cadena
     next();
   } catch (error) {
-    console.error('Error al verificar token:', error);
-    return res.status(401).json({ mensaje: 'Token no válido o expirado' });
+    console.error("Error al verificar token:", error);
+    return res.status(401).json({ mensaje: "Token no válido o expirado" });
   }
-}
-
-module.exports = verifyToken;`}
+}`}
         </code>
       </pre>
 
       <div className="cuadro-didactico">
-        <h4>🔍 ¿Qué hace exactamente este middleware?</h4>
+        <h4>¿Qué hace exactamente este middleware?</h4>
         <div className="cuadro-didactico__grid">
           <div className="cuadro-didactico__item">
             <h5>1. Lee la cabecera</h5>
             <p>
-              Busca <code>Authorization: Bearer &lt;token&gt;</code> en la petición.
+              Busca{" "}
+              <code>Authorization: Bearer &lt;token&gt;</code> en la petición
+              que envía React.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>2. Valida el formato</h5>
             <p>
-              Comprueba que la cabecera tenga dos partes: la palabra 
+              Comprueba que la cabecera tenga dos partes: la palabra{" "}
               <code>Bearer</code> y el token en sí.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>3. Verifica el token</h5>
             <p>
-              Usa <code>jwt.verify</code> con <code>JWT_SECRET</code> para comprobar 
-              que el token es auténtico y no ha expirado.
+              Usa <code>jwt.verify</code> con{" "}
+              <code>process.env.JWT_SECRET</code> para comprobar que el token
+              es auténtico y no ha expirado.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>4. Inserta datos en req.user</h5>
             <p>
-              Si todo va bien, guarda <code>id</code>, <code>email</code> y 
-              <code>nombre</code> del usuario en <code>req.user</code> para 
-              que puedan usarse en el controlador.
+              Si todo va bien, guarda <code>id</code>, <code>email</code> y{" "}
+              <code>nombre</code> del usuario en{" "}
+              <code className="etiqueta-codigo">req.user</code>, para que el
+              controlador pueda saber quién es el usuario.
             </p>
           </div>
         </div>
@@ -2883,166 +3235,190 @@ module.exports = verifyToken;`}
       <h3>4️⃣ Proteger rutas de la API con el middleware</h3>
 
       <p>
-        Una vez creado el middleware, podemos usarlo en las rutas que queramos proteger.
-        Por ejemplo, podríamos exigir que un usuario esté autenticado para crear 
-        pedidos o ver sus pedidos.
+        Una vez creado el middleware, podemos usarlo en las rutas que queramos
+        proteger. Por ejemplo, podemos exigir que el usuario esté autenticado
+        para crear pedidos o ver sus pedidos.
       </p>
 
       <p>
-        En el archivo <code className="etiqueta-codigo">routes/pedidos.routes.js</code>, 
-        importamos el middleware y lo añadimos a las rutas:
+        En el archivo{" "}
+        <code className="etiqueta-codigo">routes/pedidos.routes.js</code>{" "}
+        importamos el middleware y lo añadimos a las rutas (recuerda que
+        seguimos con ES Modules).
       </p>
 
       <pre className="bloque-codigo">
         <code>
 {`// routes/pedidos.routes.js
-const express = require('express');
-const router = express.Router();
-const pedidosController = require('../controllers/pedidos.controller');
-const verifyToken = require('../middlewares/auth.middleware');
+import { Router } from "express";
+import * as pedidosController from "../controllers/pedidos.controller.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
+
+const router = Router();
 
 // Crear pedido (solo usuarios autenticados)
-router.post('/', verifyToken, pedidosController.crearPedido);
+router.post("/", verifyToken, pedidosController.crearPedido);
+
+// Obtener los pedidos del cliente autenticado
+router.get("/mios", verifyToken, pedidosController.getMisPedidos);
 
 // Añadir producto a un pedido (solo autenticados)
-router.post('/:id/productos', verifyToken, pedidosController.agregarProducto);
+router.post("/:id/productos", verifyToken, pedidosController.agregarProducto);
 
-// Obtener un pedido concreto (solo autenticados)
-router.get('/:id', verifyToken, pedidosController.obtenerPedido);
-
-// Obtener los pedidos de un cliente (solo autenticados)
-router.get('/cliente/:clienteId', verifyToken, pedidosController.obtenerPedidosDeCliente);
-
-// Actualizar estado de un pedido (en versión avanzada, solo admin)
-router.put('/:id/estado', verifyToken, pedidosController.actualizarEstado);
-
-module.exports = router;`}
+export default router;`}
         </code>
       </pre>
 
       <p>
-        Ahora, si intentamos acceder a estas rutas <strong>sin token</strong> o con un 
-        token incorrecto, el middleware responderá con un código{" "}
-        <code>401 Unauthorized</code>.
+        A partir de aquí, si intentamos acceder a estas rutas{" "}
+        <strong>sin token</strong> o con un token incorrecto, el middleware
+        devolverá un <code>401 Unauthorized</code>. Ese 401 es el que el
+        frontend en React puede detectar para mostrar el mensaje:
+        <em>“Por favor, regístrese o inicie sesión para completar su pedido.”</em>
       </p>
 
       <h3>5️⃣ Usar el usuario autenticado en el controlador</h3>
 
       <p>
-        Como el middleware coloca los datos del usuario en <code>req.user</code>, 
-        ya no necesitamos que el frontend nos envíe <code>cliente_id</code> en el cuerpo
-        de la petición. Podemos sacarlo directamente del token.
+        Como el middleware coloca los datos del usuario en{" "}
+        <code className="etiqueta-codigo">req.user</code>, ya no necesitamos
+        que el frontend nos envíe un <code>cliente_id</code> en el cuerpo de la
+        petición. Podemos obtenerlo directamente del token.
       </p>
 
       <p>
-        Por ejemplo, en <code>pedidos.controller.js</code> podemos simplificar{" "}
-        <code>crearPedido</code> así:
+        En <code className="etiqueta-codigo">pedidos.controller.js</code>{" "}
+        simplificamos <code>crearPedido</code> así:
       </p>
 
       <pre className="bloque-codigo">
         <code>
-{`// controllers/pedidos.controller.js (fragmento)
-const PedidosModel = require('../models/pedidos.model');
+{`// controllers/pedidos.controller.js
+import * as PedidosModel from "../models/pedidos.model.js";
 
-// POST /api/pedidos
-async function crearPedido(req, res) {
+export async function crearPedido(req, res) {
   try {
     // Gracias al middleware, req.user tiene los datos del cliente autenticado
     const clienteId = req.user.id;
 
     const pedido = await PedidosModel.crearPedido(clienteId);
-    res.status(201).json(pedido);
+    return res.status(201).json(pedido);
   } catch (error) {
-    console.error('Error al crear pedido:', error);
-    res.status(500).json({ mensaje: 'Error al crear pedido' });
+    console.error("Error al crear pedido:", error);
+    return res.status(500).json({ mensaje: "Error al crear pedido" });
   }
 }`}
         </code>
       </pre>
 
-      <div className="nota">
-        En una versión más avanzada podríamos comprobar que{" "}
-        <code>clienteId</code> coincide con el <code>clienteId</code> de la URL, 
-        o que el usuario tiene rol de administrador para ciertas operaciones.
-      </div>
+      
 
-      <h3>6️⃣ Resumen visual del flujo con middleware de autenticación</h3>
+      <h3>6️⃣ Conexión con React: experiencia para el usuario</h3>
 
-      <pre className="bloque-codigo">
-        <code>
-{`Cliente (con token) 
-  → Petición a /api/pedidos
-    → verifyToken (middleware)
-      → Si token OK → req.user = { id, email, nombre } → controlador de pedidos
-      → Si token NO OK → 401 Unauthorized`}
-        </code>
-      </pre>
-
-      <h3>🧪 Actividad guiada</h3>
+      <p>
+        Desde el punto de vista del alumno que trabaja en React, lo importante
+        es entender que:
+      </p>
 
       <ul className="lista-simple">
         <li>
-          Haz login con un usuario y copia el <strong>token</strong> que devuelve la API.
+          Al hacer login, el backend responde con un{" "}
+          <strong>token JWT</strong>, que guardamos en{" "}
+          <code>localStorage</code> o en un contexto de React (
+          <code>AuthContext</code>).
         </li>
         <li>
-          Intenta crear un pedido <strong>sin</strong> cabecera 
-          <code>Authorization</code> y observa la respuesta (debería ser 401).
+          Cuando el usuario pulsa <strong>“Crear pedido”</strong>, el frontend
+          envía el token en la cabecera{" "}
+          <code className="etiqueta-codigo">Authorization: Bearer &lt;token&gt;</code>.
         </li>
         <li>
-          Repite la petición añadiendo la cabecera:{" "}
-          <code>Authorization: Bearer &lt;tu_token&gt;</code> y comprueba que 
-          el pedido se crea correctamente.
+          El middleware <code>verifyToken</code> comprueba el token y, si es
+          correcto, deja pasar la petición hasta el controlador.
         </li>
         <li>
-          Muestra en el controlador de pedidos el valor de{" "}
-          <code>req.user</code> por consola para ver qué datos llegan desde el token.
+          Si el token falta o es inválido, el backend responde con{" "}
+          <code>401 Unauthorized</code> y React puede mostrar un mensaje tipo:
+          <em>“Debes registrarte o iniciar sesión para completar tu pedido.”</em>
+        </li>
+        <li>
+          Para mostrar un botón de menú como <strong>“Mi perfil”</strong>, el
+          frontend solo tiene que comprobar si existe token (
+          <code>isLogged = !!token</code>) y mostrar el botón o un enlace a
+          login según el caso.
         </li>
       </ul>
 
       <h3>✅ Resumen de la lección</h3>
 
       <ul className="lista-simple">
-        <li>Hemos entendido qué es un middleware en Express y cómo funciona la cadena de ejecución.</li>
-        <li>Hemos creado un middleware sencillo de log para ver qué peticiones llegan al servidor.</li>
-        <li>Hemos implementado un middleware de autenticación que verifica tokens JWT.</li>
-        <li>Hemos protegido rutas de pedidos para que solo usuarios autenticados puedan usarlas.</li>
-        <li>Hemos aprendido a usar <code>req.user</code> para obtener la identidad del usuario en los controladores.</li>
+        <li>
+          Un <strong>middleware</strong> es una función que Express ejecuta
+          antes de llegar a la ruta final.
+        </li>
+        <li>
+          Los middlewares permiten añadir <strong>autenticación</strong>,{" "}
+          <strong>validación</strong>, <strong>logs</strong> y{" "}
+          <strong>protección</strong> de rutas.
+        </li>
+        <li>
+          Con <code>verifyToken</code> protegemos rutas para que solo usuarios
+          autenticados puedan crear pedidos o ver sus pedidos.
+        </li>
+        <li>
+          Gracias a <code>req.user</code>, el backend sabe quién es el usuario
+          sin que React tenga que enviar su <code>cliente_id</code> a mano.
+        </li>
+        <li>
+          El frontend en React usa el token JWT para decidir qué botones y
+          opciones mostrar (por ejemplo, <strong>“Mi perfil”</strong> o el aviso
+          de “por favor, regístrese”).
+        </li>
       </ul>
     </article>
   </details>
 </section>
+
 <section className="section" id="b3-introduccion-filtros-usuario">
   <details open>
-    <summary> Filtros por categoría y área personal del usuario</summary>
+    <summary>Filtros por categoría y área personal del usuario</summary>
 
     <article className="card">
       <h2>📘 ¿Qué vamos a construir en esta parte del proyecto?</h2>
 
       <p>
-        En las lecciones anteriores hemos creado un backend muy completo: 
-        gestión de productos, clientes con registro y login, pedidos y una tabla 
-        intermedia que relaciona productos con pedidos.  
+        En las lecciones anteriores hemos creado un backend muy completo:
+        gestión de productos, clientes con registro y login, pedidos y una
+        tabla intermedia que relaciona productos con pedidos.
       </p>
 
       <p>
-        Ahora ha llegado el momento de dar un paso clave para el <strong>frontend</strong>:
+        Ahora ha llegado el momento de dar un paso clave para el{" "}
+        <strong>frontend</strong>:
       </p>
 
       <ul className="lista-simple">
-        <li>🎯 Crear <strong>filtros por categoría</strong> para mostrar productos en la web.</li>
-        <li>🔐 Construir la <strong>zona personal del usuario</strong> donde pueda ver sus pedidos realizados.</li>
+        <li>
+          🎯 Crear <strong>filtros por categoría</strong> para mostrar productos
+          en la web.
+        </li>
+        <li>
+          🔐 Construir la <strong>zona personal del usuario</strong> donde pueda
+          ver sus pedidos realizados.
+        </li>
       </ul>
 
       <p>
-        Esta parte es muy importante porque une <strong>el backend y el frontend</strong> 
-        para crear una experiencia de usuario real, parecida a cualquier tienda online 
+        Esta parte es muy importante porque une <strong>el backend y el frontend</strong>{" "}
+        para crear una experiencia real, parecida a cualquier tienda online
         moderna (Amazon, Shein, PC Componentes…).
       </p>
 
       <h3>1️⃣ ¿Qué son los filtros por categoría y por qué son tan importantes?</h3>
 
       <p>
-        En la mayoría de tiendas online, el usuario quiere navegar por categorías:
+        En la mayoría de tiendas online, el usuario quiere navegar por
+        categorías:
       </p>
 
       <ul className="lista-simple">
@@ -3053,10 +3429,14 @@ async function crearPedido(req, res) {
       </ul>
 
       <p>
-        Esto se consigue gracias a un <strong>filtro que el frontend envía al backend</strong>.
+        Esto se consigue gracias a un <strong>filtro</strong> que el frontend
+        envía al backend usando <strong>parámetros en la URL</strong>{" "}
+        (query params).
       </p>
 
-      <p><strong>Ejemplo:</strong></p>
+      <p>
+        <strong>Ejemplo de petición desde el navegador o React:</strong>
+      </p>
 
       <pre className="bloque-codigo">
         <code>
@@ -3065,38 +3445,178 @@ async function crearPedido(req, res) {
       </pre>
 
       <p>
-        El backend recibe esa petición, busca en la base de datos sólo los productos 
-        de la categoría “Ropa” y se los envía al frontend en formato JSON.  
-        De esta forma, el frontend puede mostrar una página con todos los productos 
-        filtrados.
+        El backend recibe esa petición, busca en la base de datos solo los
+        productos de la categoría <strong>"Ropa"</strong> y se los envía al
+        frontend en formato JSON. De esta forma, el frontend puede construir una
+        página con los productos filtrados.
       </p>
 
       <div className="nota">
-        Este sistema se usa en prácticamente todas las plataformas de comercio 
-        electrónico. ¡Aquí lo estás aprendiendo como un desarrollador profesional!
+        Este sistema se usa en prácticamente todas las plataformas de comercio
+        electrónico. Aquí lo estás aprendiendo con una arquitectura muy parecida
+        a la de un proyecto profesional.
       </div>
 
-      <h3>2️⃣ ¿Qué es la página personal del usuario?</h3>
+      <h3>2️⃣ Backend: ruta con filtro por categoría</h3>
 
       <p>
-        Cuando un usuario entra en su área privada de cualquier tienda online, puede ver:
+        En el backend (Node + Express, con <code>type="module"</code>) vamos a
+        permitir un parámetro opcional <code>categoria</code> en la ruta{" "}
+        <code>/api/productos</code>.
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// routes/productos.routes.js
+import { Router } from "express";
+import * as productosController from "../controllers/productos.controller.js";
+
+const router = Router();
+
+// GET /api/productos?categoria=Ropa
+router.get("/", productosController.obtenerProductos);
+
+export default router;`}
+        </code>
+      </pre>
+
+      <p>
+        En el controlador leemos <code>req.query.categoria</code> y construimos
+        la consulta a la base de datos:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// controllers/productos.controller.js
+import * as ProductosModel from "../models/productos.model.js";
+
+export async function obtenerProductos(req, res) {
+  try {
+    const { categoria } = req.query; // puede venir undefined
+
+    let productos;
+
+    if (categoria) {
+      // Si hay filtro, buscamos solo por esa categoría
+      productos = await ProductosModel.obtenerPorCategoria(categoria);
+    } else {
+      // Si no hay filtro, devolvemos todos
+      productos = await ProductosModel.obtenerTodos();
+    }
+
+    return res.json(productos);
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+    return res
+      .status(500)
+      .json({ mensaje: "Error al obtener productos" });
+  }
+}`}
+        </code>
+      </pre>
+
+      <p>
+        En el modelo usarás una consulta SQL similar a esta (ejemplo
+        orientativo):
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// models/productos.model.js (ejemplo orientativo)
+import { pool } from "../db.js";
+
+export async function obtenerTodos() {
+  const [rows] = await pool.query("SELECT * FROM productos WHERE activo = 1");
+  return rows;
+}
+
+export async function obtenerPorCategoria(categoria) {
+  const [rows] = await pool.query(
+    "SELECT * FROM productos WHERE activo = 1 AND categoria = ?",
+    [categoria]
+  );
+  return rows;
+}`}
+        </code>
+      </pre>
+
+      <h3>3️⃣ Frontend: pedir productos filtrados por categoría</h3>
+
+      <p>
+        Desde React, podemos tener un componente que muestre los productos según
+        la categoría seleccionada. Por ejemplo,{" "}
+        <code className="etiqueta-codigo">ProductosPorCategoria.jsx</code>:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// src/components/ProductosPorCategoria.jsx
+import { useEffect, useState } from "react";
+
+export function ProductosPorCategoria({ categoriaSeleccionada }) {
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const query = categoriaSeleccionada
+          ? \`?categoria=\${encodeURIComponent(categoriaSeleccionada)}\`
+          : "";
+        const res = await fetch(\`http://localhost:3000/api/productos\${query}\`);
+        const data = await res.json();
+        setProductos(data);
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      }
+    };
+
+    fetchProductos();
+  }, [categoriaSeleccionada]);
+
+  return (
+    <div>
+      <h3>Productos {categoriaSeleccionada ? \`de \${categoriaSeleccionada}\` : "disponibles"}</h3>
+      <ul className="lista-simple">
+        {productos.map((producto) => (
+          <li key={producto.id}>
+            {producto.nombre} - {producto.precio} €
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}`}
+        </code>
+      </pre>
+
+      <p>
+        El componente padre puede tener botones o un <code>&lt;select&gt;</code>{" "}
+        para cambiar <code>categoriaSeleccionada</code> y así actualizar el
+        listado automáticamente.
+      </p>
+
+      <h3>4️⃣ ¿Qué es la página personal del usuario?</h3>
+
+      <p>
+        Cuando un usuario entra en su área privada de una tienda online, suele
+        ver:
       </p>
 
       <ul className="lista-simple">
-        <li>🧾 Sus pedidos realizados</li>
-        <li>📦 Los productos que compró</li>
-        <li>⌛ El estado del pedido (pendiente, enviado, entregado…)</li>
-        <li>📅 La fecha del pedido</li>
+        <li>🧾 Sus pedidos realizados.</li>
+        <li>📦 Los productos que compró.</li>
+        <li>⌛ El estado del pedido (pendiente, enviado, entregado…).</li>
+        <li>📅 La fecha de cada pedido.</li>
       </ul>
 
       <p>
-        Para construir esto, usaremos el <strong>token JWT</strong> que se genera 
-        cuando el usuario inicia sesión.  
-        Gracias al token, el backend sabe perfectamente <strong>quién es el usuario</strong>
-        que está haciendo la petición.
+        Para construirlo, usaremos el <strong>token JWT</strong> que se genera
+        cuando el usuario inicia sesión. Gracias al token, el backend sabe{" "}
+        <strong>exactamente quién es</strong> el usuario que está haciendo la
+        petición.
       </p>
 
-      <p>Es decir:</p>
+      <p>Ejemplo de petición desde el frontend:</p>
 
       <pre className="bloque-codigo">
         <code>
@@ -3106,124 +3626,227 @@ Authorization: Bearer <token-del-usuario>`}
       </pre>
 
       <p>
-        El backend decodifica el token, sabe qué usuario es y le devuelve exactamente 
-        <strong>sus pedidos</strong>, no los de otros clientes.
+        El backend decodifica el token, sabe qué usuario es y devuelve{" "}
+        <strong>solo sus pedidos</strong>, no los de otros clientes.
       </p>
 
-      <h3>3️⃣ ¿Qué aprenderás en esta sección?</h3>
+      <h3>5️⃣ Backend: ruta protegida para “mis pedidos”</h3>
+
+      <p>
+        Aprovechamos el middleware <code>verifyToken</code> que ya definimos en
+        la lección de JWT. Solo podrán acceder usuarios autenticados.
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// routes/pedidos.routes.js
+import { Router } from "express";
+import * as pedidosController from "../controllers/pedidos.controller.js";
+import { verifyToken } from "../middlewares/auth.middleware.js";
+
+const router = Router();
+
+// GET /api/mis-pedidos
+router.get("/mis-pedidos", verifyToken, pedidosController.obtenerMisPedidos);
+
+export default router;`}
+        </code>
+      </pre>
+
+      <p>
+        En el controlador usamos <code>req.user.id</code> (rellenado por el
+        middleware) para buscar los pedidos del usuario logado:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// controllers/pedidos.controller.js
+import * as PedidosModel from "../models/pedidos.model.js";
+
+export async function obtenerMisPedidos(req, res) {
+  try {
+    const clienteId = req.user.id; // viene del token
+    const pedidos = await PedidosModel.obtenerPedidosDeCliente(clienteId);
+    return res.json(pedidos);
+  } catch (error) {
+    console.error("Error al obtener mis pedidos:", error);
+    return res
+      .status(500)
+      .json({ mensaje: "Error al obtener mis pedidos" });
+  }
+}`}
+        </code>
+      </pre>
+
+      <p>
+        Y en el modelo, una consulta tipo (ejemplo orientativo):
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// models/pedidos.model.js (ejemplo orientativo)
+import { pool } from "../db.js";
+
+export async function obtenerPedidosDeCliente(clienteId) {
+  const [rows] = await pool.query(
+    "SELECT * FROM pedidos WHERE cliente_id = ? ORDER BY fecha DESC",
+    [clienteId]
+  );
+  return rows;
+}`}
+        </code>
+      </pre>
+
+      <h3>6️⃣ Frontend: componente para el área personal (mis pedidos)</h3>
+
+      <p>
+        En React podemos crear un componente{" "}
+        <code className="etiqueta-codigo">MisPedidos.jsx</code> que:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Lee el token (por ejemplo, desde <code>localStorage</code>).</li>
+        <li>
+          Si no hay token, muestra un mensaje tipo:{" "}
+          <em>“Por favor, regístrate o inicia sesión para ver tus pedidos.”</em>
+        </li>
+        <li>Si hay token, hace la petición a `/api/mis-pedidos`.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+        <code>
+{`// src/components/MisPedidos.jsx
+import { useEffect, useState } from "react";
+
+export function MisPedidos() {
+  const [pedidos, setPedidos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchPedidos = async () => {
+      if (!token) {
+        setCargando(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/api/mis-pedidos", {
+          headers: {
+            Authorization: \`Bearer \${token}\`
+          }
+        });
+
+        if (res.status === 401) {
+          console.warn("No autorizado. Probablemente el token ha caducado.");
+          setCargando(false);
+          return;
+        }
+
+        const data = await res.json();
+        setPedidos(data);
+      } catch (error) {
+        console.error("Error al cargar mis pedidos:", error);
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    fetchPedidos();
+  }, [token]);
+
+  if (!token) {
+    return (
+      <div className="nota nota-importante">
+        Debes <strong>registrarte o iniciar sesión</strong> para ver tus pedidos.
+      </div>
+    );
+  }
+
+  if (cargando) {
+    return <p>Cargando tus pedidos...</p>;
+  }
+
+  if (pedidos.length === 0) {
+    return <p>Todavía no has realizado ningún pedido.</p>;
+  }
+
+  return (
+    <div>
+      <h3>🧾 Mis pedidos</h3>
+      <ul className="lista-simple">
+        {pedidos.map((pedido) => (
+          <li key={pedido.id_pedido}>
+            Pedido #{pedido.id_pedido} - {pedido.fecha} - Estado:{" "}
+            {pedido.estado}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}`}
+        </code>
+      </pre>
 
       <div className="cuadro-didactico">
-        <h4>🧠 Objetivos de aprendizaje</h4>
+        <h4>🧠 Resumen de la arquitectura</h4>
         <div className="cuadro-didactico__grid">
           <div className="cuadro-didactico__item">
             <h5>Backend</h5>
             <p>
-              Crear rutas con <strong>filtros</strong>, usar el middleware de 
-              autenticación para identificar al usuario y generar endpoints para 
-              obtener sus pedidos.
+              Expone rutas REST como{" "}
+              <code className="etiqueta-codigo">/api/productos</code> y{" "}
+              <code className="etiqueta-codigo">/api/mis-pedidos</code>, usando
+              filtros por categoría y middleware de autenticación.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Frontend</h5>
             <p>
-              Enviar peticiones al backend usando parámetros (query params), 
-              cabeceras con token y procesar las respuestas JSON para construir 
-              pantallas dinámicas.
+              Envía parámetros de consulta, cabeceras con token y construye
+              pantallas dinámicas con React según la respuesta JSON.
             </p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Seguridad</h5>
             <p>
-              Comprender la importancia de que un cliente sólo pueda ver 
-              <strong>sus propios pedidos</strong>, y no los de otros usuarios.
+              Cada usuario solo puede ver <strong>sus propios pedidos</strong>,
+              nunca los de otros clientes.
             </p>
           </div>
           <div className="cuadro-didactico__item">
-            <h5>Arquitectura real</h5>
+            <h5>Experiencia real</h5>
             <p>
-              Entender cómo se conectan frontend y backend en una arquitectura moderna
-              usando API REST.
+              El resultado final se parece al funcionamiento de un ecommerce
+              profesional, pero construido paso a paso.
             </p>
           </div>
         </div>
       </div>
 
-      <h3>4️⃣ Esquema visual de lo que vas a construir</h3>
-
-      <pre className="bloque-codigo">
-        <code>
-{`FRONTEND (React)
-    |
-    |  GET /api/productos?categoria=Ropa
-    v
-BACKEND (Node + Express)
-    |
-    |  Consulta SQL filtrada
-    v
-BASE DE DATOS (MySQL)
-
-
-FRONTEND (React)
-    |
-    |  GET /api/mis-pedidos
-    |  Authorization: Bearer <token>
-    v
-BACKEND (middleware verifyToken)
-    |
-    |  Lee req.user.id
-    |  SELECT * FROM pedidos WHERE cliente_id = req.user.id
-    v
-BASE DE DATOS (MySQL)
-`}
-        </code>
-      </pre>
-
-      <p>Así es exactamente como funcionan las webs reales de ecommerce.</p>
-
-      <h3>5️⃣ ¿Qué vamos a programar exactamente?</h3>
+      <h3>7️⃣ Resumen</h3>
 
       <ul className="lista-simple">
+        <li>Has visto cómo crear filtros por categoría en la API.</li>
         <li>
-          🔍 <strong>Backend</strong>:  
-          Ruta <code>/api/productos</code> que admite filtros por categoría.
+          Has aprendido a proteger rutas como <code>/api/mis-pedidos</code> con
+          JWT.
         </li>
         <li>
-          👤 <strong>Backend</strong>:  
-          Rutas <code>/api/mis-pedidos</code> y <code>/api/mis-pedidos/:id</code>, 
-          protegidas con JWT.
+          Has conectado estas rutas con componentes React funcionales y fáciles
+          de entender.
         </li>
         <li>
-          🛠️ <strong>Frontend</strong>:  
-          Lógica para enviar token por cabecera y construir las pantallas:
-          <ul className="lista-simple">
-            <li>Página con productos filtrados por categoría</li>
-            <li>Página “Mi cuenta”</li>
-            <li>Listado de pedidos</li>
-            <li>Detalle de un pedido</li>
-          </ul>
+          Empiezas a trabajar con una arquitectura completa:{" "}
+          <strong>React + Node + MySQL</strong>.
         </li>
-      </ul>
-
-      <div className="nota nota-importante">
-        Es completamente normal que esta parte te parezca una mezcla de backend
-        + frontend + seguridad.  
-        Justamente aquí es donde empiezas a trabajar como un desarrollador full-stack
-        real.
-      </div>
-
-      <h3>6️⃣ Resumen</h3>
-
-      <ul className="lista-simple">
-        <li>Aprenderás a crear filtros por categoría para el catálogo.</li>
-        <li>Crearás rutas protegidas con JWT para el área personal del usuario.</li>
-        <li>Conectarás estas rutas con el frontend para mostrar pedidos reales.</li>
-        <li>Entenderás la comunicación entre frontend, backend y base de datos.</li>
       </ul>
 
       <p>
-        Cuando termines esta sección tendrás un sistema completo y funcional 
-        de ecommerce: catálogo filtrado + historial personal de pedidos.  
-        Esto es un salto enorme en tu aprendizaje como desarrollador.
+        Al terminar esta parte, tendrás un sistema de ecommerce con catálogo
+        filtrado por categorías y un área personal donde el usuario puede
+        consultar sus pedidos. Es un salto enorme en tu camino como
+        desarrollador full-stack.
       </p>
     </article>
   </details>

@@ -987,7 +987,7 @@ Si la dirección importa de verdad, debe ir en su propia tabla
   con el mismo valor en la columna 
   <code className="etiqueta-codigo">cliente_id</code>. Esto no solo es correcto, sino 
   que es exactamente como una base de datos relacional debe almacenar una relación 
-  1–N.
+  1–N. 
 </p>
 
 <div className="cuadro-didactico">

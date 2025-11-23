@@ -41,6 +41,7 @@
  * @returns {JSX.Element} Página completa del Bloque 2 con explicaciones y ejemplos SQL.
  */
 import TablasSQL from "../components/TablasSQL.jsx";
+import TestSQLBasico50 from "../components/TestSQLBasico50.jsx";  
 
 
 export default function Bloque2Consultas() {
@@ -84,8 +85,12 @@ export default function Bloque2Consultas() {
             <li><a href="#joins">Relaciones entre tablas y JOIN</a></li>
             <li><a href="#relaciones">Integridad</a></li>
             <li><a href="#indice">Índices y rendimiento</a></li>
+            <li><a href="#procedures">Procedimientos almacenados (PROCEDURE)</a></li>
+            <li><a href="#triggers">Disparadores (TRIGGER)</a></li>
+            <li><a href="#permisos">Gestionar permisos según el rol (admin / cliente)</a></li>
             <li><a href="#buenas-practicas">Buenas prácticas de modelado y consultas</a></li>
             <li><a href="#actividades">Actividades del bloque</a></li>
+            <li><a href="#test">Test de repaso</a></li>
           </ol>
         </nav>
 
@@ -2105,7 +2110,7 @@ ORDER BY media DESC;`}</code>
 
 
 
-        {/* 6. U → UPDATE */}
+        
         {/* 6. U → UPDATE */}
 <section className="section" id="crud-update">
   <details>
@@ -2308,7 +2313,7 @@ WHERE activo = 0;`}</code>
   </details>
 </section>
 
-        {/* 7. D → DELETE */}
+        
       {/* 7. D → DELETE */}
 <section className="section" id="crud-delete">
   <details>
@@ -2525,7 +2530,7 @@ WHERE id = 4;`}</code>
 
        
 
-        {/* 10. JOIN Y RELACIONES ENTRE TABLAS */}
+        
        {/* 10. JOIN Y RELACIONES ENTRE TABLAS */}
 <section className="section" id="joins">
   <details>
@@ -3008,6 +3013,622 @@ CREATE UNIQUE INDEX idx_dni ON clientes(dni);
     </article>
   </details>
 </section>
+
+
+{/*  X. PROCEDIMIENTOS ALMACENADOS  */}
+<section className="section" id="procedures">
+  <details>
+    <summary>Procedimientos almacenados (PROCEDURE)</summary>
+
+    <article className="card">
+      <h2>Procedimientos almacenados</h2>
+
+      <p>
+        Un <strong>procedimiento almacenado</strong> (o <strong>PROCEDURE</strong>) es un conjunto de 
+        instrucciones SQL que guardamos dentro de la base de datos para poder ejecutarlas 
+        cuando queramos con un simple <code className="etiqueta-codigo">CALL</code>.
+      </p>
+
+      <p>
+        Es como crear una <strong>“función” reutilizable</strong> dentro de MySQL: 
+        en lugar de escribir siempre las mismas sentencias, las definimos una vez 
+        y luego solo las llamamos.
+      </p>
+
+      <div className="cuadro-didactico">
+        <h4>¿Para qué usamos un PROCEDURE?</h4>
+        <div className="cuadro-didactico__grid">
+          <div className="cuadro-didactico__item">
+            <h5>Reutilizar código</h5>
+            <p>Guardamos consultas habituales (informes, listados…) para no repetirlas.</p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Agrupar pasos</h5>
+            <p>Podemos ejecutar varias sentencias (INSERT, UPDATE, DELETE…) de una vez.</p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Evitar errores</h5>
+            <p>
+              Si siempre usamos el mismo procedimiento, reducimos fallos de copiar/pegar 
+              o escribir mal la consulta.
+            </p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Seguridad</h5>
+            <p>
+              Podemos dar permisos para ejecutar el procedimiento sin mostrar toda la lógica interna.
+            </p>
+          </div>
+        </div>
+
+        <div className="cuadro-didactico__nota">
+          En resumen: un <strong>PROCEDURE</strong> nos ayuda a <strong>organizar</strong> mejor 
+          la lógica de la base de datos y a trabajar de forma más profesional.
+        </div>
+      </div>
+
+      <h3>📌 Sintaxis básica</h3>
+
+      <p>
+        La forma más sencilla de crear un procedimiento en MySQL es:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`DELIMITER $$
+
+CREATE PROCEDURE nombre_del_procedure()
+BEGIN
+  -- aquí escribimos las sentencias SQL
+  SELECT 'Hola desde un procedure';
+END $$
+
+DELIMITER ;`}</code>
+      </pre>
+
+      <p>
+        Y para ejecutarlo:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`CALL nombre_del_procedure();`}</code>
+      </pre>
+
+      <div className="callout">
+        <strong>¿Por qué cambiamos el DELIMITER?</strong><br />
+        MySQL normalmente termina las sentencias con <code>;</code>.  
+        Como dentro del <code>BEGIN ... END</code> vamos a usar muchos 
+        <code>;</code>, necesitamos decirle al cliente de MySQL 
+        (phpMyAdmin, consola…) que <strong>temporalmente</strong> 
+        use otro terminador, por ejemplo <code>$$</code>.  
+        Después de crear el procedimiento volvemos a poner 
+        <code>DELIMITER ;</code>.
+      </div>
+
+      <h3>🧪 Ejemplo: listar todos los clientes</h3>
+
+      <p>
+        Imagina que en nuestra base de datos <strong>bazar</strong> tenemos una tabla 
+        <code className="etiqueta-codigo">clientes</code>. Vamos a crear un procedimiento que 
+        muestre todos los clientes:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`DELIMITER $$
+
+CREATE PROCEDURE listar_clientes()
+BEGIN
+  SELECT id, nombre, email
+  FROM clientes
+  ORDER BY nombre;
+END $$
+
+DELIMITER ;`}</code>
+      </pre>
+
+      <p>
+        Para usarlo, simplemente llamamos:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`CALL listar_clientes();`}</code>
+      </pre>
+
+      <h3>🎯 Procedimientos con parámetros (entradas)</h3>
+
+      <p>
+        Podemos crear procedimientos que reciban <strong>parámetros de entrada</strong>.  
+        Por ejemplo, listar solo los pedidos de un cliente concreto:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`DELIMITER $$
+
+CREATE PROCEDURE pedidos_por_cliente(IN p_id_cliente INT)
+BEGIN
+  SELECT id_pedido, fecha, total
+  FROM pedidos
+  WHERE id_cliente = p_id_cliente
+  ORDER BY fecha DESC;
+END $$
+
+DELIMITER ;`}</code>
+      </pre>
+
+      <p>
+        Y lo ejecutamos pasando el valor del parámetro:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`CALL pedidos_por_cliente(3);  -- mostrará los pedidos del cliente con id = 3`}</code>
+      </pre>
+
+      <div className="callout-bonus">
+        <strong>Tipos de parámetros</strong><br />
+        En MySQL podemos usar:
+        <ul className="lista-simple">
+          <li>
+            <code className="etiqueta-codigo">IN</code>: valor de entrada (el más habitual para principiantes).
+          </li>
+          <li>
+            <code className="etiqueta-codigo">OUT</code>: el procedimiento devuelve un valor a una variable.
+          </li>
+          <li>
+            <code className="etiqueta-codigo">INOUT</code>: entra un valor y puede salir modificado.
+          </li>
+        </ul>
+        Para empezar, nos centraremos en <strong>IN</strong>, que es el más sencillo.
+      </div>
+
+      <h3>✅ Cuándo tiene sentido usar PROCEDURES</h3>
+
+      <ul className="lista-simple">
+        <li>Cuando una consulta es <strong>larga</strong> o mezcla varias operaciones.</li>
+        <li>Cuando vamos a usar la misma lógica <strong>muchas veces</strong>.</li>
+        <li>Cuando queremos que varios programas (por ejemplo, una app en React, otra en Java…) usen la misma lógica en la base de datos.</li>
+      </ul>
+
+      <p className="nota nota-importante">
+        No hace falta dominar todos los detalles desde el primer día.  
+        Lo importante es entender la idea: <strong>un PROCEDURE es un “programita” de SQL 
+        guardado en el servidor</strong> que podemos llamar cuando lo necesitemos.
+      </p>
+    </article>
+  </details>
+</section>
+{/*  X. GESTIONAR PERMISOS: ADMIN VS CLIENTE  */}
+<section className="section" id="permisos">
+  <details>
+    <summary>Gestionar permisos según el rol (admin / cliente)</summary>
+
+    <article className="card">
+      <h2>Permisos de usuarios: admin vs cliente</h2>
+
+      <p>
+        En la mayoría de proyectos vamos a tener <strong>tipos de usuarios</strong> diferentes.
+        Por ejemplo:
+      </p>
+
+      <ul className="lista-simple">
+        <li><strong>Administrador (admin)</strong>: puede gestionar productos, usuarios, pedidos, etc.</li>
+        <li><strong>Cliente</strong>: puede ver productos, hacer pedidos, consultar su perfil…</li>
+      </ul>
+
+      <p>
+        La idea es sencilla: todos se <strong>conectan por el mismo login</strong>, pero según el 
+        <strong>rol</strong> que tenga el usuario se verán unas opciones u otras, tanto en el 
+        <strong>front</strong> como en el <strong>backend</strong>.
+      </p>
+
+      <div className="callout-bonus">
+        <h3>🎯 Pasos clave (visión general)</h3>
+        <ol className="lista-simple">
+          <li>Guardar el <strong>rol</strong> del usuario en la base de datos (admin / cliente).</li>
+          <li>
+            En el <strong>login</strong>, si el usuario y contraseña son correctos, el backend 
+            devuelve también su rol.
+          </li>
+          <li>
+            El <strong>frontend</strong> guarda el usuario, su token y su rol (por ejemplo, en un 
+            <code className="etiqueta-codigo">AuthContext</code>).
+          </li>
+          <li>
+            Los componentes del front muestran <strong>opciones distintas</strong> dependiendo del rol.
+          </li>
+          <li>
+            El backend también comprueba el rol para proteger las rutas sensibles (por ejemplo, 
+            solo admin puede borrar productos).
+          </li>
+        </ol>
+      </div>
+
+      <h3>1️⃣ Base de datos: guardar el rol del usuario</h3>
+
+      <p>
+        En la tabla <code className="etiqueta-codigo">usuarios</code> añadimos una columna que indique 
+        el tipo de usuario:
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  rol ENUM('admin', 'cliente') NOT NULL DEFAULT 'cliente'
+);`}</code>
+      </pre>
+
+      <p>
+        De esta forma, podemos tener usuarios con <code>rol = 'admin'</code> y otros con 
+        <code>rol = 'cliente'</code>.
+      </p>
+
+      <h3>2️⃣ Backend: login que devuelve el rol</h3>
+
+      <p>
+        Cuando el usuario hace login, el backend:
+      </p>
+
+      <ol className="lista-simple">
+        <li>Busca el email en la tabla <code>usuarios</code>.</li>
+        <li>Comprueba la contraseña.</li>
+        <li>Si es correcta, devuelve un <strong>token</strong> y los datos básicos del usuario, 
+        incluyendo el <strong>rol</strong>.</li>
+      </ol>
+
+      <pre className="bloque-codigo">
+        <code>{`// Ejemplo de respuesta del backend al hacer login
+{
+  "token": "abc.def.ghi",
+  "user": {
+    "id": 7,
+    "nombre": "María",
+    "rol": "admin"
+  }
+}`}</code>
+      </pre>
+
+      <p>
+        Si usas JWT, el rol suele ir <strong>dentro del token</strong> también, para poder 
+        comprobarlo en los middlewares del backend.
+      </p>
+
+      <h3>3️⃣ Frontend: guardar usuario + token + rol</h3>
+
+      <p>
+        En el frontend podemos usar un <strong>AuthContext</strong> (o un estado global parecido) 
+        donde guardamos:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Si el usuario está logueado (<code>isLogged</code>).</li>
+        <li>El <strong>token</strong>.</li>
+        <li>Los datos del usuario: <code>id</code>, <code>nombre</code>, <code>rol</code>…</li>
+      </ul>
+
+      <p>
+  Lo importante para el tema de permisos es que <strong>user.rol</strong> esté disponible 
+  en toda la app. Esto lo podemos conseguir 
+  <strong>guardando el usuario y su rol dentro del AuthContext</strong>, de manera que cualquier
+  componente (menú, rutas protegidas, botones, paneles de administración…) pueda leer ese valor
+  y decidir qué mostrar.  
+  Gracias a este contexto global, no necesitamos pasar el rol por props ni repetir código:
+  cualquier parte de la aplicación puede acceder a <code>user.rol</code> usando 
+  <code>useContext(AuthContext)</code>.
+</p>
+<p>
+  <strong>AuthContext</strong> es un mecanismo nativo de React que nos permite compartir la 
+  información del usuario (si está logueado, su token y su rol) en toda la aplicación sin 
+  necesidad de pasar props de un componente a otro. Funciona como un “estado global” que todos 
+  los componentes pueden consultar, lo que facilita mostrar diferentes opciones según sea un 
+  <em>admin</em> o un <em>cliente</em>, y gestionar la autenticación de forma centralizada.
+</p>
+
+
+      <h3>4️⃣ Mostrar opciones distintas según el rol</h3>
+
+      <p>
+        Ahora ya podemos hacer algo muy potente: que el menú, la barra de navegación o ciertas 
+        páginas cambien dependiendo de si el usuario es <strong>admin</strong> o 
+        <strong>cliente</strong>.
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`function NavBar() {
+  const { user, isLogged, logout } = React.useContext(AuthContext);
+
+  return (
+    <nav className="navbar">
+      <span className="navbar__brand">Mi Bazar</span>
+
+      {!isLogged && (
+        <ul className="navbar__links">
+          <li><a href="/login">Iniciar sesión</a></li>
+          <li><a href="/registro">Registrarme</a></li>
+        </ul>
+      )}
+
+      {isLogged && (
+        <ul className="navbar__links">
+          <li><a href="/productos">Productos</a></li>
+
+          {/* Opciones solo para clientes */}
+          {user.rol === 'cliente' && (
+            <>
+              <li><a href="/mis-pedidos">Mis pedidos</a></li>
+              <li><a href="/mi-perfil">Mi perfil</a></li>
+            </>
+          )}
+
+          {/* Opciones solo para admin */}
+          {user.rol === 'admin' && (
+            <>
+              <li><a href="/admin/productos">Gestionar productos</a></li>
+              <li><a href="/admin/pedidos">Gestionar pedidos</a></li>
+              <li><a href="/admin/usuarios">Gestionar usuarios</a></li>
+            </>
+          )}
+
+          <li>
+            <button onClick={logout}>Cerrar sesión</button>
+          </li>
+        </ul>
+      )}
+    </nav>
+  );
+}`}</code>
+      </pre>
+
+      <p>
+        Fíjate en la idea principal: <strong>preguntamos por el rol</strong> y, según su valor, 
+        mostramos unos enlaces u otros.
+      </p>
+
+      
+      <p className="nota nota-importante">
+        Resumen: el <strong>rol del usuario</strong> se decide en la base de datos y en el backend.
+        El frontend solo se encarga de <strong>mostrar la interfaz adecuada</strong> según ese rol, 
+        pero la seguridad real está en el servidor.
+      </p>
+      <p>Por otro lado, es posble insertar también permisos</p>
+      <p>
+  En una aplicación web distinguimos entre <strong>roles</strong> (como <em>admin</em> o <em>cliente</em>) y 
+  <strong>permisos del servidor MySQL</strong>, y es importante no confundirlos. Los <strong>roles</strong> son 
+  parte de la lógica de tu aplicación: determinan qué se muestra en el frontend y qué acciones puede 
+  realizar cada usuario dentro del programa. Por ejemplo, un <em>admin</em> puede gestionar productos o 
+  ver paneles especiales, mientras que un <em>cliente</em> solo accede a sus pedidos o a su perfil. Estos 
+  roles se guardan normalmente en la tabla <code>usuarios</code> y se envían al frontend para tomar 
+  decisiones de interfaz o acceso.
+</p>
+
+<p>
+  En cambio, los <strong>permisos de MySQL</strong> controlan quién puede acceder realmente a la base de 
+  datos desde un nivel técnico. Aquí entran los comandos <code>GRANT</code> y <code>REVOKE</code>: 
+  <code>GRANT</code> sirve para <strong>conceder permisos</strong> (como SELECT, INSERT o DELETE) a un 
+  usuario del servidor MySQL, y <code>REVOKE</code> para <strong>retirarlos</strong>. Estos permisos no afectan 
+  a lo que un usuario ve en la web, sino a lo que un usuario técnico o una conexión concreta puede 
+  hacer dentro del motor de MySQL.
+  </p>
+
+  <p>En resumen: los roles deciden <em>qué puede hacer un usuario en la 
+  aplicación</em>, y GRANT/REVOKE deciden <em>qué puede hacer un usuario dentro de MySQL</em>.
+</p>
+
+    </article>
+  </details>
+</section>
+
+{/*  X. TRIGGERS EN MYSQL  */}
+<section className="section" id="triggers">
+  <details>
+    <summary>Triggers (Disparadores)</summary>
+
+    <article className="card">
+      <h2>Triggers en MySQL</h2>
+
+      <p>
+        Un <strong>trigger</strong> es un mecanismo de MySQL que permite ejecutar código de forma
+        automática <strong>cuando ocurre un evento</strong> en una tabla: un <code>INSERT</code>, un 
+        <code>UPDATE</code> o un <code>DELETE</code>.
+      </p>
+
+      <p>
+        Es como decirle a la base de datos:
+        <em>“Cada vez que pase esto, ejecuta este código sin que yo te lo vuelva a pedir”.</em>
+      </p>
+
+      <div className="callout-bonus">
+        <h3>🎯 ¿Para qué sirven los triggers?</h3>
+        <ul className="lista-simple">
+          <li><strong>Mantener logs</strong> de cambios automáticamente.</li>
+          <li><strong>Validar datos</strong> antes de permitir que entren en la tabla.</li>
+          <li><strong>Actualizar otras tablas</strong> cuando cambia una.</li>
+          <li><strong>Calcular valores</strong> antes de insertar o modificar registros.</li>
+        </ul>
+
+        <p>
+          En resumen: los triggers permiten que la base de datos <strong>reaccione sola</strong>,
+          sin depender del backend o del frontend.
+        </p>
+      </div>
+
+      <h3>📌 Tipos de triggers</h3>
+
+      <p>Un trigger siempre se define por:</p>
+
+      <ul className="lista-simple">
+        <li>➡️ El <strong>momento</strong>: <code>BEFORE</code> o <code>AFTER</code></li>
+        <li>➡️ El <strong>evento</strong>: <code>INSERT</code>, <code>UPDATE</code> o <code>DELETE</code></li>
+      </ul>
+
+      <p>Combinando ambos, obtenemos hasta 6 tipos de triggers.</p>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Momento</th>
+              <th>Evento</th>
+              <th>¿Cuándo se dispara?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>BEFORE</td>
+              <td>INSERT</td>
+              <td>Antes de insertar un registro</td>
+            </tr>
+            <tr>
+              <td>AFTER</td>
+              <td>INSERT</td>
+              <td>Después de insertar un registro</td>
+            </tr>
+            <tr>
+              <td>BEFORE</td>
+              <td>UPDATE</td>
+              <td>Antes de actualizar un registro</td>
+            </tr>
+            <tr>
+              <td>AFTER</td>
+              <td>UPDATE</td>
+              <td>Después de actualizar un registro</td>
+            </tr>
+            <tr>
+              <td>BEFORE</td>
+              <td>DELETE</td>
+              <td>Antes de borrar un registro</td>
+            </tr>
+            <tr>
+              <td>AFTER</td>
+              <td>DELETE</td>
+              <td>Después de borrar un registro</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>🧪 Ejemplo 1: crear un log automático de eliminaciones</h3>
+
+      <p>
+        Supongamos que tenemos una tabla <code>productos</code> y queremos guardar en una tabla
+        <code>bajas_productos</code> cada vez que alguien borre un producto.
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`DELIMITER $$
+
+CREATE TRIGGER log_borrado_producto
+AFTER DELETE ON productos
+FOR EACH ROW
+BEGIN
+  INSERT INTO bajas_productos (id_producto, nombre, fecha_baja)
+  VALUES (OLD.id, OLD.nombre, NOW());
+END $$
+
+DELIMITER ;`}</code>
+      </pre>
+
+      <p>
+        Fíjate en que usamos <code>OLD</code> para acceder al registro que se está borrando.
+      </p>
+
+      <div className="callout-bonus">
+        <h3>💡 Tip importante</h3>
+        <p>
+          En un <strong>DELETE</strong> solo existe <code>OLD</code>.  
+          En un <strong>INSERT</strong> solo existe <code>NEW</code>.  
+          En un <strong>UPDATE</strong> existen ambos: <code>OLD</code> y <code>NEW</code>.
+        </p>
+      </div>
+
+      <h3>🧪 Ejemplo 2: validar antes de insertar (BEFORE INSERT)</h3>
+
+      <p>
+        Queremos impedir que alguien inserte un producto con precio negativo.
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`DELIMITER $$
+
+CREATE TRIGGER validar_precio
+BEFORE INSERT ON productos
+FOR EACH ROW
+BEGIN
+  IF NEW.precio < 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'El precio no puede ser negativo';
+  END IF;
+END $$
+
+DELIMITER ;`}</code>
+      </pre>
+
+      <p>
+        Un <strong>SIGNAL</strong> sirve para lanzar un error personalizado.
+      </p>
+
+      <h3>🧪 Ejemplo 3: actualizar stock automáticamente</h3>
+
+      <p>
+        Cada vez que se haga un pedido, queremos restar el stock del producto.
+      </p>
+
+      <pre className="bloque-codigo">
+        <code>{`DELIMITER $$
+
+CREATE TRIGGER descontar_stock
+AFTER INSERT ON pedido_producto
+FOR EACH ROW
+BEGIN
+  UPDATE productos
+  SET stock = stock - NEW.cantidad
+  WHERE id = NEW.id_producto;
+END $$
+
+DELIMITER ;`}</code>
+      </pre>
+
+      <p>
+        Aquí usamos <strong>NEW.cantidad</strong> porque estamos reaccionando a un <code>INSERT</code>.
+      </p>
+
+      <h3>🎯 Reglas importantes para usar triggers</h3>
+
+      <ul className="lista-simple">
+        <li>Un trigger SIEMPRE está asociado a una tabla.</li>
+        <li>No puede tener parámetros (a diferencia de los procedures).</li>
+        <li>Se ejecuta automáticamente, sin necesidad de llamarlo.</li>
+        <li>Hay que tener cuidado con los triggers que modifican la misma tabla → pueden causar bucles.</li>
+      </ul>
+
+      <div className="callout-bonus">
+        <h3>🔥 Bonus para clase</h3>
+        <p>
+          Los triggers son muy útiles, pero deben usarse con responsabilidad.
+          De momento, lo ideal es utilizarlos solo para:
+        </p>
+
+        <ul className="lista-simple">
+          <li>Crear logs</li>
+          <li>Validaciones simples</li>
+          <li>Actualizaciones automáticas de tablas auxiliares</li>
+        </ul>
+
+        <p>
+          Deja la lógica más complicada a tu backend, no a la base de datos.
+        </p>
+      </div>
+
+      <p className="nota nota-importante">
+        En resumen: un <strong>trigger</strong> es una herramienta muy poderosa que permite a la base de 
+        datos reaccionar de forma automática según lo que ocurra en las tablas.  
+        Es ideal para automatizar tareas repetitivas y reforzar la integridad de los datos.
+      </p>
+    </article>
+  </details>
+</section>
+
+
 
 
 
@@ -3504,7 +4125,18 @@ Nombre del alumno, curso, academia y año académico.
     </article>
   </details>
 </section>
-</div>
-</main>
+      </div>
+<section className="section" id="test">
+  <details open>
+    <summary>TEST de REPASO</summary>
+    <article className="card">
+      {/* Test de repaso SQL */}
+      <TestSQLBasico50 />
+      </article>
+  </details>
+</section>
+    </main>
   );
 }
+
+

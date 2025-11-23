@@ -263,11 +263,13 @@ body {
   }
 
   code {
-    background: #f3e9e4;
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-  }
+  background: #f3e9e4;
+  padding: 2px 4px;
+  margin: 0 6px;   /* ← añade espacio a los lados del elemento */
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
 }
 
 .callout-bonus {
@@ -817,4 +819,141 @@ h4::before {
   color: var(--color-principal, #e44d26); /* naranja SQL */
   font-size: 1.2rem;
   line-height: 1.2rem;
+}
+/* =========================================
+   ESTILO PARA EL TEST SQL (50 PREGUNTAS)
+   Compatible y coherente con estilosql.css
+   ========================================= */
+
+/* Contenedor general del test */
+.section--test-sql {
+  margin-top: 2rem;
+}
+
+/* Tarjeta del test */
+.card--test {
+  padding: 2rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-left: 6px solid #16c264; /* Verde Mongo accesible */
+}
+
+/* Pregunta */
+.test-sql__pregunta {
+  margin-bottom: 2rem;
+  padding: 1.2rem 1.5rem;
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #e7e7e7;
+  transition: all .3s ease;
+}
+
+/* Estado: correcta */
+.test-sql__pregunta--correcta {
+  background-color: #e6f7ee;
+  border-color: #16c264;
+}
+
+/* Estado: incorrecta */
+.test-sql__pregunta--incorrecta {
+  background-color: #fdeaea;
+  border-color: #e04444;
+}
+
+/* Título de la pregunta */
+.test-sql__pregunta h3 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+/* Lista de opciones */
+.test-sql__opciones {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: .8rem;
+}
+
+/* Cada opción */
+.test-sql__opcion {
+  margin-bottom: .5rem;
+  padding: .4rem .6rem;
+  border-radius: 6px;
+  transition: background .2s ease;
+}
+
+/* Cuando la opción es la correcta */
+.test-sql__opcion--correcta {
+  background-color: #e1f7eb !important;
+  border-left: 4px solid #13aa52;
+}
+
+/* Hover para opciones (solo antes de corregir) */
+.test-sql__opcion:hover label {
+  cursor: pointer;
+}
+
+/* Texto de la opción */
+.test-sql__opcion-texto {
+  margin-left: .3rem;
+  font-size: .95rem;
+}
+
+/* Feedback debajo de cada pregunta */
+.test-sql__feedback {
+  font-size: .9rem;
+  font-weight: bold;
+  padding-top: .5rem;
+}
+
+.test-sql__pregunta--correcta .test-sql__feedback {
+  color: #13aa52;
+}
+.test-sql__pregunta--incorrecta .test-sql__feedback {
+  color: #d93030;
+}
+
+/* Acciones del test (botones) */
+.test-sql__acciones {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* Resultado final */
+.test-sql__resultado {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+/* Botones coherentes con estilo del manual */
+.btn {
+  padding: .8rem 1.6rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #c5c5c5;
+  color: #fff;
+  transition: background .2s ease;
+}
+
+.btn-primary {
+  background-color: #13aa52;
+}
+
+.btn-primary:hover {
+  background-color: #0e8440;
+}
+
+.btn:hover {
+  background-color: #b1b1b1;
+}
+
+/* Accesibilidad: estado focus */
+input[type="radio"]:focus-visible,
+.btn:focus-visible {
+  outline: 3px solid #16c264;
+  outline-offset: 2px;
 }

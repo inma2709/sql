@@ -126,7 +126,7 @@ cd bazar-frontend
 # 3. Instalar dependencias
 npm install
 
-# 4. (Opcional) Instalar React Router para las páginas
+# 4. Instalar React Router para las páginas
 npm install react-router-dom
 
 # 5. Arrancar el proyecto
@@ -327,8 +327,8 @@ npm run dev`}
       <h3>5️⃣ Esqueleto básico de App.jsx con rutas</h3>
 
       <p>
-        Como referencia, este sería un esqueleto muy simple de 
-        <code className="etiqueta-codigo">App.jsx</code> usando React Router:
+        Como referencia, este sería un esqueleto 
+        <code className="etiqueta-codigo">App.jsx</code> usando React Router. Usalo para ver como van encajando las piezas.
       </p>
 
       <pre className="bloque-codigo">
@@ -417,110 +417,114 @@ export default App;`}
   </details>
 </section>
 
-        <section className="section" id="b4-leccion2">
+   <section className="section" id="b4-leccion2-api-servicio">
   <details open>
-    <summary>4.2. Crear y probar el servicio <code>api.js</code> (Frontend → Backend)</summary>
+    <summary>
+      4.2. Servicio <code>api.js</code> y laboratorio <code>ApiTest.jsx</code> (Frontend → Backend)
+    </summary>
 
     <article className="card">
-
-      <h2>4.2. Crear y probar el servicio <code>api.js</code></h2>
+      <h2>4.2. Crear y probar el servicio <code>api.js</code> con <code>ApiTest.jsx</code></h2>
 
       <p>
-        En esta lección vamos a crear el archivo más importante del frontend a la hora
-        de comunicarse con nuestro backend: <strong>api.js</strong>.
-        Este archivo será el encargado de realizar todas las peticiones a la API Bazar
-        (productos, login, registro, pedidos…).
+        En esta lección vamos a construir dos piezas clave del frontend:
       </p>
 
-      <p>
-        Además, crearemos un componente de prueba llamado 
-        <code className="etiqueta-codigo">ApiTest.jsx</code> que nos permitirá comprobar,
-        desde el propio frontend, que todo está conectado correctamente.
-      </p>
+      <ul className="lista-simple">
+        <li>
+          <strong>El servicio <code>api.js</code></strong>: un archivo centralizado donde
+          viven todas las llamadas al backend (productos, auth, pedidos…).
+        </li>
+        <li>
+          <strong>El componente <code>ApiTest.jsx</code></strong>: un pequeño “laboratorio
+          de pruebas” que nos permite comprobar que la API responde correctamente antes de
+          montar las páginas finales.
+        </li>
+      </ul>
 
-      <h3>1️⃣ ¿Qué es <code>api.js</code>?</h3>
-
       <p>
-        <code>api.js</code> es un archivo que vive en el <strong>frontend</strong> y que 
-        funciona como un <em>puente</em> entre React y nuestro backend Express.
-        En lugar de escribir <code>fetch()</code> repetido en todas partes, centralizamos
-        aquí todas las llamadas a la API.
+        La idea es que <code>api.js</code> sea el <strong>único lugar</strong> donde escribimos
+        <code>fetch()</code>. El resto de componentes (Catálogo, Login, Mis pedidos…) solo
+        tendrán que llamar a funciones como <code>getProductos()</code> o <code>getMisPedidos()</code>,
+        sin preocuparse de URLs ni cabeceras.
       </p>
 
       <div className="cuadro-didactico">
-        <h4>Ventajas de usar un servicio API centralizado</h4>
+        <h4>¿Por qué usar un servicio <code>api.js</code>?</h4>
         <div className="cuadro-didactico__grid">
           <div className="cuadro-didactico__item">
             <h5>Código ordenado</h5>
-            <p>Todo el acceso a la API vive en un mismo archivo.</p>
+            <p>Todo el acceso a la API se concentra en un solo archivo.</p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Gestión del token</h5>
-            <p>El JWT se añade automáticamente cuando es necesario.</p>
+            <p>El JWT se añade automáticamente en las rutas protegidas.</p>
           </div>
           <div className="cuadro-didactico__item">
-            <h5>Escalable</h5>
-            <p>Podemos añadir futuras rutas sin romper el código existente.</p>
+            <h5>Reutilizable</h5>
+            <p>Los mismos métodos sirven para muchas páginas de React.</p>
           </div>
           <div className="cuadro-didactico__item">
             <h5>Profesional</h5>
-            <p>Es como se trabaja en proyectos reales de React.</p>
+            <p>Es el patrón típico en proyectos reales de React + API REST.</p>
           </div>
         </div>
       </div>
 
-      <h3>2️⃣ Crear el archivo <code>api.js</code></h3>
+      <h3>1️⃣ Código completo del servicio <code>src/services/api.js</code></h3>
 
       <p>
-        Dentro de la carpeta <code>src</code> del proyecto React creamos:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-src/services/api.js
-        </code>
-      </pre>
-
-      <p>
-        A continuación pegamos el servicio completo:
+        Dentro de <code>src</code> creamos una carpeta <code>services</code> y dentro el
+        archivo <code>api.js</code>:
       </p>
 
       <pre className="bloque-codigo">
         <code>
 {`// src/services/api.js
 
-const API_URL = 'http://localhost:3000/api';
+// Puedes cambiar esto por una variable de entorno si quieres:
+// VITE_API_URL="http://localhost:3000/api"
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 // ===============================
-// 🔐 Gestión del token
+// 🔐 Gestión del token (frontend)
 // ===============================
 
-function getToken() {
-  return localStorage.getItem('token') || null;
+export function getToken() {
+  const stored = localStorage.getItem("token");
+  return stored || null;
 }
 
 function authHeaders() {
   const token = getToken();
-  return token
-    ? { Authorization: \`Bearer \${token}\` }
-    : {};
+  if (!token) return {};
+  return { Authorization: "Bearer " + token };
 }
 
 // ===============================
 // 📦 Productos
 // ===============================
 
+/**
+ * Obtiene la lista de productos.
+ * Si se pasa una categoría, aplica el filtro:
+ *   GET /api/productos?categoria=Ropa
+ */
 export async function getProductos(categoria = null) {
-  const url = categoria
-    ? \`\${API_URL}/productos?categoria=\${categoria}\`
-    : \`\${API_URL}/productos\`;
+  const query = categoria
+    ? "?categoria=" + encodeURIComponent(categoria)
+    : "";
 
-  const res = await fetch(url);
+  const res = await fetch(API_URL + "/productos" + query);
   return res.json();
 }
 
+/**
+ * Obtiene el detalle de un producto por ID.
+ * GET /api/productos/:id
+ */
 export async function getProductoById(id) {
-  const res = await fetch(\`\${API_URL}/productos/\${id}\`);
+  const res = await fetch(API_URL + "/productos/" + id);
   return res.json();
 }
 
@@ -528,28 +532,42 @@ export async function getProductoById(id) {
 // 🔐 Auth (registro y login)
 // ===============================
 
+/**
+ * Registro de usuario.
+ * Espera un objeto:
+ * { nombre, email, password }
+ */
 export async function register(datos) {
-  const res = await fetch(\`\${API_URL}/auth/register\`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(datos)
+  const res = await fetch(API_URL + "/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
   });
+
   return res.json();
 }
 
+/**
+ * Login de usuario.
+ * Espera un objeto:
+ * { email, password }
+ *
+ * Devuelve lo que responda el backend, normalmente:
+ * { token, usuario: { id, nombre, email, ... } }
+ *
+ * IMPORTANTE:
+ *   Esta función NO guarda el token en localStorage.
+ *   Dejamos esa responsabilidad al AuthContext o al componente
+ *   que quiera controlar la sesión (por ejemplo ApiTest).
+ */
 export async function login(datos) {
-  const res = await fetch(\`\${API_URL}/auth/login\`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(datos)
+  const res = await fetch(API_URL + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
   });
 
   const data = await res.json();
-
-  if (data.token) {
-    localStorage.setItem('token', data.token);
-  }
-
   return data;
 }
 
@@ -557,97 +575,332 @@ export async function login(datos) {
 // 📦 Pedidos del usuario
 // ===============================
 
+/**
+ * Crea un nuevo pedido vacío para el usuario autenticado.
+ * POST /api/pedidos   (requiere token)
+ */
 export async function crearPedido() {
-  const res = await fetch(\`\${API_URL}/pedidos\`, {
-    method: 'POST',
+  const res = await fetch(API_URL + "/pedidos", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      ...authHeaders()
-    }
-  });
-
-  return res.json();
-}
-
-export async function agregarProductoAPedido(pedidoId, productoId, cantidad) {
-  const res = await fetch(\`\${API_URL}/pedidos/\${pedidoId}/productos\`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeaders()
+      "Content-Type": "application/json",
+      ...authHeaders(),
     },
-    body: JSON.stringify({ producto_id: productoId, cantidad })
   });
 
   return res.json();
 }
 
+/**
+ * Añade un producto a un pedido existente.
+ * POST /api/pedidos/:id/productos   (requiere token)
+ * body: { producto_id, cantidad }
+ */
+export async function agregarProductoAPedido(pedidoId, productoId, cantidad) {
+  const res = await fetch(API_URL + "/pedidos/" + pedidoId + "/productos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ producto_id: productoId, cantidad: cantidad }),
+  });
+
+  return res.json();
+}
+
+/**
+ * Devuelve los pedidos del usuario autenticado.
+ * GET /api/mis-pedidos    (requiere token)
+ */
 export async function getMisPedidos() {
-  const res = await fetch(\`\${API_URL}/mis-pedidos\`, {
+  const res = await fetch(API_URL + "/mis-pedidos", {
     headers: {
-      ...authHeaders()
-    }
+      ...authHeaders(),
+    },
   });
 
   return res.json();
 }
 
+/**
+ * Devuelve el detalle de un pedido del usuario autenticado.
+ * GET /api/mis-pedidos/:id    (requiere token)
+ */
 export async function getPedidoDetalle(id) {
-  const res = await fetch(\`\${API_URL}/mis-pedidos/\${id}\`, {
+  const res = await fetch(API_URL + "/mis-pedidos/" + id, {
     headers: {
-      ...authHeaders()
-    }
+      ...authHeaders(),
+    },
   });
 
   return res.json();
-}`}
+}
+`}
         </code>
       </pre>
 
-      <h3>3️⃣ ¿Cómo probamos que <code>api.js</code> funciona?</h3>
-
       <p>
-        Antes de construir las páginas del frontend, es buena práctica asegurarnos de que
-        el servicio se comunica correctamente con el backend.  
-        Para ello crearemos un componente de prueba llamado 
-        <code className="etiqueta-codigo">ApiTest.jsx</code>.
+        Fíjate en la idea clave: las rutas protegidas (pedidos, mis pedidos…) <strong>no
+        necesitan que pasemos el token a mano</strong>. La función <code>authHeaders()</code>
+        lo añade automáticamente a la cabecera <code>Authorization</code> cuando existe en
+        <code>localStorage</code>.
       </p>
 
-      <h4>📁 Ubicación:</h4>
+      <h3>2️⃣ Laboratorio de pruebas: <code>src/components/ApiTest.jsx</code></h3>
 
-      <pre className="bloque-codigo">
-        <code>src/components/ApiTest.jsx</code>
-      </pre>
+      <p>
+        Antes de construir las páginas finales, vamos a crear un componente llamado{" "}
+        <code className="etiqueta-codigo">ApiTest.jsx</code> que nos sirve como
+        <strong>panel de botones</strong> para probar todo:
+      </p>
 
-      <h4>📄 Código completo del componente:</h4>
+      <ul className="lista-simple">
+        <li>Ver productos (con y sin filtro por categoría).</li>
+        <li>Registrar un usuario de prueba.</li>
+        <li>Hacer login y guardar el token + usuario.</li>
+        <li>Consultar rutas protegidas: <code>/api/mis-pedidos</code>, crear pedido, etc.</li>
+      </ul>
+
+      <p>
+        Esto ayuda mucho a los alumnos que empiezan porque ven claramente cómo cambia
+        la API cuando hay token y cuando no lo hay.
+      </p>
 
       <pre className="bloque-codigo">
         <code>
 {`// src/components/ApiTest.jsx
-// src/components/ApiTest.jsx
 import { useState } from "react";
-import { getProductos, getMisPedidos } from "../services/api";
+import {
+  getProductos,
+  getProductoById,
+  register,
+  login,
+  crearPedido,
+  agregarProductoAPedido,
+  getMisPedidos,
+  getPedidoDetalle,
+  getToken,
+} from "../services/api";
 
+/**
+ * Componente de pruebas para la API Bazar.
+ *
+ * No es parte de la tienda "real", es un laboratorio.
+ * Permite:
+ *  - Ver si la API responde (GET /api/productos).
+ *  - Probar filtros por categoría.
+ *  - Registrar un usuario de prueba.
+ *  - Hacer login y guardar el token en localStorage.
+ *  - Probar rutas protegidas (/mis-pedidos, /pedidos, etc.).
+ */
 export default function ApiTest() {
   const [resultado, setResultado] = useState(null);
 
-  const token = localStorage.getItem("token");
+  // Estados para ver si estamos autenticados
+  const [token, setToken] = useState(getToken());
+  const [usuario, setUsuario] = useState(
+    () => JSON.parse(localStorage.getItem("user") || "null")
+  );
   const isLogged = !!token;
 
-  const probarProductos = async () => {
-    const data = await getProductos();
-    setResultado(data);
+  // Formularios para registro y login
+  const [registroForm, setRegistroForm] = useState({
+    nombre: "Ana",
+    email: "ana@example.com",
+    password: "secreto123",
+  });
+
+  const [loginForm, setLoginForm] = useState({
+    email: "ana@example.com",
+    password: "secreto123",
+  });
+
+  // Filtro por categoría y búsqueda de producto por ID
+  const [categoriaFiltro, setCategoriaFiltro] = useState("");
+  const [productoId, setProductoId] = useState("");
+
+  // Para probar pedidos
+  const [pedidoId, setPedidoId] = useState("");
+  const [productoPedidoId, setProductoPedidoId] = useState("");
+  const [cantidadProducto, setCantidadProducto] = useState(1);
+  const [pedidoDetalleId, setPedidoDetalleId] = useState("");
+
+  // -----------------------------
+  // Productos
+  // -----------------------------
+  const manejarGetProductos = async () => {
+    try {
+      const data = await getProductos();
+      setResultado(data);
+    } catch (error) {
+      setResultado({ error: "No se pudo obtener la lista de productos" });
+    }
   };
 
-  const probarMisPedidos = async () => {
-    const data = await getMisPedidos();
-    setResultado(data);
+  const manejarGetProductosPorCategoria = async () => {
+    try {
+      const data = await getProductos(categoriaFiltro || null);
+      setResultado(data);
+    } catch (error) {
+      setResultado({
+        error: "No se pudo obtener la lista de productos por categoría",
+      });
+    }
+  };
+
+  const manejarGetProductoPorId = async () => {
+    try {
+      if (!productoId) {
+        setResultado({ error: "Introduce un ID de producto" });
+        return;
+      }
+      const data = await getProductoById(productoId);
+      setResultado(data);
+    } catch (error) {
+      setResultado({ error: "No se pudo obtener el producto por ID" });
+    }
+  };
+
+  // -----------------------------
+  // Registro
+  // -----------------------------
+  const manejarRegistro = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await register(registroForm);
+      setResultado(data);
+      // Didáctico: el registro NO hace login automático.
+      // Después de registrarse, el usuario debe hacer login.
+    } catch (error) {
+      setResultado({ error: "Error al registrar usuario" });
+    }
+  };
+
+  // -----------------------------
+  // Login
+  // -----------------------------
+  const manejarLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await login(loginForm);
+      setResultado(data);
+
+      // Suponemos que el backend devuelve:
+      // { token, usuario: { id, nombre, email, ... } }
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+      }
+
+      if (data.usuario) {
+        localStorage.setItem("user", JSON.stringify(data.usuario));
+        setUsuario(data.usuario);
+      }
+    } catch (error) {
+      setResultado({ error: "Error al iniciar sesión" });
+    }
+  };
+
+  // -----------------------------
+  // Logout
+  // -----------------------------
+  const manejarLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUsuario(null);
+    setResultado(null);
+  };
+
+  // -----------------------------
+  // Mis pedidos (ruta protegida)
+  // -----------------------------
+  const manejarMisPedidos = async () => {
+    try {
+      const data = await getMisPedidos();
+      setResultado(data);
+    } catch (error) {
+      setResultado({ error: "Error al obtener /mis-pedidos" });
+    }
+  };
+
+  // -----------------------------
+  // Crear pedido (ruta protegida)
+  // -----------------------------
+  const manejarCrearPedido = async () => {
+    try {
+      const data = await crearPedido();
+      setResultado(data);
+
+      // Si el backend devuelve id_pedido, lo guardamos para probar
+      // rápidamente el endpoint de agregar productos.
+      if (data.id_pedido) {
+        setPedidoId(String(data.id_pedido));
+      }
+    } catch (error) {
+      setResultado({ error: "Error al crear pedido" });
+    }
+  };
+
+  // -----------------------------
+  // Añadir producto a pedido
+  // -----------------------------
+  const manejarAgregarProductoAPedido = async () => {
+    try {
+      if (!pedidoId || !productoPedidoId) {
+        setResultado({
+          error: "Debes indicar ID de pedido e ID de producto",
+        });
+        return;
+      }
+
+      const cantidad = Number(cantidadProducto) || 1;
+
+      const data = await agregarProductoAPedido(
+        pedidoId,
+        productoPedidoId,
+        cantidad
+      );
+      setResultado(data);
+    } catch (error) {
+      setResultado({
+        error: "Error al agregar producto al pedido",
+      });
+    }
+  };
+
+  // -----------------------------
+  // Ver detalle de un pedido del usuario
+  // -----------------------------
+  const manejarPedidoDetalle = async () => {
+    try {
+      if (!pedidoDetalleId) {
+        setResultado({ error: "Introduce un ID de pedido" });
+        return;
+      }
+      const data = await getPedidoDetalle(pedidoDetalleId);
+      setResultado(data);
+    } catch (error) {
+      setResultado({
+        error: "Error al obtener el detalle del pedido",
+      });
+    }
   };
 
   return (
-    <div style={{ padding: "1rem", border: "1px solid #ddd", marginTop: "2rem" }}>
+    <div
+      style={{
+        padding: "1rem",
+        border: "1px solid #ddd",
+        marginTop: "2rem",
+        borderRadius: "8px",
+        background: "#fafafa",
+      }}
+    >
       <h2>🔧 Prueba de API (modo desarrollo)</h2>
 
+      {/* Estado de autenticación */}
       <p>
         Estado de autenticación:{" "}
         {isLogged ? (
@@ -658,36 +911,238 @@ export default function ApiTest() {
       </p>
 
       {isLogged && (
-        <p style={{ fontSize: "0.8rem", color: "#555" }}>
-          Token JWT: {token.substring(0, 20)}...
-        </p>
+        <>
+          <p style={{ fontSize: "0.85rem", color: "#555" }}>
+            Token JWT (inicio): {token.substring(0, 25)}...
+          </p>
+          {usuario && (
+            <p style={{ fontSize: "0.85rem", color: "#555" }}>
+              Usuario: {usuario.nombre} ({usuario.email})
+            </p>
+          )}
+          <button
+            type="button"
+            onClick={manejarLogout}
+            style={{ marginBottom: "1rem" }}
+          >
+            🚪 Cerrar sesión (borrar token)
+          </button>
+        </>
       )}
 
-      <button onClick={probarProductos}>
-        📦 Probar GET /api/productos
+      <hr />
+
+      {/* Productos */}
+      <h3>📦 1. Probar productos</h3>
+      <button type="button" onClick={manejarGetProductos}>
+        📦 GET /api/productos
       </button>
+
+      <div style={{ marginTop: "0.5rem" }}>
+        <label>
+          Categoría:&nbsp;
+          <input
+            type="text"
+            value={categoriaFiltro}
+            onChange={(e) => setCategoriaFiltro(e.target.value)}
+            placeholder="Ropa, Libros..."
+          />
+        </label>
+        <button
+          type="button"
+          onClick={manejarGetProductosPorCategoria}
+          style={{ marginLeft: "0.5rem" }}
+        >
+          🔎 GET /api/productos?categoria=...
+        </button>
+      </div>
+
+      <div style={{ marginTop: "0.5rem" }}>
+        <label>
+          ID producto:&nbsp;
+          <input
+            type="number"
+            value={productoId}
+            onChange={(e) => setProductoId(e.target.value)}
+            placeholder="1, 2, 3..."
+          />
+        </label>
+        <button
+          type="button"
+          onClick={manejarGetProductoPorId}
+          style={{ marginLeft: "0.5rem" }}
+        >
+          🔎 GET /api/productos/:id
+        </button>
+      </div>
+
+      <hr />
+
+      {/* Registro */}
+      <h3>📝 2. Registrar usuario de prueba</h3>
+      <form onSubmit={manejarRegistro} style={{ marginBottom: "1rem" }}>
+        <div>
+          <label>Nombre:&nbsp;</label>
+          <input
+            type="text"
+            value={registroForm.nombre}
+            onChange={(e) =>
+              setRegistroForm({ ...registroForm, nombre: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <label>Email:&nbsp;</label>
+          <input
+            type="email"
+            value={registroForm.email}
+            onChange={(e) =>
+              setRegistroForm({ ...registroForm, email: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <label>Contraseña:&nbsp;</label>
+          <input
+            type="password"
+            value={registroForm.password}
+            onChange={(e) =>
+              setRegistroForm({ ...registroForm, password: e.target.value })
+            }
+          />
+        </div>
+        <button type="submit" style={{ marginTop: "0.5rem" }}>
+          📝 POST /api/auth/register
+        </button>
+      </form>
+
+      <hr />
+
+      {/* Login */}
+      <h3>🔑 3. Iniciar sesión</h3>
+      <form onSubmit={manejarLogin} style={{ marginBottom: "1rem" }}>
+        <div>
+          <label>Email:&nbsp;</label>
+          <input
+            type="email"
+            value={loginForm.email}
+            onChange={(e) =>
+              setLoginForm({ ...loginForm, email: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <label>Contraseña:&nbsp;</label>
+          <input
+            type="password"
+            value={loginForm.password}
+            onChange={(e) =>
+              setLoginForm({ ...loginForm, password: e.target.value })
+            }
+          />
+        </div>
+        <button type="submit" style={{ marginTop: "0.5rem" }}>
+          🔑 POST /api/auth/login
+        </button>
+      </form>
+
+      <hr />
+
+      {/* Rutas protegidas: pedidos */}
+      <h3>📄 4. Rutas protegidas (requieren token)</h3>
 
       <button
-        onClick={probarMisPedidos}
-        style={{ marginLeft: "1rem" }}
+        type="button"
+        onClick={manejarMisPedidos}
         disabled={!isLogged}
       >
-        📄 Probar GET /api/mis-pedidos (requiere token)
+        📄 GET /api/mis-pedidos
       </button>
-
       {!isLogged && (
-        <p style={{ marginTop: "1rem", color: "red" }}>
-          ⚠️ Inicia sesión primero para probar /mis-pedidos
+        <p style={{ marginTop: "0.25rem", color: "red" }}>
+          ⚠️ Inicia sesión para probar /mis-pedidos
         </p>
       )}
 
-      <pre style={{
-        marginTop: "1rem",
-        background: "#f7f7f7",
-        padding: "1rem",
-        maxHeight: "300px",
-        overflow: "auto"
-      }}>
+      <div style={{ marginTop: "1rem" }}>
+        <button
+          type="button"
+          onClick={manejarCrearPedido}
+          disabled={!isLogged}
+        >
+          🧾 POST /api/pedidos (crear pedido)
+        </button>
+      </div>
+
+      <div style={{ marginTop: "0.5rem" }}>
+        <label>
+          ID pedido:&nbsp;
+          <input
+            type="number"
+            value={pedidoId}
+            onChange={(e) => setPedidoId(e.target.value)}
+            placeholder="ID del pedido"
+          />
+        </label>
+        <label style={{ marginLeft: "0.5rem" }}>
+          ID producto:&nbsp;
+          <input
+            type="number"
+            value={productoPedidoId}
+            onChange={(e) => setProductoPedidoId(e.target.value)}
+            placeholder="ID del producto"
+          />
+        </label>
+        <label style={{ marginLeft: "0.5rem" }}>
+          Cantidad:&nbsp;
+          <input
+            type="number"
+            min="1"
+            value={cantidadProducto}
+            onChange={(e) => setCantidadProducto(e.target.value)}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={manejarAgregarProductoAPedido}
+          style={{ marginLeft: "0.5rem" }}
+          disabled={!isLogged}
+        >
+          ➕ POST /api/pedidos/:id/productos
+        </button>
+      </div>
+
+      <div style={{ marginTop: "0.5rem" }}>
+        <label>
+          ID pedido para detalle:&nbsp;
+          <input
+            type="number"
+            value={pedidoDetalleId}
+            onChange={(e) => setPedidoDetalleId(e.target.value)}
+            placeholder="ID del pedido"
+          />
+        </label>
+        <button
+          type="button"
+          onClick={manejarPedidoDetalle}
+          style={{ marginLeft: "0.5rem" }}
+          disabled={!isLogged}
+        >
+          🔍 GET /api/mis-pedidos/:id
+        </button>
+      </div>
+
+      {/* Resultado de la última petición */}
+      <pre
+        style={{
+          marginTop: "1rem",
+          background: "#f7f7f7",
+          padding: "1rem",
+          maxHeight: "300px",
+          overflow: "auto",
+          fontSize: "0.85rem",
+        }}
+      >
         {resultado ? JSON.stringify(resultado, null, 2) : "Sin resultados aún..."}
       </pre>
     </div>
@@ -697,589 +1152,57 @@ export default function ApiTest() {
         </code>
       </pre>
 
-      <h3>4️⃣ Añadir el componente de prueba al proyecto</h3>
-
-      <p>
-        Para visualizar el test dentro de tu frontend, vamos a incluir temporalmente 
-        el componente <code>ApiTest</code> dentro del layout o en 
-        <code>App.jsx</code>.
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`import ApiTest from './components/ApiTest';
-
-function App() {
-  return (
-    <AuthProvider>
-      <Router>
-        <Layout>
-          {/* SOLO PARA PRUEBAS */}
-          <ApiTest />
-
-          <Routes>
-            {/* tus rutas reales */}
-          </Routes>
-        </Layout>
-      </Router>
-    </AuthProvider>
-  );
-}
-
-export default App;`}
-        </code>
-      </pre>
-
-      <h3>5️⃣ ¿Cómo probarlo paso a paso?</h3>
-
-      <ol className="lista-simple">
-        <li>Arranca el backend con <code>npm run dev</code>.</li>
-        <li>Arranca el frontend con <code>npm run dev</code>.</li>
-        <li>Visita <code>http://localhost:5173</code> en tu navegador.</li>
-        <li>Pulsa el botón <strong>📦 Probar GET /api/productos</strong>.</li>
-        <li>
-          Si el login está hecho, prueba 
-          <strong>📄 Probar GET /api/mis-pedidos</strong>.
-        </li>
-      </ol>
-      <section className="section" id="b4-api-test-explicacion">
-  <details open>
-    <summary>4.X. Cómo comprobar si el login está hecho y cómo probar rutas protegidas</summary>
-
-    <article className="card">
-
-      <h2>📌 4.X. Comprobar login y probar rutas protegidas con <code>ApiTest.jsx</code></h2>
-
-      <p>
-        En esta sección vamos a comprender cómo saber si el usuario está autenticado 
-        en el frontend y cómo usar nuestro componente de prueba 
-        <code className="etiqueta-codigo">ApiTest.jsx</code> para comprobar que las 
-        rutas protegidas del backend funcionan correctamente.
-      </p>
-
-      <h3>1️⃣ ¿Cuándo consideramos que un usuario está “logueado”?</h3>
-
-      <p>
-        En nuestro frontend, un usuario se considera <strong>logueado</strong> cuando 
-        existe un <strong>token JWT almacenado en <code>localStorage</code></strong>.
-      </p>
-
-      <p>
-        Esto ocurre automáticamente cuando el usuario hace login correctamente:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-localStorage.setItem("token", data.token);
-        </code>
-      </pre>
-
-      <p>
-        Por lo tanto, para saber si el usuario está autenticado, simplemente 
-        comprobamos si existe el token:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-const token = localStorage.getItem("token");
-const isLogged = !!token; // true si existe token, false si no
-        </code>
-      </pre>
-
       <div className="nota">
-        ✔ Esto es exactamente lo mismo que hace el navegador cuando recordamos 
-        la sesión en la mayoría de páginas web.
+        Observa que <strong>ApiTest.jsx</strong> no se va a quedar en el proyecto final.
+        Es una herramienta didáctica para que tú (y tus alumnos) podáis comprobar de forma
+        visual que:
+        <ul className="lista-simple">
+          <li>El backend responde a las rutas públicas.</li>
+          <li>El registro y el login funcionan.</li>
+          <li>El token se guarda y se usa correctamente en las rutas protegidas.</li>
+        </ul>
+        Una vez que todo esto funciona, construir las páginas “bonitas” es mucho más fácil.
       </div>
 
-      <hr />
-
-      <h3>2️⃣ ¿Por qué es importante saber si el usuario está logueado?</h3>
-
-      <p>
-        Algunas rutas del backend están protegidas y exigen un token válido.  
-        Por ejemplo:
-      </p>
+      <h3>3️⃣ ¿Qué aporta esta arquitectura y cuál es el siguiente paso?</h3>
 
       <ul className="lista-simple">
-        <li><code>GET /api/mis-pedidos</code></li>
-        <li><code>GET /api/mis-pedidos/:id</code></li>
-        <li><code>POST /api/pedidos</code></li>
+        <li>
+          <strong>Separación de responsabilidades:</strong> <code>api.js</code> habla con la API;
+          los componentes solo muestran datos y responden a acciones del usuario.
+        </li>
+        <li>
+          <strong>Facilidad para cambiar el backend:</strong> si mañana la URL base cambia,
+          solo modificas <code>API_URL</code> en un sitio.
+        </li>
+        <li>
+          <strong>Preparado para AuthContext:</strong> más adelante, en{" "}
+          <code>AuthContext.jsx</code>, podrás reutilizar la función <code>login()</code> de{" "}
+          <code>api.js</code> para iniciar sesión y guardar usuario + token en el contexto.
+        </li>
+        <li>
+          <strong>Componentes más simples:</strong> una futura página <code>ProductosPage</code>{" "}
+          solo tendrá que hacer:
+          <code className="etiqueta-codigo">const data = await getProductos("Ropa")</code> y
+          pintar el resultado.
+        </li>
+        <li>
+          <strong>Reutilización total:</strong> las mismas funciones de <code>api.js</code> se
+          usarán desde <code>MisPedidosPage</code>, <code>LoginPage</code>,{" "}
+          <code>PerfilPage</code>, etc.
+        </li>
       </ul>
 
       <p>
-        Estas rutas requieren la cabecera:
+        En la siguiente parte del manual, <strong>api.js</strong> empezará a “hablar” con
+        nuestros componentes reales: el catálogo de productos, la página de login, la página
+        de “Mis pedidos”… Gracias a este diseño, esos componentes serán mucho más cortos y
+        fáciles de entender, porque delegan toda la lógica de red en este servicio.
       </p>
-
-      <pre className="bloque-codigo">
-        <code>
-Authorization: Bearer &lt;token-del-usuario&gt;
-        </code>
-      </pre>
-
-      <p>
-        Si no hay token, el backend devuelve un error del tipo:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`{ "mensaje": "Falta cabecera Authorization" }`}
-        </code>
-      </pre>
-
-      <hr />
-
-      <h3>3️⃣ ¿Cómo comprobar esto desde <code>ApiTest.jsx</code>?</h3>
-
-      <p>
-        El componente <code>ApiTest</code> muestra en pantalla si existe el token 
-        en <code>localStorage</code>, es decir, si el usuario está autenticado.
-      </p>
-
-      <p>Ejemplo visual dentro del componente:</p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`Estado de autenticación: Autenticado ✔
-// o
-Estado de autenticación: No autenticado ❌`}
-        </code>
-      </pre>
-
-      <p>
-        Además, el botón para probar la ruta protegida 
-        <code>/api/mis-pedidos</code> se desactiva automáticamente si no hay token:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{/* disabled={!isLogged} */}
-
-  📄 Probar GET /api/mis-pedidos
-
-        </code>
-      </pre>
-
-      <div className="cuadro-didactico">
-        <h4>¿Qué demuestra esta prueba?</h4>
-        <div className="cuadro-didactico__grid">
-          <div className="cuadro-didactico__item">
-            <h5>Autenticación OK</h5>
-            <p>El frontend detecta si el usuario tiene un token válido.</p>
-          </div>
-          <div className="cuadro-didactico__item">
-            <h5>Rutas protegidas</h5>
-            <p>El backend solo permite acceso si se envía la cabecera Authorization.</p>
-          </div>
-          <div className="cuadro-didactico__item">
-            <h5>Comunicación completa</h5>
-            <p>Frontend y backend están correctamente conectados.</p>
-          </div>
-        </div>
-      </div>
-
-      <hr />
-
-      <h3>4️⃣ ¿Cómo probarlo paso a paso?</h3>
-
-      <ol className="lista-simple">
-        <li>Abre Thunder Client o Postman y haz un login real:</li>
-      </ol>
-
-      <pre className="bloque-codigo">
-        <code>
-POST http://localhost:3000/api/auth/login
-Content-Type: application/json
-
-{"{"}
-  "email": "ana@example.com",
-  "password": "secreto123"
-{"}"}
-        </code>
-      </pre>
-
-      <p>La respuesta debe incluir un token JWT.</p>
-
-      <ol start="2" className="lista-simple">
-        <li>Guarda el token: el frontend lo hace solo al hacer login.</li>
-        <li>Recarga el navegador y abre ApiTest.</li>
-      </ol>
-
-      <p>Deberías ver:</p>
-
-      <pre className="bloque-codigo">
-        <code>Estado de autenticación: Autenticado ✔</code>
-      </pre>
-
-      <ol start="4" className="lista-simple">
-        <li>Pulsa el botón: <strong>📄 Probar GET /api/mis-pedidos</strong>.</li>
-        <li>Comprobarás si la ruta protegida funciona correctamente.</li>
-      </ol>
-
-      <p>Si todo va bien, verás un JSON con tus pedidos.</p>
-
-      <hr />
-
-      <h3>5️⃣ Resumen</h3>
-
-      <ul className="lista-simple">
-        <li>React considera al usuario autenticado si existe un token en localStorage.</li>
-        <li>ApiTest muestra claramente si hay token o no.</li>
-        <li>Las rutas protegidas requieren <code>Authorization: Bearer token</code>.</li>
-        <li>ApiTest permite probar todo esto antes de construir las páginas reales.</li>
-      </ul>
-
-      <p>
-        Gracias a esta comprobación visual, ya sabemos que el sistema de 
-        autenticación funciona y que el frontend puede comunicarse perfectamente 
-        con las rutas protegidas del backend.
-      </p>
-
     </article>
   </details>
 </section>
 
-
-      <p>
-        Si todo está bien, verás un JSON con datos reales del backend.  
-        Si falta token, saldrá un mensaje avisando.  
-        Esta comprobación es fundamental antes de programar las páginas reales.
-      </p>
-
-      <h3>6️⃣ Explicación visual del flujo</h3>
-
-      <pre className="bloque-codigo">
-        <code>
-{`React (ApiTest.jsx)
-    |
-    |  getProductos()   → api.js → fetch → backend
-    |
-Backend (Express + MySQL)
-    |
-    | respuesta JSON
-    v
-React muestra resultados en pantalla`}
-        </code>
-      </pre>
-
-      <h3>7️⃣ Resumen de la lección</h3>
-
-      <ul className="lista-simple">
-        <li>Hemos creado el archivo <code>api.js</code> como centro de comunicación con la API.</li>
-        <li>Hemos implementado funciones para productos, auth y pedidos.</li>
-        <li>Hemos construido un componente de prueba para verificar la conexión.</li>
-        <li>Hemos confirmado que el frontend puede consumir nuestra API sin errores.</li>
-      </ul>
-
-      <p>
-        En la siguiente lección comenzaremos a construir las primeras páginas reales: 
-        <strong>Catálogo</strong> y <strong>Login</strong>.
-      </p>
-
-    </article>
-  </details>
-</section>
-
-
-       <section className="section" id="b4-leccion3">
-  <details open>
-    <summary>4.3. Crear <code>AuthContext.jsx</code> para gestionar usuario + token (explicación completa)</summary>
-
-    <article className="card">
-
-      <h2>4.3. AuthContext: gestionar usuario + token JWT en todo el frontend</h2>
-
-      <p>
-        En esta lección vamos a crear un sistema profesional y muy utilizado en proyectos React:
-        un <strong>contexto de autenticación</strong> para gestionar el usuario y el token JWT
-        en toda la aplicación.
-      </p>
-
-      <p>
-        Esto permitirá que cualquier componente (Navbar, páginas, rutas protegidas…) pueda saber 
-        si un usuario está logueado, cuál es su nombre, si tiene token válido, y podrá iniciar o 
-        cerrar sesión sin repetir código.
-      </p>
-
-      <hr />
-
-      <h3>1️⃣ ¿Qué es AuthContext y para qué sirve?</h3>
-
-      <p>
-        En React, un <strong>contexto</strong> es una herramienta que permite compartir datos
-        entre muchos componentes sin necesidad de pasar props manualmente de un componente a otro.
-      </p>
-
-      <p>
-        En nuestro caso, AuthContext almacenará:
-      </p>
-
-      <ul className="lista-simple">
-        <li>🔐 El usuario que ha hecho login</li>
-        <li>🔑 El token JWT (localStorage)</li>
-        <li>🧭 Funciones <code>login()</code> y <code>logout()</code></li>
-        <li>🛡️ Estado de autenticación: conectado o no conectado</li>
-      </ul>
-
-      <p>
-        Gracias a esto:
-      </p>
-
-      <ul className="lista-simple">
-        <li>Navbar podrá mostrar “Login” o “Mi cuenta”.</li>
-        <li>MisPedidosPage podrá acceder al token del usuario.</li>
-        <li>ProtectedRoute bloqueará el acceso a rutas sin login.</li>
-        <li>LoginPage podrá llamar a <code>auth.login()</code> después del login.</li>
-      </ul>
-
-      <hr />
-
-      <h3>2️⃣ ¿Dónde se usa AuthContext?</h3>
-
-      <p>
-        Esta parte es FUNDAMENTAL y muchos alumnos se confunden.  
-        <strong>AuthContext NO se importa en una página concreta.</strong>  
-        En lugar de eso:
-      </p>
-
-      <div className="callout">
-        AuthContext debe envolver TODA la aplicación en <code>App.jsx</code>.
-      </div>
-
-      <p>Así cualquier componente tiene acceso al usuario.</p>
-
-      <h4>Esquema visual:</h4>
-
-      <pre className="bloque-codigo">
-        <code>
-{`<AuthProvider>
-  <Router>
-    <Layout>
-      TODAS LAS PÁGINAS Y COMPONENTES
-      (pueden acceder a usuario y token)
-    </Layout>
-  </Router>
-</AuthProvider>`}
-        </code>
-      </pre>
-
-      <p>
-        Esto es exactamente cómo trabajan las aplicaciones profesionales con React Router, 
-        Next.js y frameworks modernos.
-      </p>
-
-      <hr />
-
-      <h3>3️⃣ Crear el archivo <code>AuthContext.jsx</code></h3>
-
-      <p>
-        En la carpeta <code>src/context</code> creamos:
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>src/context/AuthContext.jsx</code>
-      </pre>
-
-      <h4>📄 Código completo del contexto:</h4>
-
-      <pre className="bloque-codigo">
-        <code>
-{`// src/context/AuthContext.jsx
-import { createContext, useContext, useEffect, useState } from "react";
-import { login as apiLogin } from "../services/api";
-
-const AuthContext = createContext();
-
-// Hook para usar el contexto desde cualquier componente
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);      // datos del usuario
-  const [token, setToken] = useState(null);    // token JWT
-  const [loading, setLoading] = useState(true); // para restaurar sesión
-
-  // Restaurar sesión al recargar la página
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
-
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    }
-
-    setLoading(false);
-  }, []);
-
-  // Función de login → llama a API y guarda usuario + token
-  async function login(email, password) {
-    const data = await apiLogin({ email, password });
-
-    if (data.token) {
-      setToken(data.token);
-      setUser(data.usuario);
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.usuario));
-    }
-
-    return data;
-  }
-
-  // Logout → borra datos del usuario
-  function logout() {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  }
-
-  const value = {
-    user,
-    token,
-    loading,
-    login,
-    logout,
-    isAuthenticated: !!token
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
-}`}
-        </code>
-      </pre>
-
-      <h4>🧠 ¿Qué hace este contexto?</h4>
-
-      <ul className="lista-simple">
-        <li>Guarda usuario y token al hacer login.</li>
-        <li>Restaura sesión automáticamente si recargas la página.</li>
-        <li>Proporciona <code>auth.isAuthenticated</code> para bloquear o permitir rutas.</li>
-        <li>Permite cerrar sesión en cualquier parte del frontend.</li>
-      </ul>
-
-      <hr />
-
-      <h3>4️⃣ Integrar AuthProvider en App.jsx</h3>
-
-      <p>
-        Muy importante: debemos envolver TODA la aplicación con el AuthProvider.
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`// App.jsx (fragmento)
-import { AuthProvider } from "./context/AuthContext";
-
-function App() {
-  return (
-    <AuthProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            {/* rutas aquí */}
-          </Routes>
-        </Layout>
-      </Router>
-    </AuthProvider>
-  );
-}
-
-export default App;`}
-        </code>
-      </pre>
-
-      <hr />
-
-      <h3>5️⃣ ¿Cómo se usa el contexto en un componente?</h3>
-
-      <h4>Ejemplo: mostrar “Hola, Ana” en el Navbar</h4>
-
-      <pre className="bloque-codigo">
-        <code>
-{`// Navbar.jsx
-import { useAuth } from "../context/AuthContext";
-
-export default function Navbar() {
-  const { user, isAuthenticated, logout } = useAuth();
-
-  return (
-    <nav>
-      {isAuthenticated ? (
-        <>
-          <span>Hola, {user.nombre}</span>
-          <button onClick={logout}>Cerrar sesión</button>
-        </>
-      ) : (
-        <a href="/login">Iniciar sesión</a>
-      )}
-    </nav>
-  );
-}`}
-        </code>
-      </pre>
-
-      <hr />
-
-      <h3>6️⃣ ProtectedRoute: bloquear rutas sin login</h3>
-
-      <p>
-        Creamos este componente para proteger páginas privadas como “Mis pedidos”.
-      </p>
-
-      <pre className="bloque-codigo">
-        <code>
-{`// ProtectedRoute.jsx
-import { useAuth } from "../context/AuthContext";
-import { Navigate } from "react-router-dom";
-
-export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
-
-  if (loading) return null;
-
-  return isAuthenticated ? children : <Navigate to="/login" />;
-}`}
-        </code>
-      </pre>
-
-      <hr />
-
-      <h3>🧪 Actividad guiada</h3>
-
-      <ul className="lista-simple">
-        <li>Haz login con un usuario y comprueba que AuthContext guarda el token.</li>
-        <li>Refresca la página para comprobar que la sesión se restaura sola.</li>
-        <li>Usa <code>auth.logout()</code> en el Navbar para cerrar la sesión.</li>
-        <li>Intenta acceder a <code>/mis-pedidos</code> sin token → debe redireccionar a /login.</li>
-        <li>Accede de nuevo tras iniciar sesión → debe funcionar.</li>
-      </ul>
-
-      <hr />
-
-      <h3>7️⃣ Resumen de la lección</h3>
-
-      <ul className="lista-simple">
-        <li>Has aprendido qué es un contexto en React.</li>
-        <li>Has creado <code>AuthContext.jsx</code> para gestionar usuario y token.</li>
-        <li>Has entendido dónde se coloca (en <code>App.jsx</code>) y por qué.</li>
-        <li>Has aprendido a bloquear rutas privadas con <code>ProtectedRoute</code>.</li>
-        <li>Ya estás listo/a para conectar el login y registro con el backend.</li>
-      </ul>
-
-      <p>
-        En la siguiente lección empezaremos a construir las primeras páginas del frontend:
-        <strong>Login</strong> y <strong>Registro</strong>, ahora que la autenticación
-        está completamente preparada.
-      </p>
-
-    </article>
-  </details>
-</section>
 
 
         <section className="section" id="b4-leccion4">

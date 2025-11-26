@@ -112,7 +112,8 @@ export default function Bloque4Front() {
       <h3>1️⃣ Crear el proyecto React con Vite</h3>
 
       <p>
-        Vamos a usar Vite para crear un proyecto React rápido y moderno. En la terminal:
+        Vamos a usar Vite para crear un proyecto React rápido y moderno. Fijate bien en elegir JavaScript cuando 
+        te de a elegir. Experimental: no. En la terminal:
       </p>
 
       <pre className="bloque-codigo">
@@ -1203,16 +1204,1930 @@ export default function ApiTest() {
   </details>
 </section>
 
+<section className="section" id="b4-useeffect">
+  <details>
+    <summary>4.3. Entendiendo <code>useEffect</code> desde cero</summary>
+
+    <article className="card">
+
+      <h3>📘 1. ¿Qué es <code>useEffect</code> y para qué sirve?</h3>
+      <p>
+        <code>useEffect</code> es uno de los hooks fundamentales de React. Permite ejecutar
+        código “secundario” dentro de un componente: llamadas a API, temporizadores,
+        acceso a <em>localStorage</em>, suscripciones, escuchar eventos del navegador,
+        etc. Todo aquello que React considera un <strong>efecto secundario</strong>.
+      </p>
+
+      <div className="callout">
+        <strong>Idea clave:</strong> React pinta la interfaz.  
+        <code>useEffect</code> ejecuta acciones <strong>fuera del render</strong>.
+      </div>
 
 
-        <section className="section" id="b4-leccion4">
-          <details>
-            <summary>4.4. Componentes de layout y navegación</summary>
-            <article className="card">
-              <p>Esta lección se desarrollará próximamente...</p>
-            </article>
-          </details>
-        </section>
+      <h3>📌 2. Sintaxis básica</h3>
+
+      <pre className="bloque-codigo">
+{`useEffect(() => {
+  // código aquí
+}, []);`}
+      </pre>
+
+      <p>
+        El primer parámetro es una función que contiene el efecto.
+        El segundo parámetro es el <strong>array de dependencias</strong>,
+        que determina <em>cuándo</em> se ejecuta.
+      </p>
+
+
+      <h3>🎯 3. ¿Cuándo se ejecuta un <code>useEffect</code>?</h3>
+      <p><strong>Depende del array de dependencias:</strong></p>
+
+      <ul className="lista-simple">
+        <li>
+          <strong><code>[]</code></strong>: se ejecuta <u>solo una vez</u> al montar el componente.
+        </li>
+
+        <li>
+          <strong><code>[variable]</code></strong>: se ejecuta cada vez que esa <em>variable</em> cambie.
+        </li>
+
+        <li>
+          <strong>sin array</strong>: se ejecuta en <u>cada render</u> (no recomendado para principiantes).
+        </li>
+      </ul>
+
+
+      <h3>🧠 4. Ejemplo fundamental: cargar datos al montar una página</h3>
+      <p>
+        En nuestra tienda online necesitaremos cargar productos desde el backend.
+        Este es un ejemplo real que luego utilizaremos en <code>CatalogoPage.jsx</code>.
+      </p>
+
+      <pre className="bloque-codigo">
+{`import { useEffect, useState } from "react";
+import { getProductos } from "../services/api";
+
+export default function CatalogoPage() {
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    async function cargarProductos() {
+      const datos = await getProductos();
+      setProductos(datos);
+    }
+
+    cargarProductos();
+  }, []); // 👉 se ejecuta solo una vez
+
+  return (
+    <div>
+      <h1>Catálogo</h1>
+      <p>Productos cargados: {productos.length}</p>
+    </div>
+  );
+}`}
+      </pre>
+
+      <div className="callout-bonus">
+        <strong>¿Qué ocurre aquí?</strong><br />
+        • El componente se monta → <code>useEffect</code> se ejecuta.<br />
+        • Llamamos a la API.<br />
+        • Cuando llegan los datos → actualizamos estado.<br />
+        • React vuelve a renderizar mostrando los productos.<br />
+      </div>
+
+
+      <h3>🧩 5. Ejemplo didáctico: reaccionar a un valor</h3>
+      <pre className="bloque-codigo">
+{`useEffect(() => {
+  console.log("El contador ha cambiado a:", contador);
+}, [contador]);`}
+      </pre>
+
+      <p>Este efecto se ejecuta siempre que cambie el estado <code>contador</code>.</p>
+
+
+      <h3>🧹 6. Limpieza (cleanup): ejecutar código al desmontar</h3>
+
+      <p>
+        A veces necesitamos limpiar intervalos, cerrar suscripciones o parar eventos.
+        Para eso sirve el <strong>return</strong> dentro del <code>useEffect</code>.
+      </p>
+
+      <pre className="bloque-codigo">
+{`useEffect(() => {
+  const id = setInterval(() => {
+    console.log("tick");
+  }, 1000);
+
+  return () => clearInterval(id); // 🧹 limpieza al desmontar
+}, []);`}
+      </pre>
+
+      <p>
+        Este patrón lo usaremos en futuros componentes como <code>HeroCarousel</code>.
+      </p>
+
+
+      <h3>⚠️ 7. Errores comunes</h3>
+
+      <ul className="lista-simple">
+        <li>
+          ❌ Olvidar dependencias que usa el efecto.
+          <br />
+          ✔ Solución: incluirlas en el array.
+        </li>
+
+        <li>
+          ❌ Hacer <code>useEffect(async () = {})</code>.
+          <br />
+          ✔ Solución: definir una función interna y llamarla.
+        </li>
+
+        <li>
+          ❌ Cambiar estado dentro del efecto sin control → bucle infinito.
+          <br />
+          ✔ Solución: usar dependencias adecuadas.
+        </li>
+      </ul>
+
+
+      <h3>📝 8. Ejercicio práctico</h3>
+      <p>Crea un componente <code>RelojPage.jsx</code> que:</p>
+      <ul className="lista-simple">
+        <li>Muestre la hora actual.</li>
+        <li>La actualice cada segundo con <code>setInterval</code>.</li>
+        <li>Realice limpieza del intervalo al desmontar.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`useEffect(() => {
+  const id = setInterval(() => {
+    setHora(new Date().toLocaleTimeString());
+  }, 1000);
+
+  return () => clearInterval(id);
+}, []);`}
+      </pre>
+
+
+      <h3>🎉 9. Resumen esencial para recordar siempre</h3>
+
+      <ul className="lista-simple">
+        <li><strong>¿Qué es?</strong> Un hook para ejecutar efectos secundarios.</li>
+        <li><strong>¿Cuándo se ejecuta?</strong> Depende del array de dependencias.</li>
+        <li><strong>¿Cómo limpiar?</strong> Usando el return dentro del efecto.</li>
+        <li><strong>No usarlo como async directo</strong>.</li>
+        <li><strong>No provocar bucles infinitos</strong>.</li>
+      </ul>
+
+    </article>
+
+  </details>
+</section>
+
+<section className="section" id="4">
+  <details>
+    <summary>4.4. Entendiendo <code>useState</code> desde cero</summary>
+
+    <article className="card">
+
+      <h3>📘 1. ¿Qué es <code>useState</code>?</h3>
+      <p>
+        <code>useState</code> es el hook que permite a React recordar valores entre
+        renderizados. En pocas palabras:
+      </p>
+
+      <div className="callout">
+        <strong>useState = memoria del componente.</strong><br />
+        Guarda un valor, lo actualiza y hace que React vuelva a renderizar.
+      </div>
+
+      <p>
+        Sin <code>useState</code>, los componentes serían completamente estáticos: pintarían la
+        interfaz y nada más. Gracias a este hook podemos construir buscadores,
+        formularios, contadores, toggles, menús, filtros, etc.
+      </p>
+
+
+      <h3>📌 2. Sintaxis básica</h3>
+
+      <pre className="bloque-codigo">
+{`const [valor, setValor] = useState(valorInicial);`}
+      </pre>
+
+      <ul className="lista-simple">
+        <li><code>valor</code> → el dato actual que React recuerda</li>
+        <li><code>setValor</code> → función para actualizar el valor</li>
+        <li><code>valorInicial</code> → lo que tiene al principio</li>
+      </ul>
+
+      <p>
+        Cada vez que llamamos a <code>setValor()</code>, React vuelve a renderizar el
+        componente mostrando el nuevo estado.
+      </p>
+
+
+      <h3>🎯 3. Ejemplo didáctico: contador básico</h3>
+
+      <pre className="bloque-codigo">
+{`import { useState } from "react";
+
+export default function Contador() {
+  const [contador, setContador] = useState(0);
+
+  return (
+    <>
+      <p>Valor actual: {contador}</p>
+      <button onClick={() => setContador(contador + 1)}>
+        Sumar
+      </button>
+    </>
+  );
+}`}
+      </pre>
+
+      <p>Este ejemplo resume el comportamiento fundamental del estado:</p>
+
+      <ul className="lista-simple">
+        <li>El botón actualiza el estado con <code>setContador</code>.</li>
+        <li>React vuelve a renderizar mostrando el número actualizado.</li>
+        <li>No necesitas recargar la página: React actualiza solo el componente.</li>
+      </ul>
+
+
+      <h3>🧠 4. React re-renderiza cada vez que cambia el estado</h3>
+
+      <p>
+        Esto es fundamental para entender cómo funciona una aplicación reactiva:
+        cuando el estado cambia → React vuelve a dibujar el componente.
+      </p>
+
+      <div className="callout-bonus">
+        <strong>Regla de oro:</strong><br />
+        <em>“Render = función del estado”</em>.<br />
+        Si cambia el estado, cambia lo que el usuario ve.
+      </div>
+
+
+      <h3>📌 5. Actualizar estado correctamente</h3>
+      <p>
+        Si el nuevo estado depende del anterior, usa la versión con función:
+      </p>
+
+      <pre className="bloque-codigo">
+{`setContador(prev => prev + 1);`}
+      </pre>
+
+      <p>Esto evita errores en actualizaciones muy rápidas o concurrencia.</p>
+
+
+      <h3>📦 6. useState puede guardar cualquier tipo de dato</h3>
+
+      <ul className="lista-simple">
+        <li><strong>Números</strong> → contadores, precios, cantidades</li>
+        <li><strong>Strings</strong> → inputs, búsquedas</li>
+        <li><strong>Booleanos</strong> → mostrar/ocultar, login</li>
+        <li><strong>Objetos</strong> → formularios complejos</li>
+        <li><strong>Arrays</strong> → listas de productos, carrito</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`const [activo, setActivo] = useState(true);
+const [usuario, setUsuario] = useState({ nombre: "", email: "" });
+const [productos, setProductos] = useState([]);
+`}
+      </pre>
+
+
+      <h3>🛒 7. Ejemplo real del proyecto Bazar: gestionar el input de búsqueda</h3>
+
+      <pre className="bloque-codigo">
+{`export default function Buscador() {
+  const [busqueda, setBusqueda] = useState("");
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Buscar productos…"
+        value={busqueda}
+        onChange={e => setBusqueda(e.target.value)}
+      />
+
+      <p>Buscando: {busqueda}</p>
+    </div>
+  );
+}`}
+      </pre>
+
+      <p>
+        Aquí vemos una idea muy importante: <strong>el valor del input está ligado al
+        estado</strong>. Si el usuario escribe → actualiza el estado → React re-renderiza.
+      </p>
+
+
+      <h3>🧩 8. Ejemplo esencial: mostrar/ocultar detalles</h3>
+
+      <pre className="bloque-codigo">
+{`export default function MostrarOcultar() {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setVisible(!visible)}>
+        {visible ? "Ocultar" : "Mostrar"} detalles
+      </button>
+
+      {visible && <p>Aquí van los detalles del producto.</p>}
+    </>
+  );
+}`}
+      </pre>
+
+      <p>
+        Este patrón lo usaremos para menús, modales, filtros y cualquier contenido
+        que deba mostrarse solo en ciertos casos.
+      </p>
+
+
+      <h3>⚠️ 9. Errores comunes</h3>
+
+      <ul className="lista-simple">
+        <li>
+          ❌ Cambiar el estado directamente:
+          <pre className="bloque-codigo">{`contador = contador + 1;`}</pre>
+          ✔ Solución: siempre usar <code>setContador()</code>.
+        </li>
+
+        <li>
+          ❌ Manipular arrays u objetos sin crear una copia.
+          <pre className="bloque-codigo">{`productos.push(nuevo); // ❌`}</pre>
+          ✔ Solución:
+          <pre className="bloque-codigo">{`setProductos([...productos, nuevo]);`}</pre>
+        </li>
+
+        <li>
+          ❌ Poner estados dependientes juntos cuando deben ser independientes.
+        </li>
+
+        <li>
+          ❌ No inicializar correctamente el estado (undefined inesperados).
+        </li>
+      </ul>
+
+
+      <h3>📝 10. Ejercicio </h3>
+      <p>Crear un componente <code>CarritoDemo.jsx</code> que:</p>
+
+      <ul className="lista-simple">
+        <li>Tenga un estado con un array de productos.</li>
+        <li>Permita añadir productos con un botón.</li>
+        <li>Actualice la cantidad total en pantalla.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`// Pista para empezar:
+const [carrito, setCarrito] = useState([]);
+
+function añadirProducto() {
+  const nuevo = { nombre: "Camiseta", precio: 20 };
+  setCarrito([...carrito, nuevo]);
+}`}
+      </pre>
+
+
+      <h3>🎉 11. Resumen de la lección</h3>
+
+      <ul className="lista-simple">
+        <li><strong>useState</strong> guarda valores entre renderizados.</li>
+        <li><strong>setEstado()</strong> actualiza y React vuelve a renderizar.</li>
+        <li>React re-renderiza siempre que cambia el estado.</li>
+        <li>Puede guardar cualquier tipo: número, string, boolean, objeto, array.</li>
+        <li>Siempre hacer copias al trabajar con arrays u objetos.</li>
+      </ul>
+
+    </article>
+  </details>
+</section>
+
+<section className="section" id="b4-usestate-useeffect">
+  <details>
+    <summary>4.X. Cómo trabajar <code>useState</code> y <code>useEffect</code> juntos</summary>
+
+    <article className="card">
+
+      <h3>📘 1. ¿Por qué es tan importante combinar <code>useState</code> y <code>useEffect</code>?</h3>
+
+      <p>
+        En React, la mayoría de las páginas “reales” funcionan gracias a la 
+        <strong>combinación</strong> de estos dos hooks:
+      </p>
+
+      <ul className="lista-simple">
+        <li><code>useState</code> → guarda datos</li>
+        <li><code>useEffect</code> → obtiene, calcula o actualiza esos datos</li>
+      </ul>
+
+      <p>
+        Por ejemplo, en nuestro proyecto Bazar usaremos esta combinación para:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Cargar productos desde el backend</li>
+        <li>Mostrar el listado actualizado cuando el usuario cambie de categoría</li>
+        <li>Leer el token del usuario al iniciar la aplicación</li>
+        <li>Reaccionar a filtros, búsquedas o cambios del carrito</li>
+      </ul>
+
+      <div className="callout">
+        <strong>Idea clave:</strong>  
+        <em>useState guarda el dato → useEffect cambia el dato cuando ocurre algo.</em>
+      </div>
+
+
+      <h3>📌 2. Patrón base: estado + efecto</h3>
+
+      <pre className="bloque-codigo">
+{`const [dato, setDato] = useState(valorInicial);
+
+useEffect(() => {
+  // código que actualiza setDato
+}, []);`}
+      </pre>
+
+      <p>Este patrón aparece en prácticamente el 80% de las páginas React modernas.</p>
+
+
+      <h3>🎯 3. Ejemplo real: cargar productos al montar la página</h3>
+
+      <pre className="bloque-codigo">
+{`import { useState, useEffect } from "react";
+import { getProductos } from "../services/api";
+
+export default function CatalogoPage() {
+  const [productos, setProductos] = useState([]);
+
+  useEffect(() => {
+    async function cargar() {
+      const data = await getProductos();
+      setProductos(data);
+    }
+
+    cargar();
+  }, []); // 👉 solo al montar
+
+  return (
+    <div>
+      <h2>Catálogo</h2>
+      <p>Productos cargados: {productos.length}</p>
+    </div>
+  );
+}`}
+      </pre>
+
+      <div className="callout-bonus">
+        <strong>¿Qué ocurre aquí?</strong><br/>
+        • Al abrir la página, <code>useEffect</code> llama a la API. <br/>
+        • React espera la respuesta. <br/>
+        • Cuando llegan los datos → <code>setProductos</code>. <br/>
+        • React vuelve a renderizar mostrando los productos. <br/>
+      </div>
+
+
+      <h3>📚 4. Segundo ejemplo: cargar datos cuando cambia una categoría</h3>
+
+      <p>Supongamos que el usuario elige una categoría del menú lateral.</p>
+
+      <pre className="bloque-codigo">
+{`const [categoria, setCategoria] = useState(null);
+const [productos, setProductos] = useState([]);
+
+useEffect(() => {
+  async function cargarPorCategoria() {
+    const data = await getProductos({ categoria });
+    setProductos(data);
+  }
+
+  if (categoria !== null) {
+    cargarPorCategoria();
+  }
+}, [categoria]); // 👉 se ejecuta cuando cambia la categoría`}
+      </pre>
+
+      <p>
+        Este patrón será el que usemos en <strong>CatalogoPage.jsx</strong> cuando añadamos 
+        filtros por categoría en el sidebar.
+      </p>
+
+
+      <h3>🧠 5. El ciclo típico que verán tus alumnos</h3>
+
+      <ul className="lista-simple">
+        <li>El usuario hace algo (buscar, seleccionar categoría, abrir página).</li>
+        <li><code>useState</code> guarda ese cambio.</li>
+        <li><code>useEffect</code> detecta que cambió el estado.</li>
+        <li><code>useEffect</code> hace una acción (fetch, cálculo, lectura).</li>
+        <li><code>useEffect</code> actualiza otro estado.</li>
+        <li>React vuelve a renderizar la interfaz automáticamente.</li>
+      </ul>
+
+      <div className="callout">
+        <strong>React piensa así:</strong>  
+        “El estado ha cambiado → necesito volver a dibujar”.
+      </div>
+
+
+      <h3>🔁 6. Ejemplo completo: buscador de productos</h3>
+
+      <pre className="bloque-codigo">
+{`const [busqueda, setBusqueda] = useState("");
+const [resultados, setResultados] = useState([]);
+
+useEffect(() => {
+  async function buscar() {
+    const data = await getProductos({ nombre: busqueda });
+    setResultados(data);
+  }
+
+  if (busqueda.length > 2) {
+    buscar();
+  }
+}, [busqueda]);`}
+      </pre>
+
+      <p>
+        Observaciones didácticas:
+      </p>
+
+      <ul className="lista-simple">
+        <li><strong>busqueda</strong> se actualiza al escribir en el input.</li>
+        <li>El <strong>useEffect</strong> responde a ese cambio.</li>
+        <li>La API devuelve productos que coinciden con la búsqueda.</li>
+        <li>La interfaz se actualiza sola.</li>
+      </ul>
+
+
+      <h3>🧩 7. Usar cleanup cuando el efecto depende del estado</h3>
+
+      <p>
+        Muy útil cuando el usuario escribe rápido y queremos evitar efectos viejos:
+      </p>
+
+      <pre className="bloque-codigo">
+{`useEffect(() => {
+  const id = setTimeout(() => {
+    console.log("Buscando:", busqueda);
+  }, 500);
+
+  return () => clearTimeout(id);
+}, [busqueda]);`}
+      </pre>
+
+      <p>
+        Esto evita que se ejecuten búsquedas antiguas y ralentice la app.
+      </p>
+
+
+      <h3>⚠️ 8. Errores típicos cuando se combinan</h3>
+
+      <ul className="lista-simple">
+        <li>
+          ❌ Llamar a una API dentro del render.  
+          ✔ Siempre dentro de <code>useEffect</code>.
+        </li>
+
+        <li>
+          ❌ Olvidar variables del estado en las dependencias.  
+          ✔ React te avisará en consola.
+        </li>
+
+        <li>
+          ❌ Manipular directamente arrays u objetos antes de guardarlos en estado.
+        </li>
+
+       <li>
+         ❌ Usar <code>useEffect(async ()  {})</code>.  
+         ✔ Usar una función interna asíncrona.
+       </li>
+
+        <li>
+          ❌ Crear bucles infinitos:  
+          <pre className="bloque-codigo">{`useEffect(() => setX(x + 1));`}</pre>
+        </li>
+      </ul>
+
+
+      <h3>📝 9. Ejercicio práctico final (muy recomendado)</h3>
+
+      <p>Crea un componente <code>DestacadosAuto.jsx</code> que:</p>
+
+      <ul className="lista-simple">
+        <li>Cargue productos destacados desde la API.</li>
+        <li>Los cargue al montar (<code>[]</code>).</li>
+        <li>Cambie automáticamente a otro destacado cada 3 segundos.</li>
+        <li>Limpie el intervalo cuando se desmonte.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`const [destacados, setDestacados] = useState([]);
+const [indice, setIndice] = useState(0);
+
+useEffect(() => {
+  async function cargar() {
+    const data = await getProductosDestacados();
+    setDestacados(data);
+  }
+  cargar();
+}, []);
+
+useEffect(() => {
+  const id = setInterval(() => {
+    setIndice(prev => (prev + 1) % destacados.length);
+  }, 3000);
+
+  return () => clearInterval(id);
+}, [destacados]);`}
+      </pre>
+
+
+      <h3>🎉 10. Resumen esencial</h3>
+
+      <ul className="lista-simple">
+        <li>useState → guarda datos que cambian.</li>
+        <li>useEffect → ejecuta lógica en respuesta a esos datos.</li>
+        <li>Siempre empieza por: montar → cargar datos → actualizar estado.</li>
+        <li>React actualiza solo la interfaz cuando cambia el estado.</li>
+        <li>La combinación de ambos permite crear apps completas y dinámicas.</li>
+      </ul>
+
+    </article>
+  </details>
+</section>
+<section className="section" id="b4-useref">
+  <details>
+    <summary>4.X. Entendiendo <code>useRef</code> desde cero</summary>
+
+    <article className="card">
+
+      <h3>📘 1. ¿Qué es <code>useRef</code>?</h3>
+
+      <p>
+        <code>useRef</code> es un hook de React que sirve para guardar un valor
+        <strong>mutable</strong> que <strong>no provoca re-render</strong> cuando cambia.
+      </p>
+
+      <div className="callout">
+        <strong>Idea clave:</strong>  
+        <code>useState</code> guarda datos que cambian y vuelven a pintar la interfaz.  
+        <code>useRef</code> guarda datos que cambian <strong>sin volver a pintar</strong>.
+      </div>
+
+      <p>
+        Además, <code>useRef</code> se usa para crear referencias a elementos del DOM, por ejemplo:
+        para enfocar un input, hacer scroll hasta una sección, medir el tamaño de un elemento, etc.
+      </p>
+
+
+      <h3>📌 2. Sintaxis básica</h3>
+
+      <pre className="bloque-codigo">
+{`import { useRef } from "react";
+
+const referencia = useRef(valorInicial);`}
+      </pre>
+
+      <ul className="lista-simple">
+        <li><code>useRef(valorInicial)</code> devuelve un objeto con una propiedad <code>.current</code>.</li>
+        <li>Puedes leer o escribir en <code>referencia.current</code>.</li>
+        <li>React no vuelve a renderizar cuando cambias <code>current</code>.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`const contadorRef = useRef(0);
+
+contadorRef.current = contadorRef.current + 1; // cambia el valor, pero no re-renderiza`}
+      </pre>
+
+
+      <h3>🎯 3. Primer uso clásico: referenciar un elemento del DOM</h3>
+
+      <p>
+        El uso más típico de <code>useRef</code> es acceder a nodos del DOM: inputs, divs, botones...
+      </p>
+
+      <pre className="bloque-codigo">
+{`import { useRef } from "react";
+
+export default function Formulario() {
+  const inputRef = useRef(null);
+
+  function manejarFoco() {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }
+
+  return (
+    <>
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="Escribe tu nombre"
+      />
+      <button onClick={manejarFoco}>
+        Enfocar input
+      </button>
+    </>
+  );
+}`}
+      </pre>
+
+  
+
+
+      <h3>🛒 4. Ejemplo aplicado al proyecto Bazar</h3>
+
+      <p>
+        Imagina el cuadro de búsqueda de productos en el catálogo. Podemos enfocar automáticamente
+        el input cuando se abre la página:
+      </p>
+
+      <pre className="bloque-codigo">
+{`import { useRef, useEffect } from "react";
+
+export default function BuscadorProductos() {
+  const inputBusquedaRef = useRef(null);
+
+  useEffect(() => {
+    if (inputBusquedaRef.current) {
+      inputBusquedaRef.current.focus();
+    }
+  }, []);
+
+  return (
+    <input
+      ref={inputBusquedaRef}
+      type="text"
+      placeholder="Buscar productos..."
+    />
+  );
+}`}
+      </pre>
+
+      <p>
+        Combinamos <code>useRef</code> (referencia al input) con <code>useEffect</code> 
+        (ejecutar al montar) para mejorar la experiencia de usuario.
+      </p>
+
+
+      <h3>🧠 5. Segundo uso: guardar valores que no queremos que provoquen re-render</h3>
+
+      <p>
+        A veces necesitamos guardar información que cambia, pero que <strong>no forma parte
+        de la interfaz</strong>. Por ejemplo:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Contar cuántas veces se ha renderizado un componente.</li>
+        <li>Guardar un id de <code>setInterval</code> o <code>setTimeout</code>.</li>
+        <li>Guardar el valor anterior de una variable sin re-renderizar.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`import { useState, useRef, useEffect } from "react";
+
+export default function ContadorConRef() {
+  const [valor, setValor] = useState(0);
+  const rendersRef = useRef(0);
+
+  useEffect(() => {
+    rendersRef.current = rendersRef.current + 1;
+  });
+
+  return (
+    <>
+      <p>Valor: {valor}</p>
+      <p>Renderizados: {rendersRef.current}</p>
+      <button onClick={() => setValor(valor + 1)}>
+        Sumar
+      </button>
+    </>
+  );
+}`}
+      </pre>
+
+      <p>
+        Fíjate que <code>rendersRef.current</code> va cambiando, pero solo mostramos su valor
+        en pantalla; el cambio de <code>current</code> en sí no provoca un nuevo render.
+      </p>
+
+
+      <h3>📦 6. useState vs useRef: ¿cuándo usar cada uno?</h3>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Hook</th>
+              <th>Provoca re-render al cambiar</th>
+              <th>Uso típico</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>useState</code></td>
+              <td>Sí</td>
+              <td>Datos que aparecen en la UI (texto, listas, formularios).</td>
+            </tr>
+            <tr>
+              <td><code>useRef</code></td>
+              <td>No</td>
+              <td>Referencias al DOM, ids de intervalos, contadores internos, valores previos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="callout">
+        <strong>Regla práctica:</strong>  
+        Si el dato debe pintar algo en pantalla → <code>useState</code>.  
+        Si no afecta a la interfaz y es “detalle interno” → <code>useRef</code>.
+      </div>
+
+
+      <h3>🔍 7. Guardar el valor anterior de un estado</h3>
+
+      <p>
+        Otra utilidad muy común: recordar el valor anterior de una variable, por ejemplo
+        para comparar cambios.
+      </p>
+
+      <pre className="bloque-codigo">
+{`import { useState, useEffect, useRef } from "react";
+
+export default function ValorAnteriorDemo() {
+  const [precio, setPrecio] = useState(100);
+  const precioAnteriorRef = useRef(precio);
+
+  useEffect(() => {
+    precioAnteriorRef.current = precio;
+  }, [precio]);
+
+  return (
+    <>
+      <p>Precio actual: {precio}</p>
+      <p>Precio anterior: {precioAnteriorRef.current}</p>
+
+      <button onClick={() => setPrecio(precio + 10)}>
+        Subir precio
+      </button>
+    </>
+  );
+}`}
+      </pre>
+
+      <p>
+        Aquí, <code>precioAnteriorRef.current</code> siempre guarda el valor anterior de 
+        <code>precio</code>, sin provocar re-render por sí mismo.
+      </p>
+
+
+      <h3>🎠 8. Ejemplo aplicado a un carrusel (HeroCarousel)</h3>
+
+      <p>
+        En el futuro, cuando implementemos <code>HeroCarousel</code>, podemos usar 
+        <code>useRef</code> para guardar el id del intervalo que cambia las diapositivas:
+      </p>
+
+      <pre className="bloque-codigo">
+{`const intervaloRef = useRef(null);
+
+useEffect(() => {
+  intervaloRef.current = setInterval(() => {
+    // cambiar diapositiva
+  }, 3000);
+
+  return () => clearInterval(intervaloRef.current);
+}, []);`}
+      </pre>
+
+      <p>
+        Gracias a <code>useRef</code> guardamos el id del intervalo y podemos 
+        cancelarlo en el cleanup de <code>useEffect</code>.
+      </p>
+
+
+      <h3>⚠️ 9. Errores comunes con <code>useRef</code></h3>
+
+      <ul className="lista-simple">
+        <li>
+          ❌ Usar <code>useRef</code> para datos que sí deberían provocar un re-render.  
+          ✔ En esos casos, es mejor <code>useState</code>.
+        </li>
+        <li>
+          ❌ Olvidar que <code>ref.current</code> puede ser <code>null</code> la primera vez.  
+          ✔ Siempre comprobar antes de usarlo: <code>if (ref.current) ...</code>.
+        </li>
+        <li>
+          ❌ Intentar leer <code>ref.current</code> antes de que el elemento esté montado.  
+          ✔ Usar <code>useEffect</code> con <code>[]</code> si necesitas acceder tras el montaje.
+        </li>
+      </ul>
+
+
+      <h3>📝 10. Ejercicio práctico </h3>
+
+      <p>Crea un componente <code>ScrollALaSeccion.jsx</code> que:</p>
+
+      <ul className="lista-simple">
+        <li>Tenga un botón “Ir a ofertas”.</li>
+        <li>Use <code>useRef</code> para referenciar un <code>&lt;section&gt;</code> de “Ofertas”.</li>
+        <li>Al hacer click, haga scroll suave hasta esa sección.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`const ofertasRef = useRef(null);
+
+function irAOfertas() {
+  if (ofertasRef.current) {
+    ofertasRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}
+
+return (
+  <>
+    <button onClick={irAOfertas}>Ir a ofertas</button>
+
+    {/* ...contenido... */}
+
+    <section ref={ofertasRef}>
+      <h2>Ofertas</h2>
+      {/* tarjetas de producto */}
+    </section>
+  </>
+);`}
+      </pre>
+
+
+      <h3>🎉 11. Resumen de la lección</h3>
+
+      <ul className="lista-simple">
+        <li><code>useRef</code> guarda valores mutables que no provocan re-render.</li>
+        <li>Es perfecto para referencias al DOM: inputs, secciones, sliders.</li>
+        <li>También sirve para guardar ids de intervalos, contadores internos, valores previos.</li>
+        <li>Si el dato afecta a la interfaz → <code>useState</code>. Si no, muchas veces → <code>useRef</code>.</li>
+      </ul>
+
+    </article>
+
+  </details>
+</section>
+
+<section className="section" id="b4-usecontext">
+  <details>
+    <summary>4.X. Compartir estado global con <code>useContext</code></summary>
+
+    <article className="card">
+
+      <h3>📘 1. ¿Qué es <code>useContext</code> y para qué sirve?</h3>
+
+      <p>
+        <code>useContext</code> es un hook de React que permite acceder a un 
+        <strong>estado global</strong> sin tener que pasar props manualmente por todos
+        los componentes (lo que se llama <em>prop drilling</em>).
+      </p>
+
+      <div className="callout">
+        <strong>Idea clave:</strong><br />
+        Crear un “contexto” es como crear una mochila de datos (usuario, token,
+        funciones) que cualquier componente hijo puede usar sin que el padre se los pase
+        por props.
+      </div>
+
+      <p>
+        En nuestro proyecto Bazar lo usaremos para:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Guardar el <strong>usuario autenticado</strong> y su <strong>token</strong>.</li>
+        <li>Ofrecer funciones <code>login()</code> y <code>logout()</code> a cualquier componente.</li>
+        <li>Proteger rutas como <code>MisPedidosPage</code> sin duplicar lógica.</li>
+        <li>Mostrar en la <code>Navbar</code> si el usuario está logado o no.</li>
+      </ul>
+
+
+      <h3>🏗 2. Las tres piezas del Context API</h3>
+
+      <ol className="lista-simple">
+        <li><strong>El contexto</strong> → <code>const AuthContext = createContext();</code></li>
+        <li>
+          <strong>El proveedor (Provider)</strong> → componente que envuelve la app y 
+          ofrece el valor global.
+        </li>
+        <li>
+          <strong>El consumidor</strong> → cualquier componente que usa 
+          <code>useContext(AuthContext)</code> para leer esos datos.
+        </li>
+      </ol>
+
+
+      <h3>📁 3. Creando un contexto de autenticación</h3>
+
+      <p>
+        Creamos un archivo específico para la lógica de autenticación, por ejemplo:
+        <code>src/context/AuthContext.jsx</code>.
+      </p>
+
+      <pre className="bloque-codigo">
+{`// src/context/AuthContext.jsx
+import { createContext, useState, useEffect } from "react";
+import { login as apiLogin, getMisPedidos } from "../services/api";
+
+// 1) Creamos el contexto
+export const AuthContext = createContext();
+
+// 2) Creamos el proveedor
+export function AuthProvider({ children }) {
+  const [usuario, setUsuario] = useState(null);
+  const [token, setToken] = useState(null);
+
+  // Cargar token almacenado (si existe) al iniciar la app
+  useEffect(() => {
+    const tokenGuardado = localStorage.getItem("token");
+    if (tokenGuardado) {
+      setToken(tokenGuardado);
+      // Podríamos también decodificar o llamar a backend para obtener datos de usuario
+    }
+  }, []);
+
+  async function login(credenciales) {
+    // credenciales: { email, password }
+    const data = await apiLogin(credenciales);
+    setToken(data.token);
+    localStorage.setItem("token", data.token);
+    // Si el backend devuelve datos de usuario, podemos guardarlos:
+    setUsuario({ email: credenciales.email });
+  }
+
+  function logout() {
+    setUsuario(null);
+    setToken(null);
+    localStorage.removeItem("token");
+  }
+
+  const valor = {
+    usuario,
+    token,
+    login,
+    logout,
+    estaAutenticado: !!token,
+  };
+
+  return (
+    <AuthContext.Provider value={valor}>
+      {children}
+    </AuthContext.Provider>
+  );
+}`}
+      </pre>
+
+      <div className="callout-bonus">
+        <strong>Resumen:</strong><br />
+        • Creamos <code>AuthContext</code>.<br />
+        • <code>AuthProvider</code> guarda el estado global (usuario + token).<br />
+        • Envuelve al resto de la aplicación y les da acceso a ese estado.
+      </div>
+
+
+      <h3>🔗 4. Envolver la aplicación con el <code>AuthProvider</code></h3>
+
+      <p>
+        En <code>main.jsx</code> envolvemos toda la app con nuestro proveedor para que
+        cualquier componente interno pueda usar el contexto:
+      </p>
+
+      <pre className="bloque-codigo">
+{`// src/main.jsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { AuthProvider } from "./context/AuthContext";
+import "./styles/frontend.css";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </React.StrictMode>
+);`}
+      </pre>
+
+      <p>
+        A partir de aquí, <strong>cualquier componente dentro de App</strong> puede
+        acceder al contexto llamando a <code>useContext(AuthContext)</code>.
+      </p>
+
+
+      <h3>🧪 5. Usar el contexto en un componente: ejemplo Navbar</h3>
+
+      <p>
+        Modificamos la <code>Navbar</code> para que muestre “Iniciar sesión” o el
+        nombre del usuario según el estado del contexto.
+      </p>
+
+      <pre className="bloque-codigo">
+{`// src/components/Navbar.jsx
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+export default function Navbar() {
+  const { usuario, estaAutenticado, logout } = useContext(AuthContext);
+
+  return (
+    <header className="cabecera">
+      <div className="contenedor cabecera-contenido">
+        <h1 className="cabecera-titulo">Mi Bazar</h1>
+
+        <nav className="navegacion-principal">
+          <Link to="/" className="enlace-navegacion">Inicio</Link>
+          <Link to="/catalogo" className="enlace-navegacion">Catálogo</Link>
+
+          {estaAutenticado && (
+            <Link to="/mis-pedidos" className="enlace-navegacion">
+              Mis pedidos
+            </Link>
+          )}
+
+          {!estaAutenticado ? (
+            <Link to="/login" className="enlace-navegacion">
+              Iniciar sesión
+            </Link>
+          ) : (
+            <button onClick={logout} className="enlace-navegacion">
+              Cerrar sesión ({usuario?.email})
+            </button>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+}`}
+      </pre>
+
+      <p>
+        Aquí estamos usando <code>useContext(AuthContext)</code> para leer directamente
+        el usuario, saber si está autenticado y poder cerrar sesión, sin pasar props
+        desde <code>App.jsx</code>.
+      </p>
+
+
+      <h3>🛡 6. Context + rutas protegidas</h3>
+
+      <p>
+        Una ventaja enorme de usar contexto es poder crear un componente 
+        <strong>ProtectedRoute</strong> que reutilizaremos en varias páginas.
+      </p>
+
+      <pre className="bloque-codigo">
+{`// src/components/ProtectedRoute.jsx
+import { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+export default function ProtectedRoute({ children }) {
+  const { estaAutenticado } = useContext(AuthContext);
+
+  if (!estaAutenticado) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+}`}
+      </pre>
+
+      <p>
+        Y en <code>App.jsx</code> protegemos rutas como <code>/mis-pedidos</code>:
+      </p>
+
+      <pre className="bloque-codigo">
+{`// src/App.jsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
+import MisPedidosPage from "./pages/MisPedidosPage";
+import LoginPage from "./pages/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route
+            path="/mis-pedidos"
+            element={
+              <ProtectedRoute>
+                <MisPedidosPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  );
+}`}
+      </pre>
+
+
+      <h3>⚠️ 7. Errores frecuentes con <code>useContext</code></h3>
+
+      <ul className="lista-simple">
+        <li>
+          ❌ Usar <code>useContext</code> fuera del proveedor.<br />
+          ✔ Solución: asegurarse de que el componente esté dentro de <code>&lt;AuthProvider&gt;</code>.
+        </li>
+        <li>
+          ❌ Crear el contexto y no exportarlo correctamente (olvidar <code>export</code>).<br />
+        </li>
+        <li>
+          ❌ Mezclar demasiados datos en un solo contexto (auth, tema, carrito, etc.).<br />
+          ✔ Mejor separar en varios contextos cuando el proyecto crezca.
+        </li>
+      </ul>
+
+
+      <h3>📝 8. Ejercicio práctico para tus alumnos</h3>
+
+      <p>Crea un contexto llamado <code>UiContext</code> que:</p>
+
+      <ul className="lista-simple">
+        <li>Guarde en estado si el menú lateral de categorías está abierto o cerrado.</li>
+        <li>Exponga una función <code>toggleSidebar()</code>.</li>
+        <li>Permita que <code>Navbar</code> tenga un botón para abrir/cerrar el menú.</li>
+        <li>Permita que el componente de <code>SidebarCategorias</code> lea ese estado sin props.</li>
+      </ul>
+
+
+      <h3>🎉 9. Resumen de la lección</h3>
+
+      <ul className="lista-simple">
+        <li><code>useContext</code> permite acceder a estado global sin pasar props.</li>
+        <li>Se basa en: <strong>Context</strong> + <strong>Provider</strong> + <strong>useContext</strong>.</li>
+        <li>Es ideal para: usuario, token, tema, configuración de UI, carrito.</li>
+        <li>En el proyecto, lo usamos para autenticación y rutas protegidas.</li>
+      </ul>
+
+    </article>
+
+  </details>
+</section>
+<section className="section" id="b4-arquitectura-hooks">
+  <details>
+    <summary>4.X. Arquitectura de hooks en el Proyecto Bazar</summary>
+
+    <article className="card">
+
+      <h3>📘 1. ¿Por qué necesitamos una arquitectura de hooks?</h3>
+
+      <p>
+        En React, los hooks son las herramientas que nos permiten construir
+        <strong>aplicaciones dinámicas, interactivas y basadas en datos</strong>.
+        El Proyecto Bazar (nuestra tienda online) se estructura a partir de 4 hooks clave:
+      </p>
+
+      <ul className="lista-simple">
+        <li><strong>useState</strong> → almacenar valores que cambian</li>
+        <li><strong>useEffect</strong> → ejecutar lógica cuando cambian esos valores</li>
+        <li><strong>useRef</strong> → guardar valores mutables sin re-render</li>
+        <li><strong>useContext</strong> → compartir datos globales en toda la app</li>
+      </ul>
+
+      <div className="callout">
+        <strong>Idea clave:</strong>  
+        React funciona como una cadena: <strong>Estado → Efectos → Renderizado → Interacción → Estado…</strong>
+      </div>
+
+
+      <h3>📌 2. El ciclo de vida real en el Proyecto Bazar</h3>
+
+      <p>
+        Cada vez que un alumno abre la tienda, se produce un ciclo completo:
+      </p>
+
+      <ol className="lista-simple">
+        <li>El componente se monta → <code>useEffect(..., [])</code> se ejecuta.</li>
+        <li>Se llama al backend para obtener productos, categorías o pedidos.</li>
+        <li>El resultado se guarda con <code>useState</code>.</li>
+        <li>React vuelve a renderizar mostrando los datos nuevos.</li>
+        <li>El usuario interactúa → el estado cambia → nuevo render.</li>
+        <li>Algunos elementos (inputs, carruseles) necesitan referencias → <code>useRef</code>.</li>
+        <li>Cualquier parte de la app puede consultar datos globales (token, usuario) → <code>useContext</code>.</li>
+      </ol>
+
+      <p>Esta arquitectura se repite en cada página.</p>
+
+
+      <h3>📦 3. Rol de cada hook dentro del proyecto</h3>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Hook</th>
+              <th>Qué hace</th>
+              <th>Dónde se usa en el proyecto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>useState</code></td>
+              <td>Guarda valores que afectan al render</td>
+              <td>
+                Productos, categorías, inputs, paginación, estado de carga, pedidos…
+              </td>
+            </tr>
+            <tr>
+              <td><code>useEffect</code></td>
+              <td>Reacciona a cambios o ejecuta lógica al montar</td>
+              <td>
+                Cargar productos desde la API, aplicar filtros, leer token del localStorage…
+              </td>
+            </tr>
+            <tr>
+              <td><code>useRef</code></td>
+              <td>Guarda valores mutables sin re-render</td>
+              <td>
+                Carrusel, enfocar inputs, guardar ids de intervalos, scroll a secciones…
+              </td>
+            </tr>
+            <tr>
+              <td><code>useContext</code></td>
+              <td>Comparte estado global entre múltiples componentes</td>
+              <td>
+                Autenticación (usuario, token), rutas protegidas, mostrar opciones en Navbar…
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <h3>🧠 4. Cómo interactúan entre sí (la arquitectura lógica)</h3>
+
+      <p>En una página típica del Bazar, los hooks trabajan así:</p>
+
+      <pre className="bloque-codigo">
+{`// 1) Estado
+const [productos, setProductos] = useState([]);
+
+// 2) Efecto al montar
+useEffect(() => {
+  async function cargar() {
+    const datos = await getProductos();
+    setProductos(datos);
+  }
+  cargar();
+}, []);
+
+// 3) Datos globales del usuario
+const { token, usuario } = useContext(AuthContext);
+
+// 4) Elementos referenciables
+const inputBusquedaRef = useRef(null);
+
+return (
+  ...
+);`}
+      </pre>
+
+      <p>
+        Así, cada hook cumple una misión distinta pero encaja en una misma estructura:
+      </p>
+
+      <ul className="lista-simple">
+        <li><strong>useState</strong> → guarda los datos que cambiarán el render.</li>
+        <li><strong>useEffect</strong> → obtiene/cambia esos datos según acciones o montajes.</li>
+        <li><strong>useContext</strong> → da acceso al estado global sin prop drilling.</li>
+        <li><strong>useRef</strong> → maneja interacciones “técnicas” (DOM, intervalos…).</li>
+      </ul>
+
+
+      <h3>🎯 5. Ejemplo real: página de Catálogo</h3>
+
+      <p>
+        Esta página utiliza 3 hooks desde el primer minuto:
+      </p>
+
+      <pre className="bloque-codigo">
+{`const [productos, setProductos] = useState([]);
+const [categoria, setCategoria] = useState(null);
+const inputBusquedaRef = useRef(null);
+
+useEffect(() => {
+  cargarProductos();
+}, [categoria]);
+
+function cargarProductos() {
+  getProductos({ categoria }).then(setProductos);
+}`}
+      </pre>
+
+      <p>
+        Aquí vemos uno de los patrones fundamentales del Bazar:
+      </p>
+
+      <div className="callout-bonus">
+        <strong>Patrón del catálogo:</strong>  
+        <em>El usuario cambia algo → cambia el estado → useEffect responde → se cargan productos nuevos.</em>
+      </div>
+
+
+      <h3>🔐 6. Ejemplo real: autenticación con contexto</h3>
+
+      <p>
+        <code>useContext</code> funciona como el “cerebro central” de la app para el usuario:
+      </p>
+
+      <pre className="bloque-codigo">
+{`const { estaAutenticado, usuario, logout } = useContext(AuthContext);`}
+      </pre>
+
+      <p>
+        Esto nos permite mostrar u ocultar botones en la Navbar, proteger rutas y usar
+        el token en las llamadas a la API sin repetir código.
+      </p>
+
+
+      <h3>📐 7. Diagrama simplificado de arquitectura</h3>
+
+      <p>Así es como se relacionan entre sí los hooks en cada parte del proyecto:</p>
+
+      <pre className="bloque-codigo">
+{`[useContext]  →  usuario global, token, login, logout
+       ↓
+[useEffect]   →  carga datos al montar o al cambiar filtros
+       ↓
+[useState]    →  guarda productos, filtros, inputs, pedidos
+       ↓
+[Render]      →  React actualiza la UI
+       ↓
+[useRef]      →  efectos auxiliares (carrusel, foco, scroll)
+       ↓
+(Interacción del usuario)
+       ↓
+  vuelve a useState → y se repite el ciclo`}
+      </pre>
+
+
+      <h3>⚠ 8. Errores comunes al combinar hooks</h3>
+
+      <ul className="lista-simple">
+        <li>❌ Mezclar demasiada lógica dentro de un solo <code>useEffect</code>.</li>
+        <li>❌ Usar <code>useRef</code> para datos que deberían ir en <code>useState</code>.</li>
+        <li>❌ Olvidar usar <code>useContext</code> en vez de pasar props de 3 niveles.</li>
+        <li>❌ Hacer fetch en cada render sin condicionarlo.</li>
+        <li>❌ No limpiar intervalos creados con <code>useRef</code> + <code>useEffect</code>.</li>
+      </ul>
+
+
+      <h3>📝 9. Mini–ejercicio final para alumnos</h3>
+
+      <p>Crea un componente <code>DashboardMini.jsx</code> que:</p>
+
+      <ul className="lista-simple">
+        <li>Lea desde <code>AuthContext</code> si el usuario está logado.</li>
+        <li>Use <code>useState</code> para guardar los últimos 3 productos vistos.</li>
+        <li>Use <code>useEffect</code> para cargar esos productos desde localStorage.</li>
+        <li>Use <code>useRef</code> para contar cuántas veces se abrió la página.</li>
+      </ul>
+
+
+      <h3>🎉 10. Resumen general</h3>
+
+      <ul className="lista-simple">
+        <li><strong>useState</strong> → valores que cambian la UI.</li>
+        <li><strong>useEffect</strong> → acciones derivadas de esos valores.</li>
+        <li><strong>useRef</strong> → referencias y valores mutables.</li>
+        <li><strong>useContext</strong> → estado global para toda la app.</li>
+      </ul>
+
+      <p>
+        Esta combinación de hooks es la base de la arquitectura del Bazar y permite
+        construir una tienda dinámica, organizada y fácil de mantener.
+      </p>
+
+    </article>
+  </details>
+</section>
+<section className="section" id="b4-hooks-cheatsheet">
+  <details>
+    <summary>4.X. 🧾 Cheat Sheet de Hooks (Resumen Rápido)</summary>
+
+    <article className="card">
+
+      <h3>⚡ 1. useState — Estado dentro del componente</h3>
+
+      <pre className="bloque-codigo">
+{`const [valor, setValor] = useState(valorInicial);`}
+      </pre>
+
+      <ul className="lista-simple">
+        <li>Guarda datos que cambian y afectan a la UI.</li>
+        <li>Al usar <code>setValor</code>, React vuelve a renderizar.</li>
+        <li>Perfecto para inputs, contadores, productos filtrados, formularios…</li>
+      </ul>
+
+      <div className="callout">
+        <strong>Recuerda:</strong> si cambia la interfaz → es estado.
+      </div>
+
+
+      <h3>⚡ 2. useEffect — Ejecutar lógica fuera del render</h3>
+
+      <pre className="bloque-codigo">
+{`useEffect(() => {
+  // efecto
+}, [dependencias]);`}
+      </pre>
+
+      <ul className="lista-simple">
+        <li><code>[]</code> → al montar.</li>
+        <li><code>[valor]</code> → cuando cambie ese valor.</li>
+        <li>Ideal para: fetch, localStorage, intervalos, suscripciones.</li>
+      </ul>
+
+      <div className="callout">
+        <strong>Regla:</strong> cambios externos → useEffect.
+      </div>
+
+
+      <h3>⚡ 3. useRef — Valores mutables y referencias al DOM</h3>
+
+      <pre className="bloque-codigo">
+{`const miRef = useRef(valorInicial);`}
+      </pre>
+
+      <ul className="lista-simple">
+        <li>No provoca re-render al cambiar <code>miRef.current</code>.</li>
+        <li>Sirve para: enfocar inputs, carrusel, medir elementos, intervalos.</li>
+        <li>Perfecto para lógica técnica que no afecta al render.</li>
+      </ul>
+
+      <div className="callout">
+        <strong>Regla:</strong> si NO cambia la UI → useRef.
+      </div>
+
+
+      <h3>⚡ 4. useContext — Estado global sin prop drilling</h3>
+
+      <pre className="bloque-codigo">
+{`const valor = useContext(MiContexto);`}
+      </pre>
+
+      <ul className="lista-simple">
+        <li>Evita pasar props de componente en componente.</li>
+        <li>Ideal para: usuario, token, idioma, tema, carrito.</li>
+        <li>Se usa junto al Provider: <code>&lt;MiContexto.Provider value=&gt;</code></li>
+      </ul>
+
+      <div className="callout">
+        <strong>Regla:</strong> datos globales o compartidos → useContext.
+      </div>
+
+
+      <h3>📦 5. ¿Qué hook utilizar en cada caso?</h3>
+
+      <div className="contenedor-tabla">
+        <table className="tabla-datos tabla-datos--compacta">
+          <thead>
+            <tr>
+              <th>Situación</th>
+              <th>Hook recomendado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mostrar datos que cambian</td>
+              <td><strong>useState</strong></td>
+            </tr>
+            <tr>
+              <td>Llamar a la API al cargar la página</td>
+              <td><strong>useEffect</strong> con <code>[]</code></td>
+            </tr>
+            <tr>
+              <td>Reaccionar a un filtro/categoría/búsqueda</td>
+              <td><strong>useEffect</strong> con dependencias</td>
+            </tr>
+            <tr>
+              <td>Guardar id de intervalos / acceder a un nodo del DOM</td>
+              <td><strong>useRef</strong></td>
+            </tr>
+            <tr>
+              <td>Guardar usuario, token o idioma de toda la app</td>
+              <td><strong>useContext</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <h3>🎯 6. Estructura general de una página del Bazar</h3>
+
+      <pre className="bloque-codigo">
+{`// 1) estado local
+const [productos, setProductos] = useState([]);
+
+// 2) estado global
+const { token, usuario } = useContext(AuthContext);
+
+// 3) referencia a elementos
+const buscadorRef = useRef(null);
+
+// 4) cargar datos al montar o al cambiar filtros
+useEffect(() => {
+  getProductos().then(setProductos);
+}, []);
+
+// 5) render final
+return (...);`}
+      </pre>
+
+      <p>
+        Esta estructura se repetirá en <strong>HomePage</strong>, <strong>CatalogoPage</strong>,
+        <strong>LoginPage</strong>, <strong>MisPedidosPage</strong>, etc.
+      </p>
+
+
+      <h3>🧪 7. Mini-ejercicios para practicar</h3>
+
+      <ul className="lista-simple">
+        <li><strong>useState</strong>: contador, input controlado, toggle de detalles.</li>
+        <li><strong>useEffect</strong>: carga de API, contador con intervalo, guardar en localStorage.</li>
+        <li><strong>useRef</strong>: enfocar un input, scroll a una sección, contador de renders.</li>
+        <li><strong>useContext</strong>: mostrar “Login” o “Cerrar sesión” en la Navbar.</li>
+      </ul>
+
+
+      <h3>🎉 8. Resumen express para examen</h3>
+
+      <ul className="lista-simple">
+        <li>useState → datos que pintan UI.</li>
+        <li>useEffect → acciones derivadas del estado.</li>
+        <li>useRef → valores que no pintan UI + acceso al DOM.</li>
+        <li>useContext → estado global sin props.</li>
+      </ul>
+
+    </article>
+  </details>
+</section>
+
+      <section className="section" id="5">
+  <details>
+    <summary>4.5. Componentes de layout y navegación</summary>
+
+    <article className="card">
+
+      <h3>📘 1. Preparación: guía de frontend para los alumnos</h3>
+      <p>
+        Igual que hicimos con backend, recomendamos que cada alumno cree su propia 
+        <strong>guía de frontend</strong>. Esta guía será su referencia para montar una tienda online 
+        usando React + Vite, siguiendo la paleta, estructura y componentes definidos en el PDF 
+        oficial del proyecto.
+      </p>
+
+      <div className="callout">
+        <strong>Consejo docente:</strong> los alumnos comprenden y retienen mejor si ellos mismos
+        reconstruyen la guía (copian, reescriben, prueban ejemplos propios).
+      </div>
+
+      <p>Puedes descargar la guía oficial aquí:</p>
+
+      <p>
+        <a 
+          href="/frontend.pdf" 
+          download 
+          className="boton boton-primario"
+        >
+          📄 Descargar guía de frontend
+        </a>
+      </p>
+
+      <hr />
+
+      <h3>📐 2. Creación del Layout global (Layout.jsx)</h3>
+
+      <p>
+        El componente <code>Layout.jsx</code> es la estructura principal de toda la aplicación 
+        (Navbar + contenido + Footer). Es el “esqueleto” del proyecto y se usa en todas las páginas.
+      </p>
+
+      <pre className="bloque-codigo">
+{`// src/components/Layout.jsx
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+
+export default function Layout({ children }) {
+  return (
+    <>
+      <Navbar />
+      <main className="contenido-principal">
+        {children}
+      </main>
+      <Footer />
+    </>
+  );
+}`}
+      </pre>
+
+      <div className="callout-bonus">
+        <strong>🔍 Recuerda:</strong> este Layout ya respeta la estructura del PDF oficial del 
+        proyecto: navbar fijo, contenido centrado y footer accesible.
+      </div>
+
+      <hr />
+
+      <h3>🧭 3. Creación de la barra de navegación (Navbar.jsx)</h3>
+
+      <p>El componente <code>Navbar.jsx</code> contiene:</p>
+
+      <ul className="lista-simple">
+        <li>Logo o nombre de la tienda.</li>
+        <li>Enlaces principales: Inicio, Catálogo, Mis pedidos.</li>
+        <li>Estado del usuario: Login / Registro / Logout.</li>
+      </ul>
+
+      <pre className="bloque-codigo">
+{`// src/components/Navbar.jsx
+import { Link } from "react-router-dom";
+
+export default function Navbar() {
+  return (
+    <header className="cabecera">
+      <div className="contenedor cabecera-contenido">
+
+        <h1 className="cabecera-titulo">Mi Bazar</h1>
+
+        <nav className="navegacion-principal">
+          <Link to="/" className="enlace-navegacion">Inicio</Link>
+          <Link to="/catalogo" className="enlace-navegacion">Catálogo</Link>
+          <Link to="/mis-pedidos" className="enlace-navegacion">Mis pedidos</Link>
+          <Link to="/login" className="enlace-navegacion">Iniciar sesión</Link>
+        </nav>
+
+      </div>
+    </header>
+  );
+}`}
+      </pre>
+
+      <p>Más adelante lo conectaremos con el token y el contexto del usuario.</p>
+
+      <div className="callout">
+        <strong>Próximos pasos:</strong> en las siguientes lecciones crearemos 
+        <code>Footer.jsx</code>, <code>HomePage.jsx</code> y el 
+        <code>HeroCarousel.jsx</code>.
+      </div>
+
+    </article>
+  </details>
+</section>
+
+<section className="section" id="b4-home-hero">
+  <details>
+    <summary>4.X. HomePage, Hero principal y carrusel de productos destacados</summary>
+
+    <article className="card">
+
+      <h3>🎯 1. Objetivo de esta sección</h3>
+      <p>
+        En esta lección vamos a diseñar la estructura de la <strong>página de inicio</strong> de nuestra
+        tienda online (<code>HomePage.jsx</code>) y dos componentes clave:
+      </p>
+
+      <ul className="lista-simple">
+        <li><strong>HeroCarousel.jsx</strong> → carrusel de productos destacados.</li>
+        <li><strong>CategoryGrid.jsx</strong> → tarjetas grandes de categorías destacadas.</li>
+      </ul>
+
+      <p>
+        Estos componentes serán la “portada” de la tienda y utilizarán los hooks que ya hemos
+        estudiado (<code>useState</code>, <code>useEffect</code>, <code>useRef</code>) y las funciones de 
+        <code>src/services/api.js</code> que antes probamos con <code>ApiTest.jsx</code>.
+      </p>
+
+
+      <h3>🏠 2. Estructura de <code>HomePage.jsx</code></h3>
+
+      <p>
+        La Home estará formada por tres bloques principales (según la guía de frontend del Bazar):
+      </p>
+
+      <ol className="lista-simple">
+        <li><strong>Hero principal</strong> con carrusel de productos destacados.</li>
+        <li><strong>Bloque de categorías destacadas</strong> (tarjetas grandes tipo “Mujer”, “Hombre”…).</li>
+        <li>(Más adelante) <strong>carrusel o grid de promociones</strong>.</li>
+      </ol>
+
+      <p>
+        A nivel de código, <code>HomePage.jsx</code> no hará llamadas directas a la API. En su lugar,
+        delega en componentes especializados:
+      </p>
+
+      <ul className="lista-simple">
+        <li><code>&lt;HeroCarousel /&gt;</code> → se encarga de llamar a la API de productos destacados.</li>
+        <li><code>&lt;CategoryGrid /&gt;</code> → de momento usará categorías “dummy”; luego se podrá conectar a BD.</li>
+      </ul>
+
+
+      <h3>🎠 3. Componente <code>HeroCarousel.jsx</code></h3>
+
+      <p>
+        <code>HeroCarousel</code> muestra un gran bloque visual con uno o varios productos 
+        destacados, siguiendo la paleta rosa/lila/verde del diseño. Su lógica:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Al montarse, llama a la API <code>/api/productos/destacados</code> usando <code>getProductosDestacados()</code>.</li>
+        <li>Guarda los productos en un estado (<code>useState</code>).</li>
+        <li>Utiliza un índice (<code>currentIndex</code>) para saber qué slide mostrar.</li>
+        <li>Opcionalmente, usa un intervalo (<code>setInterval</code> + <code>useRef</code>) para cambiar de slide cada X segundos.</li>
+        <li>Muestra botones o “puntitos” para navegar manualmente entre los destacados.</li>
+      </ul>
+
+      <div className="callout">
+        <strong>Importante:</strong> <code>HeroCarousel</code> no decide el layout global,
+        solo su propia sección. El Layout general lo sigue marcando <code>Layout.jsx</code>.
+      </div>
+
+
+      <h3>🧩 4. Componente <code>CategoryGrid.jsx</code></h3>
+
+      <p>
+        <code>CategoryGrid</code> muestra tarjetas grandes para las categorías principales, por
+        ejemplo:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Mujer</li>
+        <li>Hombre</li>
+        <li>Niños</li>
+        <li>Accesorios</li>
+      </ul>
+
+      <p>
+        Cada tarjeta tendrá:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Nombre de la categoría.</li>
+        <li>Descripción breve.</li>
+        <li>Un botón o enlace “Ver productos”.</li>
+      </ul>
+
+      <p>
+        En una versión avanzada, <code>CategoryGrid</code> podrá leer las categorías desde 
+        la API (tabla <code>categorias</code>) y navegar a <code>/catalogo?categoria_id=X</code>. 
+        En esta primera versión, usaremos datos estáticos para centrarnos en React.
+      </p>
+
+
+      <h3>🔗 5. Relación con <code>ApiTest.jsx</code> y <code>api.js</code></h3>
+
+      <p>
+        El componente <code>ApiTest.jsx</code> es un <strong>laboratorio</strong> que ya hemos usado para
+        comprobar que el backend responde correctamente. En el frontend “real”:
+      </p>
+
+      <ul className="lista-simple">
+        <li><strong>No</strong> usaremos <code>ApiTest.jsx</code> en la tienda.</li>
+        <li><strong>Sí</strong> reutilizaremos todas las funciones de <code>src/services/api.js</code>:
+          <code>getProductos</code>, <code>getProductoById</code>, <code>login</code>, 
+          <code>getMisPedidos</code>, etc.
+        </li>
+        <li>
+          <code>HeroCarousel</code> llamará a una función tipo <code>getProductosDestacados()</code>
+          (que podemos añadir a <code>api.js</code> si aún no existe).
+        </li>
+      </ul>
+
+      <div className="callout-bonus">
+        <strong>Resumen arquitectónico:</strong><br />
+        <code>HomePage</code> organiza la portada.<br />
+        <code>HeroCarousel</code> + <code>CategoryGrid</code> son componentes especializados.<br />
+        Las llamadas a la API se centralizan en <code>src/services/api.js</code>, 
+        probado previamente con <code>ApiTest.jsx</code>.
+      </div>
+
+    </article>
+  </details>
+</section>
+
 
         <section className="section" id="b4-leccion5">
           <details>

@@ -42,7 +42,7 @@ function Home() {
               <li>Tipos de datos básicos y claves primarias.</li>
             </ul>
            <div className="boton-derecha">
-  <Link to="/bloque1Fundamentos" className="boton">
+  <Link to="/Bloque1Fundamentos" className="boton">
     Ver contenido
   </Link>
 </div>
@@ -101,6 +101,48 @@ function Home() {
             </ul>
                <div className="boton-derecha">
                 <Link to="/Bloque4Front" className="boton">
+                  Ver contenido
+                </Link>
+              </div>
+          </Tarjeta>
+        </div>
+
+        <div className="tarjetas-en-fila espacio-arriba">
+          <Tarjeta
+            titulo="Bloque 5 · API Test con HTML Vanilla"
+           
+          >
+            <ul className="lista-simple">
+              <li>Crear una página HTML para testear la API.</li>
+              <li>Usar fetch() para consumir endpoints REST.</li>
+              <li>Formularios HTML para POST, PUT, DELETE.</li>
+              <li>Mostrar respuestas JSON de forma visual.</li>
+            </ul>
+            <span className="texto-resaltado">
+              Prueba tu backend sin frameworks.
+            </span>
+              <div className="boton-derecha">
+                <Link to="/Bloque5ApiTestHtml" className="boton">
+                  Ver contenido
+                </Link>
+              </div>
+          </Tarjeta>
+
+          <Tarjeta
+            titulo="Bloque 6 · API Test con React"
+           
+          >
+            <ul className="lista-simple">
+              <li>Crear componentes React para testear APIs.</li>
+              <li>Hook useEffect para cargar datos automáticamente.</li>
+              <li>Formularios controlados con useState.</li>
+              <li>Manejo de errores y estados de carga.</li>
+            </ul>
+            <span className="texto-resaltado">
+              Herramientas profesionales para testing de APIs.
+            </span>
+              <div className="boton-derecha">
+                <Link to="/Bloque6ApiTestReact" className="boton">
                   Ver contenido
                 </Link>
               </div>

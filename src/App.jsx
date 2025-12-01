@@ -6,6 +6,8 @@ import Bloque2 from './pages/Bloque2.jsx';
 import Actividad from './pages/Actividad.jsx';
 import Bloque3Backend from './pages/Bloque3Backend.jsx';
 import Bloque4Front from './pages/Bloque4Front.jsx';
+import Bloque5ApiTestHtml from './pages/Bloque5ApiTestHtml.jsx';
+import Bloque6ApiTestReact from './pages/Bloque6ApiTestReact.jsx';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="Actividad" element={<Actividad />} />
         <Route path="Bloque3Backend" element={<Bloque3Backend />} />
         <Route path="Bloque4Front" element={<Bloque4Front />} />
+        <Route path="Bloque5ApiTestHtml" element={<Bloque5ApiTestHtml />} />
+        <Route path="Bloque6ApiTestReact" element={<Bloque6ApiTestReact />} />
 
         {/* Ruta no encontrada */}
         <Route path="*" element={<h2>Página no encontrada</h2>} />

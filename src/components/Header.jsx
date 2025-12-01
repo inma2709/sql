@@ -43,6 +43,12 @@ function Header() {
           <NavLink to="/Bloque4Front" className="enlace-navegacion">
             Frontend
           </NavLink>
+          <NavLink to="/Bloque5ApiTestHtml" className="enlace-navegacion">
+            API Test HTML
+          </NavLink>
+          <NavLink to="/Bloque6ApiTestReact" className="enlace-navegacion">
+            API Test React
+          </NavLink>
           <NavLink to="/Actividad" className="enlace-navegacion">
             Actividad
           </NavLink>

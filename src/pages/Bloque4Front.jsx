@@ -118,7 +118,7 @@ export default function Bloque4Front() {
 
       <pre className="bloque-codigo">
         <code>
-{`# 1. Crear el proyecto
+{`# 1. Crear el proyecto con javascript (no TypeScript) 
 npm create vite@latest bazar-frontend -- --template react
 
 # 2. Entrar en la carpeta
@@ -328,13 +328,13 @@ npm run dev`}
       <h3>5️⃣ Esqueleto básico de App.jsx con rutas</h3>
 
       <p>
-        Como referencia, este sería un esqueleto 
+        Como referencia, este sería un esqueleto, un ejemplo 
         <code className="etiqueta-codigo">App.jsx</code> usando React Router. Usalo para ver como van encajando las piezas.
       </p>
 
       <pre className="bloque-codigo">
         <code>
-{`// App.jsx (esquema simplificado)
+{`// App.jsx 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import HomePage from './pages/HomePage';
@@ -390,12 +390,180 @@ export default App;`}
         <code>ProtectedRoute</code> y cada una de las páginas. De momento, nos interesa
         entender la <strong>estructura general</strong>.
       </div>
+         <div className="cuadro-didactico">
+  <h4>📁 Crear carpetas y archivos desde el terminal</h4>
+  <p>
+    Antes de iniciar tu servidor con Node.js y Express, es fundamental aprender
+    a crear la estructura de carpetas y archivos desde el terminal.  
+    Esto te permite trabajar como un desarrollador profesional, manteniendo tu proyecto
+    organizado desde el primer minuto.
+  </p>
+
+  <div className="cuadro-didactico__grid">
+
+    {/* 1. Crear carpetas */}
+    <div className="cuadro-didactico__item">
+      <h5>1. Crear carpetas</h5>
+      <ul className="lista-simple">
+        <li>
+          <code>mkdir nombre_carpeta</code> — Crea una carpeta nueva.
+        </li>
+        <li>
+          <code>mkdir src</code> — Carpeta principal del código fuente.
+        </li>
+        <li>
+          <code>mkdir src/controllers</code> — Crear subcarpetas dentro de src.
+        </li>
+        <li>
+          <code>mkdir -p src/models</code> — Con <strong>-p</strong> crea varias carpetas anidadas de una vez.
+        </li>
+      </ul>
+    </div>
+
+    {/* 2. Crear archivos */}
+    <div className="cuadro-didactico__item">
+      <h5>2. Crear archivos</h5>
+      <ul className="lista-simple">
+        <li>
+          <code>touch server.js</code> — Crea un archivo vacío.
+        </li>
+        <li>
+          <code>touch src/app.js</code> — Archivo dentro de una carpeta concreta.
+        </li>
+        <li>
+          <code>touch src/controllers/productos.controller.js</code> — Ejemplo típico del proyecto.
+        </li>
+      </ul>
+    </div>
+
+    {/* 3. Navegar entre carpetas */}
+    <div className="cuadro-didactico__item">
+      <h5>3. Navegar entre carpetas</h5>
+      <ul className="lista-simple">
+        <li>
+          <code>cd nombre_carpeta</code> — Entra en una carpeta.
+        </li>
+        <li>
+          <code>cd ..</code> — Sube un nivel.
+        </li>
+        <li>
+          <code>cd ../..</code> — Sube dos niveles.
+        </li>
+       
+      </ul>
+    </div>
+</div>
+<div className="cuadro-didactico">
+  <h4>📄 Crear muchos archivos a la vez desde el terminal</h4>
+
+  <p>
+    Cuando empezamos un proyecto backend, suele ser necesario crear varios 
+    archivos y carpetas rápidamente (controladores, modelos, rutas, etc.).  
+    Estas técnicas permiten crear <strong>varios archivos a la vez</strong> directamente
+    desde el terminal, sin tener que crearlos uno por uno.
+  </p>
+
+  <div className="cuadro-didactico__grid">
+
+    {/* 1. Crear varios archivos con un solo comando */}
+    <div className="cuadro-didactico__item">
+      <h5>1. Crear muchos archivos con un solo <code>touch</code></h5>
+      <p>Funciona en Linux, Mac y Git Bash en Windows.</p>
+      <pre className="bloque-codigo">
+        <code>{`touch app.js server.js src/index.js src/config.js`}</code>
+      </pre>
+      <p>
+        Puedes crear todos los que quieras en una sola línea, incluso en carpetas
+        diferentes.
+      </p>
+    </div>
+
+    {/* 2. Crear muchos archivos dentro de una carpeta */}
+    <div className="cuadro-didactico__item">
+      <h5>2. Crear muchos archivos dentro de una carpeta</h5>
+      <p>Basta con indicarlos seguidos:</p>
+      <pre className="bloque-codigo">
+        <code>{`touch src/controllers/productos.controller.js \
+src/controllers/clientes.controller.js \
+src/controllers/pedidos.controller.js`}</code>
+      </pre>
+      <p>
+        Perfecto para scaffolding (estructura inicial de controladores).
+      </p>
+    </div>
+
+    {/* 3. Atajo usando llaves */}
+    <div className="cuadro-didactico__item">
+      <h5>3. Atajo profesional: crear 10 archivos con llaves</h5>
+      <p>Usa <strong>brace expansion</strong> (expansión de llaves).</p>
+      <pre className="bloque-codigo">
+        <code>{`touch src/models/{productos,clientes,pedidos,carrito}.model.js`}</code>
+      </pre>
+      <p>
+        Crea automáticamente cuatro archivos:  
+        <em>productos.model.js, clientes.model.js, pedidos.model.js, carrito.model.js</em>.
+      </p>
+    </div>
+
+    {/* 4. Crear archivos numerados */}
+    <div className="cuadro-didactico__item">
+      <h5>4. Crear archivos numerados automáticamente</h5>
+      <p>Muy útil para crear tests o ejemplos.</p>
+      <pre className="bloque-codigo">
+        <code>{`touch test_{1..10}.js`}</code>
+      </pre>
+      <p>Genera: test_1.js, test_2.js, ..., test_10.js.</p>
+    </div>
+
+    {/* 5. Crear carpetas + archivos de golpe */}
+    <div className="cuadro-didactico__item">
+      <h5>5. Crear carpetas y archivos en un solo comando</h5>
+      <p>
+        Primero creamos las carpetas necesarias con <code>mkdir -p</code>,
+        y luego generamos todos los archivos dentro:
+      </p>
+      <pre className="bloque-codigo">
+        <code>{`mkdir -p src/{controllers,models,routes}
+touch src/controllers/{auth,productos,pedidos}.controller.js \
+src/models/{clientes,productos}.model.js \
+src/routes/{auth,productos}.routes.js`}</code>
+      </pre>
+      <p>Este es el método profesional para estructurar un backend en segundos.</p>
+    </div>
+
+    {/* 6. Para usuarios Windows CMD (sin Git Bash) */}
+    <div className="cuadro-didactico__item">
+      <h5>6. En Windows CMD (sin Git Bash)</h5>
+      <p>CMD no tiene <code>touch</code>, pero puedes usar:</p>
+      <pre className="bloque-codigo">
+        <code>{`type nul > archivo1.js
+type nul > archivo2.js
+mkdir src\\controllers
+type nul > src\\controllers\\productos.controller.js`}</code>
+      </pre>
+      <p>
+        Aunque lo más recomendable es usar <strong>Git Bash</strong> o 
+        <strong>PowerShell</strong>.
+      </p>
+    </div>
+
+  </div>
+
+  <div className="cuadro-didactico__nota">
+    <strong>Idea clave:</strong>  
+     Dominar la creación masiva de archivos te permite montar la estructura 
+    profesional de un backend en segundos, sin recurrir a ningún editor gráfico.
+  </div>
+</div>
+
 
       <h3>🧪 Actividad guiada</h3>
 
       <ul className="lista-simple">
         <li>Crea el proyecto React con Vite tal y como se indica al inicio de la lección.</li>
         <li>Crea las carpetas <code>services</code>, <code>context</code>, <code>components</code> y <code>pages</code>.</li>
+        <li>Recuerda que existen ordenes para crear carpetas desde la consola por ejemplo mkdir crea las carpetas</li>
+        <li>Utiliza <code>touch</code> para crear archivos vacíos en la consola. </li>
         <li>Crea archivos vacíos para las páginas principales (HomePage, CatalogoPage, LoginPage...).</li>
         <li>Crea un <code>Navbar</code> sencillo con enlaces a <code>/</code>, <code>/productos</code>, <code>/login</code> y <code>/mis-pedidos</code>.</li>
       </ul>
@@ -414,11 +582,13 @@ export default App;`}
         <code className="etiqueta-codigo">services/api.js</code>, que será el encargado
         de comunicarse con nuestra API de backend.
       </p>
+   
+</div>
     </article>
   </details>
 </section>
 
-   <section className="section" id="b4-leccion2-api-servicio">
+   <section className="section" id="b4-leccion2">
   <details open>
     <summary>
       4.2. Servicio <code>api.js</code> y laboratorio <code>ApiTest.jsx</code> (Frontend → Backend)
@@ -647,6 +817,409 @@ export async function getPedidoDetalle(id) {
         lo añade automáticamente a la cabecera <code>Authorization</code> cuando existe en
         <code>localStorage</code>.
       </p>
+      <section className="seccion" id="explicacion-api-js">
+  <article className="tarjeta">
+    <header className="tarjeta-encabezado">
+      <h3 className="tarjeta-titulo">
+        2️⃣ Entendiendo paso a paso <code>src/services/api.js</code>
+      </h3>
+      <p className="tarjeta-subtitulo">
+        Este archivo es el “traductor” entre tu frontend en React y tu backend en Node/Express.
+      </p>
+    </header>
+
+    <div className="tarjeta-cuerpo">
+      <p>
+        Cuando el React del navegador quiere pedir productos, registrar usuarios o crear pedidos,
+        <span className="texto-resaltado">no habla directamente con los archivos .js del backend</span>.
+        Habla con el servidor a través de <strong>peticiones HTTP</strong> (URLs como
+        <code className="etiqueta-codigo">http://localhost:3000/api/productos</code>).
+      </p>
+
+      <p>
+        El archivo <code>api.js</code> agrupa esas peticiones en funciones fáciles de usar: 
+        <code className="etiqueta-codigo">getProductos()</code>,
+        <code className="etiqueta-codigo">login()</code>,
+        <code className="etiqueta-codigo">crearPedido()</code>, etc.
+      </p>
+    </div>
+  </article>
+
+  {/* ===============================
+      1. API_URL y variables de entorno
+      =============================== */}
+  <article className="tarjeta">
+    <header className="tarjeta-encabezado">
+      <h4 className="tarjeta-titulo">1️⃣ La constante <code>API_URL</code> y la famosa “variable de entorno”</h4>
+    </header>
+    <div className="tarjeta-cuerpo">
+      <pre className="bloque-codigo">
+        <code>{`// Puedes cambiar esto por una variable de entorno si quieres:
+// VITE_API_URL="http://localhost:3000/api"
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";`}</code>
+      </pre>
+
+      <p>
+        Esta línea define <code className="etiqueta-codigo">API_URL</code>, que es la
+        <strong>dirección base de tu backend</strong>. A partir de ella se construirán todas las URLs:
+      </p>
+
+      <ul className="lista-simple">
+        <li><code className="etiqueta-codigo">API_URL + "/productos"</code> → <code className="etiqueta-codigo">http://localhost:3000/api/productos</code></li>
+        <li><code className="etiqueta-codigo">API_URL + "/pedidos"</code> → <code className="etiqueta-codigo">http://localhost:3000/api/pedidos</code></li>
+      </ul>
+
+      <div className="callout">
+        <strong>¿Qué es eso de <code>import.meta.env.VITE_API_URL</code>?</strong>
+        <p>
+          En proyectos creados con <strong>Vite</strong>, se pueden definir variables de configuración
+          en un archivo llamado <code className="etiqueta-codigo">.env</code> en la raíz del proyecto.
+        </p>
+        <p>
+          Por ejemplo, podríamos crear un archivo <code className="etiqueta-codigo">.env</code> dentro del
+          proyecto React con esta línea:
+        </p>
+        
+        <p>
+          Entonces, dentro del código, Vite expone esa variable como
+          <code>import.meta.env.VITE_API_URL</code>.
+        </p>
+      </div>
+
+      <div className="nota nota-importante">
+        <strong>Muy importante para ti ahora:</strong><br />
+        Si <strong>no tienes ningún archivo <code>.env</code> en el frontend</strong>, no pasa nada.
+        En ese caso <code>import.meta.env.VITE_API_URL</code> será <code>null</code> o <code>undefined</code> y
+        entonces se usa el valor por defecto:
+        <code className="etiqueta-codigo">"http://localhost:3000/api"</code> gracias al operador <code>||</code>.
+      </div>
+
+      <p>
+        De momento no vamos a usar variables de entorno en frontend (ya las hemos usado en el backend)
+      </p>
+
+    <pre className="bloque-codigo">
+{`const API_URL = "http://localhost:3000/api";`}
+</pre>
+
+    </div>
+  </article>
+
+  {/* ===============================
+      2. Token y authHeaders
+      =============================== */}
+  <article className="tarjeta">
+    <header className="tarjeta-encabezado">
+      <h4 className="tarjeta-titulo">2️⃣ Gestión del token: <code>getToken()</code> y <code>authHeaders()</code></h4>
+      <p className="tarjeta-subtitulo">Cómo recuerda el navegador que estás logado.</p>
+    </header>
+
+    <div className="tarjeta-cuerpo">
+      <pre className="bloque-codigo">
+        <code>{`export function getToken() {
+  const stored = localStorage.getItem("token");
+  return stored || null;
+}
+
+function authHeaders() {
+  const token = getToken();
+  if (!token) return {};
+  return { Authorization: "Bearer " + token };
+}`}</code>
+      </pre>
+
+      <p>
+        Aquí se usan dos ideas importantes del frontend:
+      </p>
+
+      <ul className="lista-simple">
+        <li>
+          <strong><code>localStorage</code></strong> es una “cajita” de datos que guarda información en el navegador.
+          En este caso, guardaremos ahí el <strong>token JWT</strong> después de hacer login.
+        </li>
+        <li>
+          <strong><code>getToken()</code></strong> lee esa “cajita”:
+          si existe algo en <code className="etiqueta-codigo">localStorage["token"]</code>, lo devuelve;
+          si no, devuelve <code>null</code>.
+        </li>
+      </ul>
+
+      <p>
+        La función <code className="etiqueta-codigo">authHeaders()</code> construye las cabeceras para rutas protegidas:
+      </p>
+
+      <ul className="lista-simple">
+        <li>Si <strong>no hay token</strong> → devuelve un objeto vacío <code>{`{}`}</code>.</li>
+        <li>
+          Si <strong>sí hay token</strong> → devuelve:
+          <code className="etiqueta-codigo">{`{ Authorization: "Bearer " + token }`}</code>
+        </li>
+      </ul>
+
+      <div className="callout">
+        <strong>¿Para qué sirve esto?</strong>
+        <p>
+          En las rutas protegidas (pedidos, mis pedidos…) el backend exige un encabezado HTTP
+          <code className="etiqueta-codigo">Authorization: Bearer &lt;token&gt;</code>.
+          Gracias a <code>authHeaders()</code>, <strong>no tenemos que escribir esa cabecera a mano en cada fetch</strong>;
+          simplemente hacemos:
+        </p>
+        <pre className="bloque-codigo">
+          {`headers: {
+  "Content-Type": "application/json",
+  ...authHeaders(),
+}`}
+        </pre>
+      </div>
+    </div>
+  </article>
+
+  {/* ===============================
+      3. Funciones de productos
+      =============================== */}
+  <article className="tarjeta">
+    <header className="tarjeta-encabezado">
+      <h4 className="tarjeta-titulo">3️⃣ Funciones de productos</h4>
+      <p className="tarjeta-subtitulo">
+        Cómo el frontend le pide al backend “dame la lista de productos” o “dame el producto 5”.
+      </p>
+    </header>
+
+    <div className="tarjeta-cuerpo">
+      <pre className="bloque-codigo">
+        <code>{`export async function getProductos(categoria = null) {
+  const query = categoria
+    ? "?categoria=" + encodeURIComponent(categoria)
+    : "";
+
+  const res = await fetch(API_URL + "/productos" + query);
+  return res.json();
+}
+
+export async function getProductoById(id) {
+  const res = await fetch(API_URL + "/productos/" + id);
+  return res.json();
+}`}</code>
+      </pre>
+
+      <p>
+        Estas funciones usan <code className="etiqueta-codigo">fetch</code>, que es la forma de hacer peticiones HTTP desde el navegador:
+      </p>
+
+      <ul className="lista-simple">
+        <li>
+          <code>getProductos()</code>:
+          <ul className="lista-simple">
+            <li>Si no recibe categoría → hace <code>GET http://localhost:3000/api/productos</code></li>
+            <li>
+              Si recibe una categoría, por ejemplo <code>"Ropa"</code> →
+              hace <code>GET http://localhost:3000/api/productos?categoria=Ropa</code>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <code>getProductoById(5)</code> → hace
+          <code className="etiqueta-codigo">GET http://localhost:3000/api/productos/5</code>
+        </li>
+      </ul>
+
+      <div className="callout">
+        <strong>Conexión con el backend:</strong>
+        <p>
+          Estas rutas tienen que existir en tu servidor Express, normalmente en el archivo de rutas de productos,
+          algo parecido a:
+        </p>
+        <pre className="bloque-codigo">
+          {`// backend: server.js (o app.js)
+app.use("/api/productos", productosRouter);
+
+// backend: routes/productos.routes.js
+router.get("/", getProductos);
+router.get("/:id", getProductoById);`}
+        </pre>
+        <p>
+          <span className="texto-resaltado">
+            El frontend no “importa” <code>productos.routes.js</code>. Se comunica con él a través de la URL que le sirve el server</span>.
+        </p>
+      </div>
+    </div>
+  </article>
+
+  {/* ===============================
+      4. Funciones de Auth (register / login)
+      =============================== */}
+  <article className="tarjeta">
+    <header className="tarjeta-encabezado">
+      <h4 className="tarjeta-titulo">4️⃣ Registro y login</h4>
+    </header>
+
+    <div className="tarjeta-cuerpo">
+      <pre className="bloque-codigo">
+        <code>{`export async function register(datos) {
+  const res = await fetch(API_URL + "/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+
+  return res.json();
+}
+
+export async function login(datos) {
+  const res = await fetch(API_URL + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(datos),
+  });
+
+  const data = await res.json();
+  return data;
+}`}</code>
+      </pre>
+
+      <p>Ambas funciones hacen una petición <strong>POST</strong> al backend:</p>
+
+      <ul className="lista-simple">
+        <li>
+          <code>register({`{ nombre, email, password }`})</code> → 
+          <code className="etiqueta-codigo">POST /auth/register</code> con JSON en el body.
+        </li>
+        <li>
+          <code>login({`{ email, password }`})</code> → 
+          <code className="etiqueta-codigo">POST /auth/login</code> y espera que el backend devuelva
+          algo como: <code className="etiqueta-codigo">{`{ token, usuario: { ... } }`}</code>.
+        </li>
+      </ul>
+
+      <div className="nota nota-importante">
+        <strong>Detalle didáctico:</strong> esta función de <code>login()</code> 
+        <span className="texto-resaltado">NO guarda el token en <code>localStorage</code></span>.  
+        Devuelve los datos y será el <strong>componente React</strong> (o un <strong>AuthContext</strong>)
+        quien decida qué hacer:
+        <pre className="bloque-codigo">
+          <code>{`const data = await login(formState);
+localStorage.setItem("token", data.token);`}</code>
+        </pre>
+      </div>
+
+      <p>
+        De nuevo, esto debe corresponderse con tus rutas de backend:
+      </p>
+      <pre className="bloque-codigo">
+        <code>{`app.use("/api/auth", authRouter);
+
+router.post("/register", registerController);
+router.post("/login", loginController);`}</code>
+      </pre>
+    </div>
+  </article>
+
+  {/* ===============================
+      5. Funciones de pedidos
+      =============================== */}
+  <article className="tarjeta">
+    <header className="tarjeta-encabezado">
+      <h4 className="tarjeta-titulo">5️⃣ Pedidos del usuario</h4>
+    </header>
+
+    <div className="tarjeta-cuerpo">
+      <pre className="bloque-codigo">
+        <code>{`export async function crearPedido() {
+  const res = await fetch(API_URL + "/pedidos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+  });
+
+  return res.json();
+}
+
+export async function agregarProductoAPedido(pedidoId, productoId, cantidad) {
+  const res = await fetch(API_URL + "/pedidos/" + pedidoId + "/productos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ producto_id: productoId, cantidad: cantidad }),
+  });
+
+  return res.json();
+}
+
+export async function getMisPedidos() {
+  const res = await fetch(API_URL + "/mis-pedidos", {
+    headers: {
+      ...authHeaders(),
+    },
+  });
+
+  return res.json();
+}
+
+export async function getPedidoDetalle(id) {
+  const res = await fetch(API_URL + "/mis-pedidos/" + id, {
+    headers: {
+      ...authHeaders(),
+    },
+  });
+
+  return res.json();
+}`}</code>
+      </pre>
+
+      <p>
+        Todas estas funciones usan <code>authHeaders()</code>, porque son rutas que requieren usuario autenticado.
+        Es decir: <strong>si no hay token → el backend responderá 401 (No autorizado)</strong>.
+      </p>
+
+      <div className="cuadro-didactico">
+        <h4>Relación con las rutas del backend</h4>
+        <div className="cuadro-didactico__grid">
+          <div className="cuadro-didactico__item">
+            <h5>Frontend</h5>
+            <p><code>crearPedido()</code> → <code>POST API_URL + "/pedidos"</code></p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Backend</h5>
+            <p>
+              <code>app.use("/api/pedidos", pedidosRouter)</code><br />
+              <code>router.post("/", verificarToken, crearPedido)</code>
+            </p>
+          </div>
+
+          <div className="cuadro-didactico__item">
+            <h5>Frontend</h5>
+            <p><code>agregarProductoAPedido(id,...)</code> → <code>POST /pedidos/:id/productos</code></p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Backend</h5>
+            <p><code>router.post("/:id/productos", verificarToken, agregarProducto)</code></p>
+          </div>
+
+          <div className="cuadro-didactico__item">
+            <h5>Frontend</h5>
+            <p><code>getMisPedidos()</code> → <code>GET API_URL + "/mis-pedidos"</code></p>
+          </div>
+          <div className="cuadro-didactico__item">
+            <h5>Backend</h5>
+            <p><code>router.get("/mios", verificarToken, obtenerMisPedidos)</code> (según cómo lo hayas llamado)</p>
+          </div>
+        </div>
+
+        <p className="cuadro-didactico__nota">
+          <strong>Conclusión clave para tus alumnos:</strong> 
+          el archivo <code>api.js</code> no se “enlaza” con los <code>routes/*.js</code> del backend por importación de archivos,
+          sino por coincidencia entre las <strong>URLs</strong>: lo que el frontend pide por <code>fetch()</code> y lo que Express 
+          escucha con <code>app.use("/api/...")</code> y <code>router.get/post(...)</code>.
+        </p>
+      </div>
+    </div>
+  </article>
+</section>
+
 
       <h3>2️⃣ Laboratorio de pruebas: <code>src/components/ApiTest.jsx</code></h3>
 

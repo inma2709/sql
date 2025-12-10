@@ -49,6 +49,9 @@ function Header() {
           <NavLink to="/Bloque6ApiTestReact" className="enlace-navegacion">
             API Test React
           </NavLink>
+          <NavLink to="/TestCompleto" className="enlace-navegacion">
+            Test Completo
+          </NavLink>
           <NavLink to="/Actividad" className="enlace-navegacion">
             Actividad
           </NavLink>

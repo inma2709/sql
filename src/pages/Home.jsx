@@ -149,6 +149,30 @@ function Home() {
           </Tarjeta>
         </div>
 
+        {/* Test comprehensivo */}
+        <div className="tarjetas-en-fila espacio-arriba">
+          <Tarjeta
+            titulo="🧪 Test Comprehensivo Final UF1846"
+           
+          >
+            <ul className="lista-simple">
+              <li>80 preguntas: 50 sobre SQL fundamentals + 30 sobre UF1846.</li>
+              <li>Arquitectura MVC con Node.js y Express avanzado.</li>
+              <li>Integración frontend-backend y controladores.</li>
+              <li>Fetch, modelos, rutas y certificado IF210.</li>
+              <li>Validación, seguridad y testing de APIs REST.</li>
+            </ul>
+            <span className="texto-resaltado">
+              Evaluación completa para certificación UF1846.
+            </span>
+              <div className="boton-derecha">
+                <Link to="/TestCompleto" className="boton boton-destacado">
+                  Realizar Test
+                </Link>
+              </div>
+          </Tarjeta>
+        </div>
+
         
       </section>
     </div>
